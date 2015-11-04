@@ -3,7 +3,9 @@
   "description": "Gives you the best idea about your current browsing location you could possibly want.",
   "version": "1.0",
   "permissions": [
-    "tabs", "*://*/*"
+    "contextMenus",
+    "tabs",
+    "*://*/*"
   ],
   "content_scripts": [{
     "matches": ["*://*/*"],
@@ -11,5 +13,8 @@
     "run_at": "document_end"
   }],
 
+  "background": {
+    "scripts": ["lib/jquery-2.1.4.min.js", "scripts/background.js"]
+  },
   "manifest_version": 2
 }
