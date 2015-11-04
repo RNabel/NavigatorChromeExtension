@@ -33,6 +33,10 @@ function addSidePanes(leftPaneSize, rightPaneSize) {
         }
     }
 
+    // Add placeholder to right sidepane.
+    var picUrl = chrome.extension.getURL('assets/tree.png');
+    right.append($('<img>').attr('src', picUrl).attr('width', '100%'));
+
     addStyle(left, true);
     addStyle(right, false);
 

@@ -16,5 +16,9 @@
   "background": {
     "scripts": ["lib/jquery-2.1.4.min.js", "scripts/background.js"]
   },
+
+  "web_accessible_resources": [
+    "assets/*"
+  ],
   "manifest_version": 2
 }

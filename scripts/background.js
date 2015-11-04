@@ -71,3 +71,6 @@ function addLeftNode(uuid, node) {
     }
 
 }
+
+
+// ----- Functions used for shared and miscellaneous actions -----
