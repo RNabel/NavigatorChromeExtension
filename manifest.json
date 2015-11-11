@@ -9,7 +9,7 @@
   ],
   "content_scripts": [{
     "matches": ["*://*/*"],
-    "js":      ["lib/jquery-2.1.4.min.js", "scripts/content_script.js"],
+    "js":      ["lib/d3.js", "lib/jquery-2.1.4.min.js", "scripts/content_script.js"],
     "run_at": "document_end"
   }],
 

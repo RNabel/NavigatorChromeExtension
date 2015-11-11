@@ -7,7 +7,6 @@ var rightPaneIdentifier = "rightPane";
 var rightPaneSelector = "#" + rightPaneIdentifier;
 
 
-console.log("Starting to run content script.");
 
 // --- General functionality. ---
 // Adapted from: http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages
@@ -39,11 +38,8 @@ function addSidePanes(leftPaneSize, rightPaneSize) {
         }
     }
 
-    // Add placeholder to right sidepane.
-    var picUrl = chrome.extension.getURL('assets/tree.png');
-    right.append($('<img>').attr('src', picUrl).attr('width', '90%%').css('margin', '5% 5%'));
-
-    left.append($quoteBox);
+    // Initialize the tree.
+    initGraph();
 
     addStyle(left, true);
     addStyle(right, false);
@@ -107,9 +103,9 @@ function slideInSidePanes() {
 // --- Functionality of left pane. ---
 function setUpLeftPanel() {
     // Add the drop listeners.
-    $('#main').on('drop', drop);
-    $('#main').on('dragover', allowDrop);
-    $('body').on('enddrag', startDrag);
+    $(leftPaneSelector).on('drop', drop);
+    $(leftPaneSelector).on('dragover', allowDrop);
+    $('#content').on('dragstart', startDrag);
 
     // Event listener for drag; required to find the origin of the drag.
     function startDrag(ev) {
@@ -153,15 +149,18 @@ function setUpInfoBubble(text, html_text, origin_url, source_selector) {
     // Send data to backing store.
     sendMessage(obj_to_send);
 
-    var $box = createQuoteBox();
+    var $box = createQuoteBox(origin_url);
     $box.text(text);
 
+    // TODO set location of box.
+
+    $(leftPaneSelector).append($box);
     // TODO scroll to element. http://stackoverflow.com/a/9272017/3918512
 }
 
-function createQuoteBox() {
+function createQuoteBox(url) {
     // Add text box to left pane.
-    var $quoteBox = $('<div>').css({
+    var $quoteBox = $('<div onclick="window.open(\'' + url + '\', \'_self\');">').css({
         'background-color': 'white',
         width: 100,
         height: 60,
@@ -174,6 +173,31 @@ function createQuoteBox() {
     $quoteBox.append($('<p>').attr('id', 'quoteContent'));
 
     return $quoteBox;
+}
+
+// ---- Functionality of right hand pane. ----
+function initGraph() {
+    // TODO fetch data from backend.
+    // Add placeholder to right sidepane.
+    var picUrl = chrome.extension.getURL('assets/tree.png');
+    $(rightPaneSelector).append($('<img>').attr('src', picUrl).attr('width', '90%%').css('margin', '5% 5%'));
+
+    var diameter = 960;
+
+    var tree = d3.layout.tree()
+        .size([360, diameter / 2 - 120])
+        .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
+
+    var diagonal = d3.svg.diagonal.radial()
+        .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
+
+    var svg = d3.select(rightPaneSelector).append("svg")
+        .attr("width", diameter)
+        .attr("height", diameter - 150)
+        .append("g")
+        .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+
+
 }
 
 // ---- Miscellaneous functionality. ----
