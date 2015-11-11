@@ -66,5 +66,30 @@ chrome.runtime.onMessage.addListener(
         }
     });
 
+// ---- Functionality required for right-hand pane. ----
+function onTabChange(tabId, changeInfo, tab) {
+    console.log(tabId);
+    console.log(changeInfo);
+    console.log(tab);
+}
+function createNewConnection(source, target) {
+    // Add connection to source website.
+    if (history.hasOwnProperty(source)) {
+        var source_hist = history[source];
+        if (source_hist.hasOwnProperty(target)) {
+            source_hist[target]++;
+        } else {
+            source_hist[target] = 1;
+        }
+    }
+    if (history.hasOwnProperty(target)) {
+        var target_hist = history[target];
+        if (target_hist.hasOwnProperty(source)) {
+            target_hist[source]++;
+        } else {
+            target_hist[source] = 1;
+        }
+    }
+}
 
-// ----- Functions used for shared and miscellaneous actions -----
+// ---- Functions used for shared and miscellaneous actions ----
