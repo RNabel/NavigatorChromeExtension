@@ -2,11 +2,11 @@
  * Created by rn30 on 03/11/15.
  */
 
-// ----- Code relevant to the right pane -----
+// ----- Code relevant to the right pane. -----
 var history = {};
 
 
-// ----- Code relevant to the left pane -----
+// ----- Code relevant to the left pane. -----
 // The variable which holds content for the left pane to display
 var savedText = {};
 var uuidToUrlMap = {};
@@ -23,35 +23,12 @@ function guid() {
         s4() + '-' + s4() + s4() + s4();
 }
 
-// Add element to the context menu.
-chrome.contextMenus.create({
-    "title": "Buzz This",
-    "contexts": ["page", "selection", "image", "link"],
-    "onclick": contextMenuHandler
-});
+// ---- Code for left-hand pane. ----
 
-function contextMenuHandler(data) {
-    console.log("Context Menu clicked.");
-    console.log(data.selectionText);
-
-    var selectedText = data.selectionText;
-    var url = data.pageUrl;
-
-    var node = createNode(selectedText, url, null);
-
+// Method used to handle the creation of a snippet. Is handed the data sent from the content script.
+function newSnippetHandler(object) {
     var uuid = guid();
-
-    // TODO ensure UUID is not already contained.
-
-    addLeftNode(uuid, node);
-}
-
-function createNode(text, url, connections) {
-    return {
-        text: text,
-        url: url,
-        connections: connections
-    };
+    addLeftNode(uuid, object);
 }
 
 function addLeftNode(uuid, node) {
@@ -71,3 +48,48 @@ function addLeftNode(uuid, node) {
     }
 
 }
+
+// Message end point.
+chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+        if (!request.type) {
+            console.log("Invalid request received by extension - type field not specified.");
+            return;
+        }
+        // Delete unnecessary data fields.
+        delete request.type;
+
+        // Forward data to respective handler.
+        switch (request.type) {
+            case "new_snippet": // A new element was dragged onto the left pane.
+                newSnippetHandler(request); break;
+        }
+    });
+
+// ---- Functionality required for right-hand pane. ----
+function onTabChange(tabId, changeInfo, tab) {
+    console.log(tabId);
+    console.log(changeInfo);
+    console.log(tab);
+}
+function createNewConnection(source, target) {
+    // Add connection to source website.
+    if (history.hasOwnProperty(source)) {
+        var source_hist = history[source];
+        if (source_hist.hasOwnProperty(target)) {
+            source_hist[target]++;
+        } else {
+            source_hist[target] = 1;
+        }
+    }
+    if (history.hasOwnProperty(target)) {
+        var target_hist = history[target];
+        if (target_hist.hasOwnProperty(source)) {
+            target_hist[source]++;
+        } else {
+            target_hist[source] = 1;
+        }
+    }
+}
+
+// ---- Functions used for shared and miscellaneous actions ----
