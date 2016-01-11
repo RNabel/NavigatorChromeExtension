@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History tree tests</title>
+    <script src="../lib/jquery-2.1.4.min.js"></script>
+    <script src="../lib/d3.js"></script>
+
+</head>
+<body>
+
+<div id="rightPane"></div>
+
+</body>
+
+<!-- Include content script -->
+<script>
+    // Compatibility script.
+    chrome = {};
+    chrome.extension = {};
+    chrome.extension.getURL = function(path) {
+        return "../" + path;
+    }
+</script>
+<script src="../scripts/content_script.js"></script>
+<script type="text/javascript">
+    //  Instantiate graph using JS functionality.
+    initGraph();
+</script>
+</html>
