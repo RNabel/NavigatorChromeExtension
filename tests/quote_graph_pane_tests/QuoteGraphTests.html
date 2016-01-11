@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <title>History tree tests</title>
     <script src="../../lib/jquery-2.1.4.min.js"></script>
-    <script src="../../lib/sigma.min.js"></script>
     <style type="text/css">
-        #rightPane {
+        #leftPane {
             max-width: 400px;
             height: 400px;
             margin: auto;
@@ -15,28 +14,26 @@
 </head>
 <body>
 
-<div id="rightPane"></div>
+<div id="leftPane"></div>
 
 </body>
 
 <!-- Include content script -->
 <script>
-    // Compatibility script.
+    // Compatibility code.
     chrome = {};
+    chrome.runtime = {};
+    chrome.runtime.sendMessage = function () {};
     chrome.extension = {};
     chrome.extension.getURL = function(path) {
-        return "../" + path;
-    }
+        return "../../" + path;
+    };
+
 </script>
-<script src="../../lib/sigma.parsers.json.min.js"></script>
 <script src="../../scripts/content_script.js"></script>
 <script type="text/javascript">
     //  Instantiate graph using JS functionality.
-    initGraph();
+    setUpLeftPanel();
+    setUpInfoBubble("Test text", "<p>Test text</p>", "test.com", "/bookstore/book/title")
 </script>
-
-<script>
-
-</script>
-
 </html>

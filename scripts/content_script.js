@@ -179,10 +179,12 @@ function createQuoteBox(url) {
 function initGraph() {
     // TODO fetch data from backend.
     // Add placeholder to right sidepane.
-    var picUrl = chrome.extension.getURL('assets/tree.png');
-    $(rightPaneSelector).append($('<img>').attr('src', picUrl).attr('width', '90%%').css('margin', '5% 5%'));
-
-
+    sigma.parsers.json('dummy_nodes.json', {
+        container: 'rightPane',
+        settings: {
+            defaultNodeColor: '#ec5148'
+        }
+    });
 }
 
 // ---- Miscellaneous functionality. ----
