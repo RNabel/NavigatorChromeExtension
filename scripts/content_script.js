@@ -182,21 +182,6 @@ function initGraph() {
     var picUrl = chrome.extension.getURL('assets/tree.png');
     $(rightPaneSelector).append($('<img>').attr('src', picUrl).attr('width', '90%%').css('margin', '5% 5%'));
 
-    var diameter = 960;
-
-    var tree = d3.layout.tree()
-        .size([360, diameter / 2 - 120])
-        .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
-
-    var diagonal = d3.svg.diagonal.radial()
-        .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
-
-    var svg = d3.select(rightPaneSelector).append("svg")
-        .attr("width", diameter)
-        .attr("height", diameter - 150)
-        .append("g")
-        .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
-
 
 }
 
