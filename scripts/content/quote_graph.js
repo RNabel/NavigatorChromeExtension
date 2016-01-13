@@ -23,9 +23,9 @@ function setUpLeftPanel() {
         ev.preventDefault();
 
         var url = window.location.href;
-        var text = ev.originalEvent.dataTransfer.getData("text/plain");
-        var html_data = ev.originalEvent.dataTransfer.getData("text/html");
-        var source_selector = ev.originalEvent.dataTransfer.getData("src");
+        var text = ev.originalEvent.dataTransfer.getData('text/plain');
+        var html_data = ev.originalEvent.dataTransfer.getData('text/html');
+        var source_selector = ev.originalEvent.dataTransfer.getData('src');
 
         setUpInfoBubble(text, html_data, url, source_selector);
     }
@@ -35,11 +35,11 @@ function setUpLeftPanel() {
 // dataTransfer - the object passed by the drop event.
 // originUrl - the origin url of the dropped element.
 function setUpInfoBubble(text, html_text, origin_url, source_selector) {
-    console.log("Create new data bubble called with text:\n" + text);
+    console.log('Create new data bubble called with text:\n' + text);
 
     // Send data to the backend to store.
     var obj_to_send = {
-        type: "new_snippet",
+        type: 'new_snippet',
         text: text,
         html: html_text,
         url: origin_url,

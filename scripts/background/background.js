@@ -53,7 +53,7 @@ function addLeftNode(uuid, node) {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (!request.type) {
-            console.log("Invalid request received by extension - type field not specified.");
+            console.log('Invalid request received by extension - type field not specified.');
             return;
         }
         // Delete unnecessary data fields.
@@ -61,7 +61,7 @@ chrome.runtime.onMessage.addListener(
 
         // Forward data to respective handler.
         switch (request.type) {
-            case "new_snippet": // A new element was dragged onto the left pane.
+            case 'new_snippet': // A new element was dragged onto the left pane.
                 newSnippetHandler(request); break;
         }
     });
@@ -72,6 +72,7 @@ function onTabChange(tabId, changeInfo, tab) {
     console.log(changeInfo);
     console.log(tab);
 }
+
 function createNewConnection(source, target) {
     // Add connection to source website.
     if (history.hasOwnProperty(source)) {

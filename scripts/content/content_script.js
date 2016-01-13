@@ -1,10 +1,10 @@
 /**
  * Created by Robin Nabel on 30/10/2015.
  */
-var leftPaneIdentifier = "leftPane";
-var leftPaneSelector = "#" + leftPaneIdentifier;
-var rightPaneIdentifier = "rightPane";
-var rightPaneSelector = "#" + rightPaneIdentifier;
+var leftPaneIdentifier = 'leftPane';
+var leftPaneSelector = '#' + leftPaneIdentifier;
+var rightPaneIdentifier = 'rightPane';
+var rightPaneSelector = '#' + rightPaneIdentifier;
 
 
 
@@ -71,13 +71,13 @@ function wrapOriginalContentInDiv() {
     return $div;
 }
 function entryPoint() {
-    console.log("Entered entry point.");
+    console.log('Entered entry point.');
     var $contentDiv = wrapOriginalContentInDiv();
 
     var leftContentPaneSize = '20%';
     var rightContentPaneSize = '20%';
 
-    var contentSize = (100 - parseFloat(leftContentPaneSize) - parseFloat(rightContentPaneSize)) + "%";
+    var contentSize = (100 - parseFloat(leftContentPaneSize) - parseFloat(rightContentPaneSize)) + '%';
 
     resizeContent(contentSize, $contentDiv);
 
@@ -86,10 +86,10 @@ function entryPoint() {
 }
 
 function getSelectionText() {
-    var text = "";
+    var text = '';
     if (window.getSelection) {
         text = window.getSelection().toString();
-    } else if (document.selection && document.selection.type != "Control") {
+    } else if (document.selection && document.selection.type != 'Control') {
         text = document.selection.createRange().text;
     }
     return text;
@@ -129,10 +129,10 @@ jQuery.fn.getPath = function () {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (sender.tab && request.text) {
-            console.log("Request from tab");
+            console.log('Request from tab');
 
             // Message sent from context menu handler; returns the text currently highlighted on the page.
-            if (request.text == "get_highlighted_text") {
+            if (request.text == 'get_highlighted_text') {
                 return sendResponse(getSelectionText());
             }
 
@@ -151,4 +151,4 @@ function sendMessage(msgObj, responseHandler) {
 
 $(document).ready(entryPoint);
 
-console.log("Finished running the file.");
+console.log('Finished running the file.');
