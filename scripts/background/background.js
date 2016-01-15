@@ -92,5 +92,3 @@ function createNewConnection(source, target) {
         }
     }
 }
-
-// ---- Functions used for shared and miscellaneous actions ----
