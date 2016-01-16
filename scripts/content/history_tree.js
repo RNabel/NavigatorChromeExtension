@@ -1,7 +1,8 @@
 /**
  * Created by robin on 11/01/16.
  */
-function initGraph() {
+function Graph() {
+    // Custom rendering code taken from https://github.com/jacomyal/sigma.js/blob/master/examples/plugin-customShapes.html
     // Custom renderer component for image type nodes.
     sigma.canvas.nodes.image = (function () {
         var _cache = {},
@@ -9,8 +10,7 @@ function initGraph() {
             _callbacks = {};
         // Return the renderer itself:
         var renderer = function (node, context, settings) {
-            var args = arguments,
-                prefix = settings('prefix') || '',
+            var prefix = settings('prefix') || '',
                 size = node[prefix + 'size'],
                 color = node.color || settings('defaultNodeColor'),
                 url = node.url;
@@ -55,7 +55,7 @@ function initGraph() {
                 sigma.canvas.nodes.image.cache(url);
                 sigma.canvas.nodes.def.apply(
                     sigma.canvas.nodes,
-                    args
+                    arguments
                 );
             }
         };
@@ -81,7 +81,7 @@ function initGraph() {
         return renderer;
     })();
 
-    // Create the graph.
+    // Create the graph. TODO remove as test code.
     var g = {
         edges: [
             {
@@ -213,10 +213,21 @@ function initGraph() {
         ]
     };
 
+    // Create internal data structure. Level at index 4 is the current node.
+    //      Level at index 1 is deepest level of children.
+    this.levels = [];
+    this.totalLevels = 7;
+    this.currentNodeIndex = Math.floor(this.totalLevels / 2); // The index of the centre node.
+
+    this.maxX = 1.5;
+    this.minX = -1.5;
+    this.maxY = 3;
+    this.minY = -3;
+
     // Instantiate Sigma object.
-    var sig = new sigma(
+    this.sig = new sigma(
         {
-            graph: g,
+            //graph: g, // TODO remove as testing code.
             container: 'rightPane',
             settings: {
                 defaultNodeColor: '#ec5148'
@@ -231,7 +242,120 @@ function initGraph() {
         }
     );
 
-
-    CustomShapes.init(sig);
-    sig.refresh();
+    CustomShapes.init(this.sig);
+    this.sig.refresh();
 }
+
+/**
+ * Function which places a node in a specific level and interfaces with Sigma's Graph API.
+ * @param nodeName - The ID of the node.
+ * @param edges - array of ids of parent and child nodes.
+ */
+Graph.prototype.addNode = function (nodeName, edges, level) {
+    // Code adapted from tutorial:
+    // https://github.com/jacomyal/sigma.js/wiki
+
+    // Validation.
+    if (nodeName !== undefined) {
+
+        // Calculate the location of the node.
+        var x,
+            y,
+            diameter = 3;
+
+        // Calculate y coordinate.
+        y = level - this.currentNodeIndex;
+
+        // Calculate x coordinate.
+        var numOfNodesInLevel = (this.levels[level] && this.levels[level].length) || 0;
+
+        if (numOfNodesInLevel == 0) {
+            x = 0;
+        } else {
+            // TODO Update all other nodes in this level.
+            numOfNodesInLevel++; // Account for new node.
+            var nodes = this.sig.graph.nodes();
+            var dist = (this.maxY - this.minY) / (numOfNodesInLevel - 1);
+            x = 0;
+
+            for (var i = 0; i < numOfNodesInLevel; i++) {
+                if (numOfNodesInLevel != i) { // Skip last node as not added yet.
+                    nodes[i].x = x;
+                }
+                x += dist;
+            }
+        }
+
+        // Add node to graph.
+        this.sig.graph.addNode({
+            id: nodeName,
+            label: 'x:' + x + 'y:' + y,
+            x: x,
+            y: y,
+            size: diameter
+        });
+
+
+        // Add edges to children and parents.
+        if (edges !== undefined && edges.constructor === Array) {
+
+            for (i = 0; i < edges.length; i++) {
+                var edge = edges[i];
+
+                if ('id' in edge &&
+                    'source' in edge &&
+                    'target' in edge) {
+
+                    this.sig.addEdge({
+                        id: edge.id,
+                        // Reference extremities:
+                        source: edge.source,
+                        target: edge.target
+                    });
+                }
+            }
+        }
+
+        // Refresh the graph.
+        this.sig.refresh();
+    }
+};
+
+Graph.prototype.addNodeToLevel = function (level, nodeName, dependentNodeName) {
+    // Add the node to the internal data storage.
+
+    if (!(typeof dependentNodeName === 'string') && level != this.currentNodeIndex) {
+        // Possible error-checking.
+        return false;
+    }
+
+    var dependentLevelIndex;
+    var isNodeAdded = false;
+
+    // Find the level of the dependent.
+    if (this.currentNodeIndex > this.currentNodeIndex) { // If parent.
+        dependentLevelIndex = level - 1;
+    } else if (this.currentNodeIndex < this.currentNodeIndex) { // If child.
+        dependentLevelIndex = level + 1;
+    } else { // If current node.
+        this.addNode(nodeName, [], level);
+        isNodeAdded = true;
+    }
+
+    // Check if dependent exists in other level.
+    if (!isNodeAdded) {
+        // Ensure dependent node exists.
+        if ($.inArray(dependentNodeName, this.levels[dependentLevelIndex])) {
+            // Possible error-handling.
+            return false;
+        }
+
+        // Add node to graph.
+        this.addNode(nodeName, dependentNodeName, level);
+    }
+    if (!this.levels[level]) {
+        this.levels[level] = [];
+    }
+    this.levels[level].push(nodeName);
+    return true;
+};
