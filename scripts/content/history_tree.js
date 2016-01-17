@@ -218,6 +218,7 @@ function Graph() {
     this.levels = [];
     this.totalLevels = 7;
     this.currentNodeIndex = Math.floor(this.totalLevels / 2); // The index of the centre node.
+    this.edgeCount = 0;
 
     this.maxX = 1.5;
     this.minX = -1.5;
@@ -300,19 +301,17 @@ Graph.prototype.addNode = function (nodeName, edges, level) {
         if (edges !== undefined && edges.constructor === Array) {
 
             for (i = 0; i < edges.length; i++) {
-                var edge = edges[i];
+                var target = edges[i],
+                    id = "e" + this.edgeCount++,
+                    source = nodeName;
 
-                if ('id' in edge &&
-                    'source' in edge &&
-                    'target' in edge) {
+                this.sig.graph.addEdge({
+                    id: id,
+                    // Reference extremities:
+                    source: source,
+                    target: target
+                });
 
-                    this.sig.addEdge({
-                        id: edge.id,
-                        // Reference extremities:
-                        source: edge.source,
-                        target: edge.target
-                    });
-                }
             }
         }
 
@@ -326,6 +325,7 @@ Graph.prototype.addNodeToLevel = function (level, nodeName, dependentNodeName) {
 
     if (!(typeof dependentNodeName === 'string') && level != this.currentNodeIndex) {
         // Possible error-checking.
+        console.log('No dependent stated for node "' + nodeName + '"')
         return false;
     }
 
@@ -333,9 +333,9 @@ Graph.prototype.addNodeToLevel = function (level, nodeName, dependentNodeName) {
     var isNodeAdded = false;
 
     // Find the level of the dependent.
-    if (this.currentNodeIndex > this.currentNodeIndex) { // If parent.
+    if (level > this.currentNodeIndex) { // If parent.
         dependentLevelIndex = level - 1;
-    } else if (this.currentNodeIndex < this.currentNodeIndex) { // If child.
+    } else if (level < this.currentNodeIndex) { // If child.
         dependentLevelIndex = level + 1;
     } else { // If current node.
         this.addNode(nodeName, [], level);
@@ -351,7 +351,7 @@ Graph.prototype.addNodeToLevel = function (level, nodeName, dependentNodeName) {
         }
 
         // Add node to graph.
-        this.addNode(nodeName, dependentNodeName, level);
+        this.addNode(nodeName, [dependentNodeName], level);
     }
     if (!this.levels[level]) {
         this.levels[level] = [];

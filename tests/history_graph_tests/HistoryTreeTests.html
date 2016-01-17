@@ -38,13 +38,13 @@
 <script type="text/javascript">
     //  Instantiate graph using JS functionality.
     gra = new Graph();
-    gra.addNodeToLevel(0, 'chichichi1');
-    gra.addNodeToLevel(1, 'chichi1');
-    gra.addNodeToLevel(2, 'chi1');
     gra.addNodeToLevel(3, 'main');
-    gra.addNodeToLevel(4, 'par1');
-    gra.addNodeToLevel(5, 'parpar1');
-    gra.addNodeToLevel(6, 'parparpar1');
+    gra.addNodeToLevel(2, 'chi1', 'main');
+    gra.addNodeToLevel(1, 'chichi1', 'chi1');
+    gra.addNodeToLevel(0, 'chichichi1', 'chichi1');
+    gra.addNodeToLevel(4, 'par1', 'main');
+    gra.addNodeToLevel(5, 'parpar1', 'par1');
+    gra.addNodeToLevel(6, 'parparpar1', 'parpar1');
 
 </script>
 
