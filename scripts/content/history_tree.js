@@ -256,7 +256,6 @@ Graph.prototype.addNode = function (nodeName, edges, level) {
     // Code adapted from tutorial:
     // https://github.com/jacomyal/sigma.js/wiki
 
-    // Validation.
     if (nodeName !== undefined) {
 
         // Calculate the location of the node.
@@ -270,19 +269,23 @@ Graph.prototype.addNode = function (nodeName, edges, level) {
         // Calculate x coordinate.
         var numOfNodesInLevel = (this.levels[level] && this.levels[level].length) || 0;
 
-        if (numOfNodesInLevel == 0) {
+        if (numOfNodesInLevel === 0) {
             x = 0;
         } else {
-            // TODO Update all other nodes in this level.
-            numOfNodesInLevel++; // Account for new node.
-            var nodes = this.sig.graph.nodes();
-            var dist = (this.maxY - this.minY) / (numOfNodesInLevel - 1);
-            x = 0;
+            var dist = (this.maxY - this.minY) / (numOfNodesInLevel);
+            x = this.minY;
 
             for (var i = 0; i < numOfNodesInLevel; i++) {
-                if (numOfNodesInLevel != i) { // Skip last node as not added yet.
-                    nodes[i].x = x;
+                var currNodeName = this.levels[level][i];
+
+                // Find index in graph nodes array.
+                for (var j = 0; j < this.sig.graph.nodes().length; j++) {
+                    var node = this.sig.graph.nodes()[j];
+                    if (node.id == currNodeName) {
+                        break;
+                    }
                 }
+                this.sig.graph.nodes()[j].x = x;
                 x += dist;
             }
         }
@@ -290,7 +293,7 @@ Graph.prototype.addNode = function (nodeName, edges, level) {
         // Add node to graph.
         this.sig.graph.addNode({
             id: nodeName,
-            label: 'x:' + x + 'y:' + y,
+            label: 'x:' + x + ';y:' + y + ';name:' + nodeName,
             x: x,
             y: y,
             size: diameter
