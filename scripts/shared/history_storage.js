@@ -4,10 +4,9 @@
 
 /**
  * Function that creates an object to store a node in the history tree.
- * @param URL acts as unique ID.
- * @param access_time - list of UNIX time stamps.
- * @param parent - array of parent URLs.
- * @constructor creates the object.
+ * @param {string} URL - acts as unique ID.
+ * @param {number} access_time - list of UNIX time stamps.
+ * @param {string} parent - array of parent URLs.
  */
 function HistoryRecord(URL, access_time, parent) {
     this.URL = URL;
@@ -26,7 +25,7 @@ HistoryRecord.prototype.getURL = function () {
 
 /**
  * Adds a parent to the object.
- * @param _parent The parent URL.
+ * @param {string} _parent - The parent URL.
  */
 HistoryRecord.prototype.addParent = function (_parent) {
     this.parents.push(_parent);
@@ -34,7 +33,7 @@ HistoryRecord.prototype.addParent = function (_parent) {
 
 /**
  * Adds a child node to the object.
- * @param _child The child URL.
+ * @param {string} _child - The child URL.
  */
 HistoryRecord.prototype.addChild = function (_child) {
     this.children.push(_child);
@@ -42,7 +41,7 @@ HistoryRecord.prototype.addChild = function (_child) {
 
 /**
  * Adds a UNIX access time to the object.
- * @param _access_time
+ * @param {number} _access_time - The time of access.
  */
 HistoryRecord.prototype.addAccessTime = function (_access_time) {
     this.access_times.push(_access_time);
@@ -58,7 +57,7 @@ function HistoryStorage() {
 
 /**
  * Adds a record to the history storage.
- * @param record The record object.
+ * @param {HistoryRecord} record - The record object.
  */
 HistoryStorage.prototype.addRecord = function (record) {
     // TODO Check if already existent.
@@ -67,7 +66,7 @@ HistoryStorage.prototype.addRecord = function (record) {
 
 /**
  * Searches for record by URL and deletes it.
- * @param record
+ * @param {string | HistoryRecord} record - The URL string.
  */
 HistoryStorage.prototype.deleteRecord = function (record) {
     var url = '';
@@ -109,7 +108,7 @@ HistoryStorage.prototype.deleteRecord = function (record) {
 
 /**
  * Finds a record in the history storage.
- * @param record_id
+ * @param {string} record_id - The URL (or id) associated with the record.
  * @returns {*}
  */
 HistoryStorage.prototype.findRecord = function (record_id) {
