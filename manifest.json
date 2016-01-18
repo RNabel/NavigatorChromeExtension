@@ -12,7 +12,7 @@
   ],
 
   "content_scripts": [{
-    "matches": ["*://*/*"],
+    "matches": ["*://www.google.com/*"],
     "js":      [
       "lib/d3.js", "lib/jquery-2.1.4.min.js",
       "scripts/content/history_tree.js",

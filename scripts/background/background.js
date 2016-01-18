@@ -4,8 +4,6 @@
 
 // ----- Code relevant to the right pane. -----
 var BackgroundScript = {
-    history: {},
-
     quote_graph: {
         // The variable which holds content for the left pane to display
         savedText: {},
@@ -35,18 +33,19 @@ var BackgroundScript = {
     },
 
     history_graph: {
+        history: {},
         createNewConnection: function (source, target) {
             // Add connection to source website.
-            if (history.hasOwnProperty(source)) {
-                var source_hist = history[source];
+            if (this.history.hasOwnProperty(source)) {
+                var source_hist = this.history[source];
                 if (source_hist.hasOwnProperty(target)) {
                     source_hist[target]++;
                 } else {
                     source_hist[target] = 1;
                 }
             }
-            if (history.hasOwnProperty(target)) {
-                var target_hist = history[target];
+            if (this.history.hasOwnProperty(target)) {
+                var target_hist = this.history[target];
                 if (target_hist.hasOwnProperty(source)) {
                     target_hist[source]++;
                 } else {
@@ -55,9 +54,23 @@ var BackgroundScript = {
             }
         },
         onTabChange: function (tabId, changeInfo, tab) {
-            console.log(tabId);
             console.log(changeInfo);
-            console.log(tab);
+            var windowId = changeInfo.windowId,
+                key = tabId + '_' + windowId,
+                history = BackgroundScript.history_graph.history;
+            // Check if tab is registered.
+            if (key in history) {
+                if (history[key] == changeInfo.url) {
+                    console.log("URL of " + key + " was already in history.")
+                } else {
+                    console.log("URL of " + key + " was updated.")
+                }
+            } else {
+                console.log("Inserted new history record.");
+            }
+
+            // Insert url into array.
+            history[key] = changeInfo.url;
         }
     },
 
