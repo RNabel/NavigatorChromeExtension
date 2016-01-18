@@ -95,10 +95,6 @@ function getSelectionText() {
     return text;
 }
 
-function slideInSidePanes() {
-
-}
-
 // ---- Miscellaneous functionality. ----
 // Extend jQuery to be able to generate XPaths from JQuery object.
 jQuery.fn.getPath = function () {
