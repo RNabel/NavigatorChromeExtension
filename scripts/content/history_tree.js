@@ -117,8 +117,9 @@ function Graph() {
 
 /**
  * Function which places a node in a specific level and interfaces with Sigma's Graph API.
- * @param nodeName - The ID of the node.
- * @param edges - array of ids of parent and child nodes.
+ * @param nodeName - string; The ID of the node.
+ * @param edges - array of strings; ids of parent and child nodes.
+ * @param level - integer; the level for node insertion, range: [1 - max level].
  */
 Graph.prototype.addNode = function (nodeName, edges, level) {
     // Code adapted from tutorial:
@@ -173,13 +174,11 @@ Graph.prototype.addNode = function (nodeName, edges, level) {
 
             for (i = 0; i < edges.length; i++) {
                 var target = edges[i],
-                    id = "e" + this.edgeCount++,
-                    source = nodeName;
-
+                    id = "e" + this.edgeCount++;
                 this.sig.graph.addEdge({
                     id: id,
                     // Reference extremities:
-                    source: source,
+                    source: nodeName,
                     target: target
                 });
 
@@ -191,6 +190,14 @@ Graph.prototype.addNode = function (nodeName, edges, level) {
     }
 };
 
+/**
+ * Graph interface function for graph creation from data source, validates input and stated dependencies,
+ *     and takes care of positioning.
+ * @param level - int; the number of the level [1 - max level]
+ * @param nodeName - string; the name of the node to be inserted.
+ * @param dependentNodeName - string; the name of the node it connects to.
+ * @returns {boolean} - whether the node insertion was successful.
+ */
 Graph.prototype.addNodeToLevel = function (level, nodeName, dependentNodeName) {
     // Add the node to the internal data storage.
 
