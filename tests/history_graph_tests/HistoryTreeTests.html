@@ -27,6 +27,7 @@
         return "../" + path;
     }
 </script>
+<script src="../../lib/jquery-2.1.4.min.js"></script>
 <script src="../../lib/sigma.js/sigma.min.js"></script>
 <script src="../../lib/sigma.js/plugins/sigma.parsers.json.min.js"></script>
 <script src="../../lib/sigma.js/plugins/sigma.renderers.customShapes/shape-library.js"></script>
@@ -36,10 +37,18 @@
 
 <script type="text/javascript">
     //  Instantiate graph using JS functionality.
-    initGraph();
-</script>
-
-<script>
+    gra = new Graph();
+    gra.addNodeToLevel(3, 'main');
+    gra.addNodeToLevel(2, 'chi1', 'main');
+    gra.addNodeToLevel(1, 'chichi1', 'chi1');
+    gra.addNodeToLevel(1, 'chichi2', 'chi1');
+    gra.addNodeToLevel(0, 'chichichi1', 'chichi1');
+    gra.addNodeToLevel(4, 'par1', 'main');
+    gra.addNodeToLevel(5, 'parpar1', 'par1');
+    gra.addNodeToLevel(6, 'parparpar1', 'parpar1');
+    gra.addNodeToLevel(4, 'par2', 'main');
+    gra.addNodeToLevel(4, 'par3', 'main');
+    gra.addNodeToLevel(5, 'parpar2', 'par2');
 
 </script>
 

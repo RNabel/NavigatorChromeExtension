@@ -39,7 +39,7 @@ function addSidePanes(leftPaneSize, rightPaneSize) {
     }
 
     // Initialize the tree.
-    initGraph();
+    Graph();
 
     addStyle(left, true);
     addStyle(right, false);
