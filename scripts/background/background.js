@@ -76,6 +76,10 @@ var BackgroundScript = {
 
             // Insert url into array.
             history[key] = tab.url;
+        },
+        onTabClosed: function (tabId, removeInfo) {
+            var key = tabId + "_" + removeInfo.windowId;
+            delete BackgroundScript.history_graph.currentTabUrls[key];
         }
     },
 
@@ -117,4 +121,7 @@ chrome.runtime.onMessage.addListener(
 
 chrome.tabs.onUpdated.addListener(
     BackgroundScript.history_graph.onTabChange
+);
+chrome.tabs.onRemoved.addListener(
+    BackgroundScript.history_graph.onTabClosed
 );
