@@ -32,46 +32,45 @@ var BackgroundScript = {
     },
 
     history_graph: {
-        history: {},
+        history: new HistoryStorage(),
         currentTabUrls: {},
         createNewConnection: function (source, target) {
-            // Add connection to source website.
-            if (this.history.hasOwnProperty(source)) {
-                var source_hist = this.history[source];
-                if (source_hist.hasOwnProperty(target)) {
-                    source_hist[target]++;
-                } else {
-                    source_hist[target] = 1;
-                }
+            // Check if history contains both source and target.
+            var history = BackgroundScript.history_graph.history,
+                src = history.findRecord(source),
+                tar = history.findRecord(target);
+
+            if (!src) { // Create records if not existent.
+                src = new HistoryRecord(source,
+                    BackgroundScript.tools.timestamp());
+                history.addRecord(src);
             }
-            if (this.history.hasOwnProperty(target)) {
-                var target_hist = this.history[target];
-                if (target_hist.hasOwnProperty(source)) {
-                    target_hist[source]++;
-                } else {
-                    target_hist[source] = 1;
-                }
+            if (!tar) {
+                tar = new HistoryRecord(target,
+                    BackgroundScript.tools.timestamp());
+                history.addRecord(tar);
             }
+
+            src.addChild(target);
+            tar.addParent(source);
         },
         onTabChange: function (tabId, changeInfo, tab) {
-            console.log(changeInfo);
-            console.log(tab);
             var windowId = tab.windowId,
                 key = tabId + '_' + windowId,
                 history = BackgroundScript.history_graph.currentTabUrls;
             // Check if tab is registered.
             if (key in history) {
                 if (history[key] == (changeInfo.url || tab.url)) {
-                    console.log("URL of " + key + " was already in history.")
+                    //console.log("URL of " + key + " was already in history.")
                 } else {
                     // Add new connection to background storage.
                     var target = tab.url;
                     var source = history[key];
-                    console.log("URL transition " + source + " -> " + target + " was added.");
+                    //console.log("URL transition " + source + " -> " + target + " was added.");
                     BackgroundScript.history_graph.createNewConnection(source, target);
                 }
             } else {
-                console.log("Inserted new history record. key:" + key + " tURL:" + tab.url + "\n\tciURL:" + changeInfo.url);
+                //console.log("Inserted new history record. key:" + key + " tURL:" + tab.url + "\n\tciURL:" + changeInfo.url);
             }
 
             // Insert url into array.
@@ -85,7 +84,7 @@ var BackgroundScript = {
 
     tools: {
         // UUID generator, used to create indices for the text nodes.
-        guid: function guid() {
+        guid: function () {
             function s4() {
                 return Math.floor((1 + Math.random()) * 0x10000)
                     .toString(16)
@@ -94,6 +93,9 @@ var BackgroundScript = {
 
             return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
                 s4() + '-' + s4() + s4() + s4();
+        },
+        timestamp: function () {
+            return Math.floor(Date.now() / 1000);
         }
     }
 

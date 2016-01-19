@@ -14,7 +14,7 @@
   "content_scripts": [{
     "matches": ["*://www.google.com/*"],
     "js":      [
-      "lib/d3.js", "lib/jquery-2.1.4.min.js",
+      "lib/d3.js", "lib/jquery-2.2.0.js",
       "scripts/content/history_tree.js",
       "scripts/content/quote_graph.js",
       "scripts/content/content_script.js"
@@ -24,7 +24,8 @@
 
   "background": {
     "scripts": [
-      "lib/jquery-2.1.4.min.js",
+      "lib/jquery-2.2.0.js",
+      "scripts/shared/history_storage.js",
       "scripts/background/background.js"
     ]
   },
