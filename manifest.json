@@ -1,24 +1,38 @@
 {
   "name": "Navigator Prototype",
+
   "description": "Gives you the best idea about your current browsing location you could possibly want.",
+
   "version": "1.0",
+
   "permissions": [
     "contextMenus",
     "tabs",
     "*://*/*"
   ],
+
   "content_scripts": [{
-    "matches": ["*://*/*"],
-    "js":      ["lib/d3.js", "lib/jquery-2.1.4.min.js", "scripts/content_script.js"],
+    "matches": ["*://www.google.com/*"],
+    "js":      [
+      "lib/d3.js", "lib/jquery-2.2.0.js",
+      "scripts/content/history_tree.js",
+      "scripts/content/quote_graph.js",
+      "scripts/content/content_script.js"
+    ],
     "run_at": "document_end"
   }],
 
   "background": {
-    "scripts": ["lib/jquery-2.1.4.min.js", "scripts/background.js"]
+    "scripts": [
+      "lib/jquery-2.2.0.js",
+      "scripts/shared/history_storage.js",
+      "scripts/background/background.js"
+    ]
   },
 
   "web_accessible_resources": [
     "assets/*"
   ],
+
   "manifest_version": 2
 }

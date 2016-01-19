@@ -6,13 +6,18 @@
  * Function that creates an object to store a node in the history tree.
  * @param {string} URL - acts as unique ID.
  * @param {number} access_time - list of UNIX time stamps.
- * @param {string} parent - array of parent URLs.
+ * @param {string} [parent] - array of parent URLs.
  */
 function HistoryRecord(URL, access_time, parent) {
     this.URL = URL;
     this.access_times = [access_time];
-    this.parents = [parent];
-    this.children = []
+    this.children = [];
+
+    if (parent) {
+        this.parents = [parent];
+    } else {
+        this.parents = [];
+    }
 }
 
 /**
@@ -28,7 +33,9 @@ HistoryRecord.prototype.getURL = function () {
  * @param {string} _parent - The parent URL.
  */
 HistoryRecord.prototype.addParent = function (_parent) {
-    this.parents.push(_parent);
+    if ($.inArray(_parent, this.parents) === -1) {
+        this.parents.push(_parent);
+    }
 };
 
 /**
@@ -36,7 +43,9 @@ HistoryRecord.prototype.addParent = function (_parent) {
  * @param {string} _child - The child URL.
  */
 HistoryRecord.prototype.addChild = function (_child) {
-    this.children.push(_child);
+    if ($.inArray(_child, this.children) === -1) {
+        this.children.push(_child);
+    }
 };
 
 /**
@@ -112,8 +121,8 @@ HistoryStorage.prototype.deleteRecord = function (record) {
  * @returns {*}
  */
 HistoryStorage.prototype.findRecord = function (record_id) {
-    for (var i = 0; i < this.list.length.length; i++) {
-        var record = this.list.length[i];
+    for (var i = 0; i < this.list.length; i++) {
+        var record = this.list[i];
         if (record.URL == record_id) {
             return record;
         }
