@@ -1,8 +1,7 @@
 /**
- * Created by rn30 on 03/11/15.
+ * Created by Robin Nabel on 03/11/15.
  */
 
-// ----- Code relevant to the right pane. -----
 var BackgroundScript = {
     quote_graph: {
         // The variable which holds content for the left pane to display
@@ -34,6 +33,7 @@ var BackgroundScript = {
 
     history_graph: {
         history: {},
+        currentTabUrls: {},
         createNewConnection: function (source, target) {
             // Add connection to source website.
             if (this.history.hasOwnProperty(source)) {
@@ -55,22 +55,27 @@ var BackgroundScript = {
         },
         onTabChange: function (tabId, changeInfo, tab) {
             console.log(changeInfo);
-            var windowId = changeInfo.windowId,
+            console.log(tab);
+            var windowId = tab.windowId,
                 key = tabId + '_' + windowId,
-                history = BackgroundScript.history_graph.history;
+                history = BackgroundScript.history_graph.currentTabUrls;
             // Check if tab is registered.
             if (key in history) {
-                if (history[key] == changeInfo.url) {
+                if (history[key] == (changeInfo.url || tab.url)) {
                     console.log("URL of " + key + " was already in history.")
                 } else {
-                    console.log("URL of " + key + " was updated.")
+                    // Add new connection to background storage.
+                    var target = tab.url;
+                    var source = history[key];
+                    console.log("URL transition " + source + " -> " + target + " was added.");
+                    BackgroundScript.history_graph.createNewConnection(source, target);
                 }
             } else {
-                console.log("Inserted new history record.");
+                console.log("Inserted new history record. key:" + key + " tURL:" + tab.url + "\n\tciURL:" + changeInfo.url);
             }
 
             // Insert url into array.
-            history[key] = changeInfo.url;
+            history[key] = tab.url;
         }
     },
 
