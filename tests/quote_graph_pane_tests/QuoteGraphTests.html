@@ -30,11 +30,12 @@
     };
 
 </script>
+<script src="../../scripts/content/constants.js"></script>
 <script src="../../scripts/content/content_script.js"></script>
 <script src="../../scripts/content/quote_graph.js"></script>
 <script type="text/javascript">
     //  Instantiate graph using JS functionality.
-    setUpLeftPanel();
-    setUpInfoBubble("Test text", "<p>Test text</p>", "test.com", "/bookstore/book/title")
+    var quo_gra = new QuoteGraph();
+    quo_gra.addInfoBubble("Test text", "<p>Test text</p>", "test.com", "/bookstore/book/title")
 </script>
 </html>

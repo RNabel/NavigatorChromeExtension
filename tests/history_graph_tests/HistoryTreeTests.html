@@ -29,7 +29,7 @@
 </script>
 <script src="../../lib/jquery-2.2.0.js"></script>
 <script src="../../lib/sigma.js/sigma.min.js"></script>
-<script src="../../lib/sigma.js/plugins/sigma.parsers.json.min.js"></script>
+<script src="../../lib/sigma.js/plugins/sigma.parsers.json/sigma.parsers.json.js"></script>
 <script src="../../lib/sigma.js/plugins/sigma.renderers.customShapes/shape-library.js"></script>
 <script src="../../lib/sigma.js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js"></script>
 <script src="../../scripts/content/content_script.js"></script>
@@ -37,7 +37,7 @@
 
 <script type="text/javascript">
     //  Instantiate graph using JS functionality.
-    gra = new Graph();
+    gra = new HistoryGraph();
     gra.addNodeToLevel(3, 'main');
     gra.addNodeToLevel(2, 'chi1', 'main');
     gra.addNodeToLevel(1, 'chichi1', 'chi1');

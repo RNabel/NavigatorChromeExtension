@@ -1,18 +1,13 @@
 /**
  * Created by Robin Nabel on 30/10/2015.
  */
-var leftPaneIdentifier = 'leftPane';
-var leftPaneSelector = '#' + leftPaneIdentifier;
-var rightPaneIdentifier = 'rightPane';
-var rightPaneSelector = '#' + rightPaneIdentifier;
-
 
 
 // --- General functionality. ---
 // Adapted from: http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages
 function addSidePanes(leftPaneSize, rightPaneSize) {
-    var right = $('<div id="' + rightPaneIdentifier + '"></div>');
-    var left = $('<div id="' + leftPaneIdentifier + '"></div>');
+    var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '"></div>');
+    var left = $('<div id="' + LEFT_PANE_IDENTIFIER + '"></div>');
 
     function addStyle(el, isLeft) {
         el.css({
@@ -39,7 +34,7 @@ function addSidePanes(leftPaneSize, rightPaneSize) {
     }
 
     // Initialize the tree.
-    Graph();
+    new HistoryGraph();
 
     addStyle(left, true);
     addStyle(right, false);
@@ -138,7 +133,8 @@ chrome.runtime.onMessage.addListener(
     });
 function sendMessage(msgObj, responseHandler) {
     if (responseHandler === undefined) {
-        responseHandler = function () {};
+        responseHandler = function () {
+        };
     }
     chrome.runtime.sendMessage(msgObj, responseHandler);
 }

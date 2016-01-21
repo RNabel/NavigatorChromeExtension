@@ -1,7 +1,7 @@
 /**
  * Created by robin on 11/01/16.
  */
-function Graph() {
+function HistoryGraph() {
     // Custom rendering code taken from https://github.com/jacomyal/sigma.js/blob/master/examples/plugin-customShapes.html
     // Custom renderer component for image type nodes.
     sigma.canvas.nodes.image = (function () {
@@ -105,7 +105,7 @@ function Graph() {
                 // IMPORTANT:
                 // This works only with the canvas renderer, so the
                 // renderer type set as "canvas" is necessary here.
-                container: document.getElementById(rightPaneIdentifier),
+                container: document.getElementById(RIGHT_PANE_IDENTIFIER),
                 type: 'canvas'
             }
         }
@@ -116,12 +116,12 @@ function Graph() {
 }
 
 /**
- * Function which places a node in a specific level and interfaces with Sigma's Graph API.
+ * Function which places a node in a specific level and interfaces with Sigma's HistoryGraph API.
  * @param nodeName - string; The ID of the node.
  * @param edges - array of strings; ids of parent and child nodes.
  * @param level - integer; the level for node insertion, range: [1 - max level].
  */
-Graph.prototype.addNode = function (nodeName, edges, level) {
+HistoryGraph.prototype.addNode = function (nodeName, edges, level) {
     // Code adapted from tutorial:
     // https://github.com/jacomyal/sigma.js/wiki
 
@@ -191,14 +191,14 @@ Graph.prototype.addNode = function (nodeName, edges, level) {
 };
 
 /**
- * Graph interface function for graph creation from data source, validates input and stated dependencies,
+ * HistoryGraph interface function for graph creation from data source, validates input and stated dependencies,
  *     and takes care of positioning.
  * @param level - int; the number of the level [1 - max level]
  * @param nodeName - string; the name of the node to be inserted.
  * @param dependentNodeName - string; the name of the node it connects to.
  * @returns {boolean} - whether the node insertion was successful.
  */
-Graph.prototype.addNodeToLevel = function (level, nodeName, dependentNodeName) {
+HistoryGraph.prototype.addNodeToLevel = function (level, nodeName, dependentNodeName) {
     // Add the node to the internal data storage.
 
     if (!(typeof dependentNodeName === 'string') && level != this.currentNodeIndex) {
