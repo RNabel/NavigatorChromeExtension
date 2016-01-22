@@ -170,8 +170,8 @@
 
                             // takes a computed anchor position and adjusts it for parent offset and scroll, then stores it.
                             var _setAnchorLocation = function (endpoint, anchorPos) {
-                                continuousAnchorLocations[endpoint.id] = [ anchorPos[0], anchorPos[1], anchorPos[2], anchorPos[3] ];
-                                continuousAnchorOrientations[endpoint.id] = orientation;
+                                continuousAnchorLocations[endpointTemplate.id] = [ anchorPos[0], anchorPos[1], anchorPos[2], anchorPos[3] ];
+                                continuousAnchorOrientations[endpointTemplate.id] = orientation;
                             };
 
                             for (var i = 0; i < anchors.length; i++) {
@@ -207,7 +207,7 @@
                 doRegisterTarget = true,
                 registerConnection = function (otherIndex, otherEndpoint, otherAnchor, elId, c) {
                     if ((sourceId == targetId) && otherAnchor.isContinuous) {
-                        // remove the target endpoint's canvas.  we dont need it.
+                        // remove the target endpointTemplate's canvas.  we dont need it.
                         conn._jsPlumb.instance.removeElement(ep[1].canvas);
                         doRegisterTarget = false;
                     }
@@ -229,7 +229,7 @@
                     _ju.removeWithFunction(list.bottom, f);
                     _ju.removeWithFunction(list.right, f);
                 }
-            })(anchorLists[endpoint.elementId], endpoint.id);
+            })(anchorLists[endpointTemplate.elementId], endpointTemplate.id);
         };
         this.connectionDetached = function (connInfo, doNotRedraw) {
             var connection = connInfo.connection || connInfo,
@@ -260,7 +260,7 @@
             }
         };
         this.add = function (endpoint, elementId) {
-            _ju.addToList(_amEndpoints, elementId, endpoint);
+            _ju.addToList(_amEndpoints, elementId, endpointTemplate);
         };
         this.changeId = function (oldId, newId) {
             connectionsByElementId[newId] = connectionsByElementId[oldId];
@@ -275,10 +275,10 @@
             return _amEndpoints[elementId] || [];
         };
         this.deleteEndpoint = function (endpoint) {
-            _ju.removeWithFunction(_amEndpoints[endpoint.elementId], function (e) {
-                return e.id == endpoint.id;
+            _ju.removeWithFunction(_amEndpoints[endpointTemplate.elementId], function (e) {
+                return e.id == endpointTemplate.id;
             });
-            removeEndpointFromAnchorLists(endpoint);
+            removeEndpointFromAnchorLists(endpointTemplate);
         };
         this.clearFor = function (elementId) {
             delete _amEndpoints[elementId];
@@ -294,7 +294,7 @@
             var exactIdx = -1,
                 firstMatchingElIdx = -1,
                 endpoint = conn.endpoints[idx],
-                endpointId = endpoint.id,
+                endpointId = endpointTemplate.id,
                 oIdx = [1, 0][idx],
                 values = [
                     [ theta, order ],
@@ -304,7 +304,7 @@
                     endpointId
                 ],
                 listToAddTo = lists[edgeId],
-                listToRemoveFrom = endpoint._continuousAnchorEdge ? lists[endpoint._continuousAnchorEdge] : null,
+                listToRemoveFrom = endpointTemplate._continuousAnchorEdge ? lists[endpointTemplate._continuousAnchorEdge] : null,
                 i,
                 candidate;
 
@@ -353,11 +353,11 @@
             }
 
             // store this for next time.
-            endpoint._continuousAnchorEdge = edgeId;
+            endpointTemplate._continuousAnchorEdge = edgeId;
         };
 
         //
-        // find the entry in an endpoint's list for this connection and update its target endpoint
+        // find the entry in an endpointTemplate's list for this connection and update its target endpointTemplate
         // with the current target in the connection.
         // 
         //
@@ -412,7 +412,7 @@
                 _ju.addToList(connectionsByElementId, newId, [connection, connection.endpoints[1], connection.endpoints[1].anchor.constructor == _jp.DynamicAnchor]);
 
                 // TODO SP not final on this yet. when a user drags an existing connection and it turns into a self
-                // loop, then this code hides the target endpoint (by removing it from the DOM) But I think this should
+                // loop, then this code hides the target endpointTemplate (by removing it from the DOM) But I think this should
                 // occur only if the anchor is Continuous
                 if (connection.endpoints[1].anchor.isContinuous) {
                     if (connection.source === connection.target) {
@@ -430,12 +430,12 @@
         };
 
         //
-        // moves the given endpoint from `currentId` to `element`.
+        // moves the given endpointTemplate from `currentId` to `element`.
         // This involves:
         //
-        // 1. changing the key in _amEndpoints under which the endpoint is stored
-        // 2. changing the source or target values in all of the endpoint's connections
-        // 3. changing the array in connectionsByElementId in which the endpoint's connections
+        // 1. changing the key in _amEndpoints under which the endpointTemplate is stored
+        // 2. changing the source or target values in all of the endpointTemplate's connections
+        // 3. changing the array in connectionsByElementId in which the endpointTemplate's connections
         //    are stored (done by either sourceChanged or updateOtherEndpoint)
         //
         this.rehomeEndpoint = function (ep, currentId, element) {
@@ -476,7 +476,7 @@
 
                 timestamp = timestamp || jsPlumbInstance.timestamp();
                 // offsetToUI are values that would have been calculated in the dragManager when registering
-                // an endpoint for an element that had a parent (somewhere in the hierarchy) that had been
+                // an endpointTemplate for an element that had a parent (somewhere in the hierarchy) that had been
                 // registered as draggable.
                 offsetToUI = offsetToUI || {left: 0, top: 0};
                 if (ui) {
@@ -575,8 +575,8 @@
                 }
 
                 // now that continuous anchors have been placed, paint all the endpoints for this element
-                // TODO performance: add the endpoint ids to a temp array, and then when iterating in the next
-                // loop, check that we didn't just paint that endpoint. we can probably shave off a few more milliseconds this way.
+                // TODO performance: add the endpointTemplate ids to a temp array, and then when iterating in the next
+                // loop, check that we didn't just paint that endpointTemplate. we can probably shave off a few more milliseconds this way.
                 for (i = 0; i < ep.length; i++) {
                     ep[i].paint({ timestamp: timestamp, offset: myOffset, dimensions: myOffset.s, recalc: doNotRecalcEndpoint !== true });
                 }
@@ -598,7 +598,7 @@
                         _ju.addWithFunction(connectionsToPaint, endpointConnections[i][0], function (c) {
                             return c.id == endpointConnections[i][0].id;
                         });
-                        // all the connections for the other endpoint now need to be repainted
+                        // all the connections for the other endpointTemplate now need to be repainted
                         for (var k = 0; k < otherEndpoint.connections.length; k++) {
                             if (otherEndpoint.connections[k] !== endpointConnections[i][0])
                                 _ju.addWithFunction(connectionsToPaint, otherEndpoint.connections[k], function (c) {
@@ -668,7 +668,7 @@
                 return userDefinedContinuousAnchorLocations[params.element.id] || continuousAnchorLocations[params.element.id] || [0, 0];
             };
             this.getOrientation = function (endpoint) {
-                return continuousAnchorOrientations[endpoint.id] || [0, 0];
+                return continuousAnchorOrientations[endpointTemplate.id] || [0, 0];
             };
             this.clearUserDefinedLocation = function () {
                 delete userDefinedContinuousAnchorLocations[anchorParams.elementId];
@@ -821,16 +821,16 @@
         };
 
         /**
-         * notification the endpoint associated with this anchor is hovering
+         * notification the endpointTemplate associated with this anchor is hovering
          * over another anchor; we want to assume that anchor's orientation
          * for the duration of the hover.
          */
         this.over = function (anchor, endpoint) {
-            orientation = anchor.getOrientation(endpoint);
+            orientation = anchor.getOrientation(endpointTemplate);
         };
 
         /**
-         * notification the endpoint associated with this anchor is no
+         * notification the endpointTemplate associated with this anchor is no
          * longer hovering over another anchor; we should resume calculating
          * orientation as we normally do.
          */
@@ -941,7 +941,7 @@
             return _curAnchor != null ? _curAnchor.getOrientation(_endpoint) : [ 0, 0 ];
         };
         this.over = function (anchor, endpoint) {
-            if (_curAnchor != null) _curAnchor.over(anchor, endpoint);
+            if (_curAnchor != null) _curAnchor.over(anchor, endpointTemplate);
         };
         this.out = function () {
             if (_curAnchor != null) _curAnchor.out();

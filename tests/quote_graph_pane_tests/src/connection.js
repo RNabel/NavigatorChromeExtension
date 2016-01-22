@@ -71,7 +71,7 @@
 
         this.sourceId = this._jsPlumb.instance.getId(this.source);
         this.targetId = this._jsPlumb.instance.getId(this.target);
-        this.scope = params.scope; // scope may have been passed in to the connect call. if it wasn't, we will pull it from the source endpoint, after having initialised the endpoints.            
+        this.scope = params.scope; // scope may have been passed in to the connect call. if it wasn't, we will pull it from the source endpointTemplate, after having initialised the endpoints.
         this.endpoints = [];
         this.endpointStyles = [];
 
@@ -113,7 +113,7 @@
             return this.prepareEndpoint(_jsPlumb, _newEndpoint, this, ep, isSource ? 0 : 1, params, el, elId);
         };
 
-        // if type given, get the endpoint definitions mapping to that type from the jsplumb instance, and use those.
+        // if type given, get the endpointTemplate definitions mapping to that type from the jsplumb instance, and use those.
         // we apply types at the end of this constructor but endpoints are only honoured in a type definition at
         // create time.
         if (params.type) {
@@ -125,10 +125,10 @@
 
         if (eS) _ju.addToList(params.endpointsByElement, this.sourceId, eS);
         if (eT) _ju.addToList(params.endpointsByElement, this.targetId, eT);
-        // if scope not set, set it to be the scope for the source endpoint.
+        // if scope not set, set it to be the scope for the source endpointTemplate.
         if (!this.scope) this.scope = this.endpoints[0].scope;
 
-        // if explicitly told to (or not to) delete endpoints on detach, override endpoint's preferences
+        // if explicitly told to (or not to) delete endpoints on detach, override endpointTemplate's preferences
         if (params.deleteEndpointsOnDetach != null) {
             this.endpoints[0]._deleteOnDetach = params.deleteEndpointsOnDetach;
             this.endpoints[1]._deleteOnDetach = params.deleteEndpointsOnDetach;
@@ -208,17 +208,17 @@
 
 
 // COST + DIRECTIONALITY
-        // if cost not supplied, try to inherit from source endpoint
+        // if cost not supplied, try to inherit from source endpointTemplate
         this._jsPlumb.cost = params.cost || this.endpoints[0].getConnectionCost();
         this._jsPlumb.directed = params.directed;
-        // inherit directed flag if set no source endpoint
+        // inherit directed flag if set no source endpointTemplate
         if (params.directed == null) this._jsPlumb.directed = this.endpoints[0].areConnectionsDirected();
 // END COST + DIRECTIONALITY
 
 // PARAMETERS
         // merge all the parameters objects into the connection.  parameters set
-        // on the connection take precedence; then source endpoint params, then
-        // finally target endpoint params.
+        // on the connection take precedence; then source endpointTemplate params, then
+        // finally target endpointTemplate params.
         var _p = jsPlumb.extend({}, this.endpoints[1].getParameters());
         _jp.extend(_p, this.endpoints[0].getParameters());
         _jp.extend(_p, this.getParameters());
@@ -500,7 +500,7 @@
                 existing.addConnection(conn);
             } else {
                 if (!params.endpoints) params.endpoints = [ null, null ];
-                var ep = params.endpoints[index] || params.endpoint || _jsPlumb.Defaults.Endpoints[index] || jsPlumb.Defaults.Endpoints[index] || _jsPlumb.Defaults.Endpoint || jsPlumb.Defaults.Endpoint;
+                var ep = params.endpoints[index] || params.endpointTemplate || _jsPlumb.Defaults.Endpoints[index] || jsPlumb.Defaults.Endpoints[index] || _jsPlumb.Defaults.Endpoint || jsPlumb.Defaults.Endpoint;
                 if (!params.endpointStyles) params.endpointStyles = [ null, null ];
                 if (!params.endpointHoverStyles) params.endpointHoverStyles = [ null, null ];
                 var es = params.endpointStyles[index] || params.endpointStyle || _jsPlumb.Defaults.EndpointStyles[index] || jsPlumb.Defaults.EndpointStyles[index] || _jsPlumb.Defaults.EndpointStyle || jsPlumb.Defaults.EndpointStyle;
@@ -514,7 +514,7 @@
                     es.outlineWidth = params.paintStyle.outlineWidth;
 
                 var ehs = params.endpointHoverStyles[index] || params.endpointHoverStyle || _jsPlumb.Defaults.EndpointHoverStyles[index] || jsPlumb.Defaults.EndpointHoverStyles[index] || _jsPlumb.Defaults.EndpointHoverStyle || jsPlumb.Defaults.EndpointHoverStyle;
-                // endpoint hover fill style is derived from connector's hover stroke style
+                // endpointTemplate hover fill style is derived from connector's hover stroke style
                 if (params.hoverPaintStyle != null) {
                     if (ehs == null) ehs = {};
                     if (ehs.fillStyle == null) {

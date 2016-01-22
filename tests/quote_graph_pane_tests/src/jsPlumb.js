@@ -442,7 +442,7 @@
                     }
                 }
                 // get the list of other affected elements, if supported by this component.
-                // for a connection, its the endpoints.  for an endpoint, its the connections! surprise.
+                // for a connection, its the endpoints.  for an endpointTemplate, its the connections! surprise.
                 if (this.getAttachedElements && !ignoreAttachedElements)
                     _updateAttachedElements(this, hover, _timestamp(), this);
             }
@@ -571,7 +571,7 @@
             };
 
             // delegate one event on the container to jsplumb elements. it might be possible to
-            // abstract this out: each of endpoint, connection and overlay could register themselves with
+            // abstract this out: each of endpointTemplate, connection and overlay could register themselves with
             // jsplumb as "component types" or whatever, and provide a suitable selector. this would be
             // done by the renderer (although admittedly from 2.0 onwards we're not supporting vml anymore)
             var _oneDelegate = function (id) {
@@ -580,7 +580,7 @@
                     _oneDelegateHandler(id, e);
                 });
                 // endpoints. note they can have an enclosing div, or not.
-                _addOneDelegate(id, ".jsplumb-endpoint, .jsplumb-endpoint > *, .jsplumb-endpoint svg *", function (e) {
+                _addOneDelegate(id, ".jsplumb-endpointTemplate, .jsplumb-endpointTemplate > *, .jsplumb-endpointTemplate svg *", function (e) {
                     _oneDelegateHandler(id, e);
                 });
                 // overlays
@@ -630,7 +630,7 @@
             initialized = false,
         // TODO remove from window scope
             connections = [],
-        // map of element id -> endpoint lists. an element can have an arbitrary
+        // map of element id -> endpointTemplate lists. an element can have an arbitrary
         // number of endpoints on it, and not all of them have to be connected
         // to anything.
             endpointsByElement = {},
@@ -668,8 +668,8 @@
             }.bind(this),
 
         //
-        // Draws an endpoint and its connections. this is the main entry point into drawing connections as well
-        // as endpoints, since jsPlumb is endpoint-centric under the hood.
+        // Draws an endpointTemplate and its connections. this is the main entry point into drawing connections as well
+        // as endpoints, since jsPlumb is endpointTemplate-centric under the hood.
         //
         // @param element element to draw (of type library specific element object)
         // @param ui UI object from current library's event system. optional.
@@ -824,19 +824,19 @@
 
                 // hotwire endpoints passed as source or target to sourceEndpoint/targetEndpoint, respectively.
                 if (_p.source) {
-                    if (_p.source.endpoint)
+                    if (_p.source.endpointTemplate)
                         _p.sourceEndpoint = _p.source;
                     else
                         _p.source = _currentInstance.getElement(_p.source);
                 }
                 if (_p.target) {
-                    if (_p.target.endpoint)
+                    if (_p.target.endpointTemplate)
                         _p.targetEndpoint = _p.target;
                     else
                         _p.target = _currentInstance.getElement(_p.target);
                 }
 
-                // test for endpoint uuids to connect
+                // test for endpointTemplate uuids to connect
                 if (params.uuids) {
                     _p.sourceEndpoint = _getEndpoint(params.uuids[0]);
                     _p.targetEndpoint = _getEndpoint(params.uuids[1]);
@@ -845,22 +845,22 @@
                 // now ensure that if we do have Endpoints already, they're not full.
                 // source:
                 if (_p.sourceEndpoint && _p.sourceEndpoint.isFull()) {
-                    _ju.log(_currentInstance, "could not add connection; source endpoint is full");
+                    _ju.log(_currentInstance, "could not add connection; source endpointTemplate is full");
                     return;
                 }
 
                 // target:
                 if (_p.targetEndpoint && _p.targetEndpoint.isFull()) {
-                    _ju.log(_currentInstance, "could not add connection; target endpoint is full");
+                    _ju.log(_currentInstance, "could not add connection; target endpointTemplate is full");
                     return;
                 }
 
-                // if source endpoint mandates connection type and nothing specified in our params, use it.
+                // if source endpointTemplate mandates connection type and nothing specified in our params, use it.
                 if (!_p.type && _p.sourceEndpoint)
                     _p.type = _p.sourceEndpoint.connectionType;
 
-                // copy in any connectorOverlays that were specified on the source endpoint.
-                // it doesnt copy target endpoint overlays.  i'm not sure if we want it to or not.
+                // copy in any connectorOverlays that were specified on the source endpointTemplate.
+                // it doesnt copy target endpointTemplate overlays.  i'm not sure if we want it to or not.
                 if (_p.sourceEndpoint && _p.sourceEndpoint.connectorOverlays) {
                     _p.overlays = _p.overlays || [];
                     for (var i = 0, j = _p.sourceEndpoint.connectorOverlays.length; i < j; i++) {
@@ -883,7 +883,7 @@
                 var _addEndpoint = function (el, def, idx) {
                     return _currentInstance.addEndpoint(el, _mergeOverrides(def, {
                         anchor: _p.anchors ? _p.anchors[idx] : _p.anchor,
-                        endpoint: _p.endpoints ? _p.endpoints[idx] : _p.endpoint,
+                        endpoint: _p.endpoints ? _p.endpoints[idx] : _p.endpointTemplate,
                         paintStyle: _p.endpointStyles ? _p.endpointStyles[idx] : _p.endpointStyle,
                         hoverPaintStyle: _p.endpointHoverStyles ? _p.endpointHoverStyles[idx] : _p.endpointHoverStyle
                     }));
@@ -892,7 +892,7 @@
                 // check for makeSource/makeTarget specs.
 
                 var _oneElementDef = function (type, idx, defs, matchType) {
-                    if (_p[type] && !_p[type].endpoint && !_p[type + "Endpoint"] && !_p.newConnection) {
+                    if (_p[type] && !_p[type].endpointTemplate && !_p[type + "Endpoint"] && !_p.newConnection) {
                         var tid = _getId(_p[type]), tep = defs[tid];
 
                         tep = tep ? tep[matchType] : null;
@@ -900,19 +900,19 @@
                         if (tep) {
                             // if not enabled, return.
                             if (!tep.enabled) return false;
-                            var newEndpoint = tep.endpoint != null && tep.endpoint._jsPlumb ? tep.endpoint : _addEndpoint(_p[type], tep.def, idx);
+                            var newEndpoint = tep.endpointTemplate != null && tep.endpointTemplate._jsPlumb ? tep.endpointTemplate : _addEndpoint(_p[type], tep.def, idx);
                             if (newEndpoint.isFull()) return false;
                             _p[type + "Endpoint"] = newEndpoint;
                             newEndpoint._doNotDeleteOnDetach = false; // reset.
                             newEndpoint._deleteOnDetach = true;
                             if (tep.uniqueEndpoint) {
-                                if (!tep.endpoint) {
-                                    tep.endpoint = newEndpoint;
+                                if (!tep.endpointTemplate) {
+                                    tep.endpointTemplate = newEndpoint;
                                     newEndpoint._deleteOnDetach = false;
                                     newEndpoint._doNotDeleteOnDetach = true;
                                 }
                                 else
-                                    newEndpoint.finalEndpoint = tep.endpoint;
+                                    newEndpoint.finalEndpoint = tep.endpointTemplate;
                             }
                         }
                     }
@@ -940,7 +940,7 @@
                 params.id = "con_" + _idstamp();
                 var con = new connectionFunc(params);
 
-                // if the connection is draggable, then maybe we need to tell the target endpoint to init the
+                // if the connection is draggable, then maybe we need to tell the target endpointTemplate to init the
                 // dragging code. it won't run again if it already configured to be draggable.
                 if (con.isDetachable()) {
                     con.endpoints[0].initDraggable("_jsPlumbSource");
@@ -961,11 +961,11 @@
 
                 jpc.pending = null;
 
-                // turn off isTemporarySource on the source endpoint (only viable on first draw)
+                // turn off isTemporarySource on the source endpointTemplate (only viable on first draw)
                 jpc.endpoints[0].isTemporarySource = false;
 
                 // always inform the anchor manager
-                // except that if jpc has a suspended endpoint it's not true to say the
+                // except that if jpc has a suspended endpointTemplate it's not true to say the
                 // connection is new; it has just (possibly) moved. the question is whether
                 // to make that call here or in the anchor manager.  i think perhaps here.
                 if (doInformAnchorManager !== false)
@@ -989,7 +989,7 @@
             },
 
         /*
-         factory method to prepare a new endpoint.  this should always be used instead of creating Endpoints
+         factory method to prepare a new endpointTemplate.  this should always be used instead of creating Endpoints
          manually, since this method attaches event listeners and an id.
          */
             _newEndpoint = function (params, id) {
@@ -1015,7 +1015,7 @@
         /*
          * performs the given function operation on all the connections found
          * for the given element id; this means we find all the endpoints for
-         * the given element, and then for each endpoint find the connectors
+         * the given element, and then for each endpointTemplate find the connectors
          * connected to it. then we pass each connection in to the given
          * function.
          */
@@ -1067,7 +1067,7 @@
                 _operation(info.id, function (jpc) {
                     if (state && alsoChangeEndpoints) {
                         // this test is necessary because this functionality is new, and i wanted to maintain backwards compatibility.
-                        // this block will only set a connection to be visible if the other endpoint in the connection is also visible.
+                        // this block will only set a connection to be visible if the other endpointTemplate in the connection is also visible.
                         var oidx = jpc.sourceId === info.id ? 1 : 0;
                         if (jpc.endpoints[oidx].isVisible()) jpc.setVisible(true);
                     }
@@ -1150,7 +1150,7 @@
 
         /**
          * Returns a map of all the elements this jsPlumbInstance is currently managing.
-         * @returns {Object} Map of [id-> {el, endpoint[], connection, position}] information.
+         * @returns {Object} Map of [id-> {el, endpointTemplate[], connection, position}] information.
          */
         this.getManagedElements = function() {
             return managedElements;
@@ -1163,17 +1163,17 @@
         this.editableConnectorClass = "jsplumb-connector-editable";
         this.connectedClass = "jsplumb-connected";
         this.hoverClass = "jsplumb-hover";
-        this.endpointClass = "jsplumb-endpoint";
-        this.endpointConnectedClass = "jsplumb-endpoint-connected";
-        this.endpointFullClass = "jsplumb-endpoint-full";
-        this.endpointDropAllowedClass = "jsplumb-endpoint-drop-allowed";
-        this.endpointDropForbiddenClass = "jsplumb-endpoint-drop-forbidden";
+        this.endpointClass = "jsplumb-endpointTemplate";
+        this.endpointConnectedClass = "jsplumb-endpointTemplate-connected";
+        this.endpointFullClass = "jsplumb-endpointTemplate-full";
+        this.endpointDropAllowedClass = "jsplumb-endpointTemplate-drop-allowed";
+        this.endpointDropForbiddenClass = "jsplumb-endpointTemplate-drop-forbidden";
         this.overlayClass = "jsplumb-overlay";
         this.draggingClass = "jsplumb-dragging";
         this.elementDraggingClass = "jsplumb-element-dragging";
         this.sourceElementDraggingClass = "jsplumb-source-element-dragging";
         this.targetElementDraggingClass = "jsplumb-target-element-dragging";
-        this.endpointAnchorClassPrefix = "jsplumb-endpoint-anchor";
+        this.endpointAnchorClassPrefix = "jsplumb-endpointTemplate-anchor";
         this.hoverSourceClass = "jsplumb-source-hover";
         this.hoverTargetClass = "jsplumb-target-hover";
         this.dragSelectClass = "jsplumb-drag-select";
@@ -1192,7 +1192,7 @@
             referenceParams = referenceParams || {};
             var p = jsPlumb.extend({}, referenceParams);
             jsPlumb.extend(p, params);
-            p.endpoint = p.endpoint || _currentInstance.Defaults.Endpoint;
+            p.endpointTemplate = p.endpointTemplate || _currentInstance.Defaults.Endpoint;
             p.paintStyle = p.paintStyle || _currentInstance.Defaults.EndpointStyle;
 
             var results = [],
@@ -1285,7 +1285,7 @@
             // prepare a final set of parameters to create connection with
             var _p = _prepareConnectionParams(params, referenceParams), jpc;
             // TODO probably a nicer return value if the connection was not made.  _prepareConnectionParams
-            // will return null (and log something) if either endpoint was full.  what would be nicer is to
+            // will return null (and log something) if either endpointTemplate was full.  what would be nicer is to
             // create a dedicated 'error' object.
             if (_p) {
                 if (_p.source == null && _p.sourceEndpoint == null) {
@@ -1323,7 +1323,7 @@
                 connection: c
             };
 
-            if (el.constructor == jsPlumb.Endpoint) { // TODO here match the current endpoint class; users can change it {
+            if (el.constructor == jsPlumb.Endpoint) { // TODO here match the current endpointTemplate class; users can change it {
                 ep = el;
                 ep.addConnection(c);
             }
@@ -1336,8 +1336,8 @@
                 else if (sep) {
                     for (var t in sep) {
                         if (!sep[t].enabled) return;
-                        ep = sep[t].endpoint != null && sep[t].endpoint._jsPlumb ? sep[t].endpoint : this.addEndpoint(el, sep[t].def);
-                        if (sep[t].uniqueEndpoint) sep[t].endpoint = ep;
+                        ep = sep[t].endpointTemplate != null && sep[t].endpointTemplate._jsPlumb ? sep[t].endpointTemplate : this.addEndpoint(el, sep[t].def);
+                        if (sep[t].uniqueEndpoint) sep[t].endpointTemplate = ep;
                         ep._doNotDeleteOnDetach = false;
                         ep._deleteOnDetach = true;
                         ep.addConnection(c);
@@ -1378,8 +1378,8 @@
 
         this.deleteEndpoint = function (object, dontUpdateHover) {
             var endpoint = (typeof object === "string") ? endpointsByUUID[object] : object;
-            if (endpoint) {
-                _currentInstance.deleteObject({ endpoint: endpoint, dontUpdateHover: dontUpdateHover });
+            if (endpointTemplate) {
+                _currentInstance.deleteObject({ endpoint: endpointTemplate, dontUpdateHover: dontUpdateHover });
             }
             return _currentInstance;
         };
@@ -1428,16 +1428,16 @@
         };
 
         this.unregisterEndpoint = function (endpoint) {
-            //if (endpoint._jsPlumb == null) return;
-            if (endpoint._jsPlumb.uuid) endpointsByUUID[endpoint._jsPlumb.uuid] = null;
-            _currentInstance.anchorManager.deleteEndpoint(endpoint);
+            //if (endpointTemplate._jsPlumb == null) return;
+            if (endpointTemplate._jsPlumb.uuid) endpointsByUUID[endpointTemplate._jsPlumb.uuid] = null;
+            _currentInstance.anchorManager.deleteEndpoint(endpointTemplate);
             // TODO at least replace this with a removeWithFunction call.
             for (var e in endpointsByElement) {
                 var endpoints = endpointsByElement[e];
                 if (endpoints) {
                     var newEndpoints = [];
                     for (var i = 0, j = endpoints.length; i < j; i++)
-                        if (endpoints[i] != endpoint) newEndpoints.push(endpoints[i]);
+                        if (endpoints[i] != endpointTemplate) newEndpoints.push(endpoints[i]);
 
                     endpointsByElement[e] = newEndpoints;
                 }
@@ -1470,7 +1470,7 @@
             }
             else {
                 var _p = jsPlumb.extend({}, params); // a backwards compatibility hack: source should be thought of as 'params' in this case.
-                // test for endpoint uuids to detach
+                // test for endpointTemplate uuids to detach
                 if (_p.uuids) {
                     _getEndpoint(_p.uuids[0]).detachFrom(_getEndpoint(_p.uuids[1]), fireEvent);
                 } else if (_p.sourceEndpoint && _p.targetEndpoint) {
@@ -1543,14 +1543,14 @@
                 }
             };
             var unravelEndpoint = function (endpoint) {
-                if (endpoint != null && result.endpoints[endpoint.id] == null) {
-                    if (!params.dontUpdateHover && endpoint._jsPlumb != null) endpoint.setHover(false);
-                    result.endpoints[endpoint.id] = endpoint;
+                if (endpointTemplate != null && result.endpoints[endpointTemplate.id] == null) {
+                    if (!params.dontUpdateHover && endpointTemplate._jsPlumb != null) endpointTemplate.setHover(false);
+                    result.endpoints[endpointTemplate.id] = endpointTemplate;
                     result.endpointCount++;
 
                     if (deleteAttachedObjects) {
-                        for (var i = 0; i < endpoint.connections.length; i++) {
-                            var c = endpoint.connections[i];
+                        for (var i = 0; i < endpointTemplate.connections.length; i++) {
+                            var c = endpointTemplate.connections[i];
                             unravelConnection(c);
                         }
                     }
@@ -1559,7 +1559,7 @@
 
             if (params.connection)
                 unravelConnection(params.connection);
-            else unravelEndpoint(params.endpoint);
+            else unravelEndpoint(params.endpointTemplate);
 
             // loop through connections
             for (var i in result.connections) {
@@ -1583,7 +1583,7 @@
                 var e = result.endpoints[j];
                 if (e._jsPlumb) {
                     _currentInstance.unregisterEndpoint(e);
-                    // FIRE some endpoint deleted event?
+                    // FIRE some endpointTemplate deleted event?
                     e.cleanup(true);
                     e.destroy(true);
                 }
@@ -1818,13 +1818,13 @@
         this.getDefaultScope = function () {
             return DEFAULT_SCOPE;
         };
-        // get an endpoint by uuid.
+        // get an endpointTemplate by uuid.
         this.getEndpoint = _getEndpoint;
         // get endpoints for some element.
         this.getEndpoints = function (el) {
             return endpointsByElement[_info(el).id];
         };
-        // gets the default endpoint type. used when subclassing. see wiki.
+        // gets the default endpointTemplate type. used when subclassing. see wiki.
         this.getDefaultEndpointType = function () {
             return jsPlumb.Endpoint;
         };
@@ -2094,7 +2094,7 @@
                 _instance.Defaults.Anchors[epIndex] ||
                 _instance.Defaults.Anchor;
 
-            ep.endpoint = ep.endpoint ||
+            ep.endpointTemplate = ep.endpointTemplate ||
                 _instance.Defaults.Endpoints[epIndex] ||
                 _instance.Defaults.Endpoint;*/
         };
@@ -2149,16 +2149,16 @@
                 getEndpoint: function (jpc) {
 
                     // make a new Endpoint for the target, or get it from the cache if uniqueEndpoint
-                    // is set. if its a redrop the new endpoint will be immediately cleaned up.
+                    // is set. if its a redrop the new endpointTemplate will be immediately cleaned up.
 
-                    var newEndpoint = elInfo.def.endpoint;
+                    var newEndpoint = elInfo.def.endpointTemplate;
 
-                    // if no cached endpoint, or there was one but it has been cleaned up
+                    // if no cached endpointTemplate, or there was one but it has been cleaned up
                     // (ie. detached), create a new one
                     if (newEndpoint == null || newEndpoint._jsPlumb == null) {
                         var eps = _currentInstance.deriveEndpointAndAnchorSpec(jpc.getType().join(" "), true);
                         var pp = eps.endpoints ? jsPlumb.extend(p, {
-                            endpoint:elInfo.def.def.endpoint || eps.endpoints[1]
+                            endpoint:elInfo.def.def.endpointTemplate || eps.endpoints[1]
                         }) :p;
                         if (eps.anchors) {
                             pp = jsPlumb.extend(pp, {
@@ -2169,12 +2169,12 @@
                         newEndpoint._mtNew = true;
                     }
 
-                    if (p.uniqueEndpoint) elInfo.def.endpoint = newEndpoint;  // may of course just store what it just pulled out. that's ok.
+                    if (p.uniqueEndpoint) elInfo.def.endpointTemplate = newEndpoint;  // may of course just store what it just pulled out. that's ok.
                     // TODO test options to makeTarget to see if we should do this?
                     newEndpoint._doNotDeleteOnDetach = false; // reset.
                     newEndpoint._deleteOnDetach = true;
 
-                    // if connection is detachable, init the new endpoint to be draggable, to support that happening.
+                    // if connection is detachable, init the new endpointTemplate to be draggable, to support that happening.
                     if (jpc.isDetachable())
                         newEndpoint.initDraggable();
 
@@ -2245,8 +2245,8 @@
 
                 _doOne = function (el) {
 
-                    // get the element's id and store the endpoint definition for it.  jsPlumb.connect calls will look for one of these,
-                    // and use the endpoint definition if found.
+                    // get the element's id and store the endpointTemplate definition for it.  jsPlumb.connect calls will look for one of these,
+                    // and use the endpointTemplate definition if found.
                     // decode the info for this element (id and element)
                     var elInfo = _info(el),
                         elid = elInfo.id,
@@ -2300,14 +2300,14 @@
             jsPlumb.extend(p, params);
             var type = p.connectionType || "default";
             var aae = _currentInstance.deriveEndpointAndAnchorSpec(type);
-            p.endpoint = p.endpoint || aae.endpoints[0];
+            p.endpointTemplate = p.endpointTemplate || aae.endpoints[0];
             p.anchor = p.anchor || aae.anchors[0];
             _setEndpointPaintStylesAndAnchor(p, 0, this);
             var maxConnections = p.maxConnections || -1,
                 onMaxConnections = p.onMaxConnections,
                 _doOne = function (elInfo) {
-                    // get the element's id and store the endpoint definition for it.  jsPlumb.connect calls will look for one of these,
-                    // and use the endpoint definition if found.
+                    // get the element's id and store the endpointTemplate definition for it.  jsPlumb.connect calls will look for one of these,
+                    // and use the endpointTemplate definition if found.
                     var elid = elInfo.id,
                         _del = this.getElement(elInfo.el);
 
@@ -2414,12 +2414,12 @@
                             return false;
                         }
 
-                        // find the position on the element at which the mouse was pressed; this is where the endpoint
+                        // find the position on the element at which the mouse was pressed; this is where the endpointTemplate
                         // will be located.
                         var elxy = jsPlumb.getPositionOnElement(e, _del, _zoom);
 
                         // we need to override the anchor in here, and force 'isSource', but we don't want to mess with
-                        // the params passed in, because after a connection is established we're going to reset the endpoint
+                        // the params passed in, because after a connection is established we're going to reset the endpointTemplate
                         // to have the anchor we were given.
                         var tempEndpointParams = {};
                         jsPlumb.extend(tempEndpointParams, p);
@@ -2434,24 +2434,24 @@
                         ep._doNotDeleteOnDetach = false; // reset.
                         ep._deleteOnDetach = true;
 
-                        // if unique endpoint and it's already been created, push it onto the endpoint we create. at the end
-                        // of a successful connection we'll switch to that endpoint.
+                        // if unique endpointTemplate and it's already been created, push it onto the endpointTemplate we create. at the end
+                        // of a successful connection we'll switch to that endpointTemplate.
                         // TODO this is the same code as the programmatic endpoints create on line 1050 ish
                         if (def.uniqueEndpoint) {
-                            if (!def.endpoint) {
-                                def.endpoint = ep;
+                            if (!def.endpointTemplate) {
+                                def.endpointTemplate = ep;
                                 ep._deleteOnDetach = false;
                                 ep._doNotDeleteOnDetach = true;
                             }
                             else
-                                ep.finalEndpoint = def.endpoint;
+                                ep.finalEndpoint = def.endpointTemplate;
                         }
 
                         var _delTempEndpoint = function () {
                             // this mouseup event is fired only if no dragging occurred, by jquery and yui, but for mootools
                             // it is fired even if dragging has occurred, in which case we would blow away a perfectly
-                            // legitimate endpoint, were it not for this check.  the flag is set after adding an
-                            // endpoint and cleared in a drag listener we set in the dragOptions above.
+                            // legitimate endpointTemplate, were it not for this check.  the flag is set after adding an
+                            // endpointTemplate and cleared in a drag listener we set in the dragOptions above.
                             _currentInstance.off(ep.canvas, "mouseup", _delTempEndpoint);
                             _currentInstance.off(elInfo.el, "mouseup", _delTempEndpoint);
                             if (endpointAddedButNoDragYet) {
@@ -2475,7 +2475,7 @@
                         }
 
                         // and then trigger its mousedown event, which will kick off a drag, which will start dragging
-                        // a new connection from this endpoint.
+                        // a new connection from this endpointTemplate.
                         _currentInstance.trigger(ep.canvas, "mousedown", e, payload);
 
                         _ju.consume(e);
@@ -2702,7 +2702,7 @@
             });
         };
 
-        // repaint every endpoint and connection.
+        // repaint every endpointTemplate and connection.
         this.repaintEverything = function () {
             // TODO this timestamp causes continuous anchors to not repaint properly.
             // fix this. do not just take out the timestamp. it runs a lot faster with
@@ -2850,7 +2850,7 @@
                 var _t = _currentInstance.getType(bits[i], "connection");
                 if (_t) {
                     if (_t.endpoints) eps = _t.endpoints;
-                    if (_t.endpoint) ep = _t.endpoint;
+                    if (_t.endpointTemplate) ep = _t.endpointTemplate;
                     if (_t.anchors) as = _t.anchors;
                     if (_t.anchor) a = _t.anchor;
                 }

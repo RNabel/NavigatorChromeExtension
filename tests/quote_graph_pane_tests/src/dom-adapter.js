@@ -132,7 +132,7 @@
         };
 
         /**
-         notification that an endpoint was added to the given el.  we go up from that el's parent
+         notification that an endpointTemplate was added to the given el.  we go up from that el's parent
          node, looking for a parent that has been registered as a draggable. if we find one, we add this
          el to that parent's list of elements to update on drag (if it is not there already)
          */
@@ -168,13 +168,13 @@
         };
 
         this.endpointDeleted = function (endpoint) {
-            if (_elementsWithEndpoints[endpoint.elementId]) {
-                _elementsWithEndpoints[endpoint.elementId]--;
-                if (_elementsWithEndpoints[endpoint.elementId] <= 0) {
+            if (_elementsWithEndpoints[endpointTemplate.elementId]) {
+                _elementsWithEndpoints[endpointTemplate.elementId]--;
+                if (_elementsWithEndpoints[endpointTemplate.elementId] <= 0) {
                     for (var i in _delements) {
                         if (_delements.hasOwnProperty(i) && _delements[i]) {
-                            delete _delements[i][endpoint.elementId];
-                            delete _draggablesForElements[endpoint.elementId];
+                            delete _delements[i][endpointTemplate.elementId];
+                            delete _draggablesForElements[endpointTemplate.elementId];
                         }
                     }
                 }

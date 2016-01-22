@@ -726,7 +726,7 @@
 
     /**
      * Class: Endpoints.Dot
-     * A round endpoint, with default radius 10 pixels.
+     * A round endpointTemplate, with default radius 10 pixels.
      */
 
     /**
@@ -734,7 +734,7 @@
      *
      * Parameters:
      *
-     *    radius    -    radius of the endpoint.  defaults to 10 pixels.
+     *    radius    -    radius of the endpointTemplate.  defaults to 10 pixels.
      */
     _jp.Endpoints.Dot = function (params) {
         this.type = "Dot";
@@ -827,7 +827,7 @@
         this._jsPlumb.deleted = false;
         this._jsPlumb.widthToUse = params.width;
         this._jsPlumb.heightToUse = params.height;
-        this._jsPlumb.endpoint = params.endpoint;
+        this._jsPlumb.endpointTemplate = params.endpointTemplate;
 
         this._jsPlumb.img.onload = function () {
             if (this._jsPlumb != null) {
@@ -848,7 +848,7 @@
          img         -   may be a URL or an Image object
          onload      -   optional; a callback to execute once the image has loaded.
          */
-        this._jsPlumb.endpoint.setImage = function (_img, onload) {
+        this._jsPlumb.endpointTemplate.setImage = function (_img, onload) {
             var s = _img.constructor == String ? _img : _img.src;
             _onload = onload;
             this._jsPlumb.img.src = s;
@@ -857,7 +857,7 @@
                 this.canvas.setAttribute("src", this._jsPlumb.img.src);
         }.bind(this);
 
-        this._jsPlumb.endpoint.setImage(src, _onload);
+        this._jsPlumb.endpointTemplate.setImage(src, _onload);
         this._compute = function (anchorPoint, orientation, endpointStyle, connectorPaintStyle) {
             this.anchorPoint = anchorPoint;
             if (this._jsPlumb.ready) return [anchorPoint[0] - this._jsPlumb.widthToUse / 2, anchorPoint[1] - this._jsPlumb.heightToUse / 2,

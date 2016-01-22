@@ -5,4 +5,5 @@ var WEBSITE_CONTENT_WRAPPER = 'content',
     RIGHT_PANE_IDENTIFIER = 'rightPane',
     RIGHT_PANE_SELECTOR = '#' + RIGHT_PANE_IDENTIFIER,
 
-    QUOTE_BUBBLE_CONTENT_ID = 'quoteContent';
+    QUOTE_BUBBLE_CONTENT_ID = 'quoteContent',
+    ENDPOINT_COLOR = "rgba(229,219,61,0.5)";

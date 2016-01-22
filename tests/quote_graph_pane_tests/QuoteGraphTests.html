@@ -11,10 +11,21 @@
             margin: auto;
         }
     </style>
+
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+
+    <link rel="stylesheet" href="demo.css">
 </head>
 <body>
-
-<div id="leftPane"></div>
+<div class="drag-drop-demo">
+    <div id="leftPane"
+         class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>
+</div>
 
 </body>
 
@@ -23,19 +34,25 @@
     // Compatibility code.
     chrome = {};
     chrome.runtime = {};
-    chrome.runtime.sendMessage = function () {};
+    chrome.runtime.sendMessage = function () {
+    };
     chrome.extension = {};
-    chrome.extension.getURL = function(path) {
+    chrome.extension.getURL = function (path) {
         return "../../" + path;
     };
 
 </script>
+<!-- jsPlumb library.-->
+<script src="../../lib/jsPlumb-2.0.5.js"></script>
+
+<!-- Extension scripts. -->
 <script src="../../scripts/content/constants.js"></script>
 <script src="../../scripts/content/content_script.js"></script>
 <script src="../../scripts/content/quote_graph.js"></script>
+
 <script type="text/javascript">
     //  Instantiate graph using JS functionality.
-    var quo_gra = new QuoteGraph();
-    quo_gra.addInfoBubble("Test text", "<p>Test text</p>", "test.com", "/bookstore/book/title")
+    //    quo_gra.addInfoBubble("Test text", "<p>Test text</p>", "test.com", "/bookstore/book/title")
+    //    QuoteGraph.addNodeExperimental(100,100);
 </script>
 </html>

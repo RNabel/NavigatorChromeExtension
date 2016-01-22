@@ -2,19 +2,19 @@
     jsPlumb.ready(function () {
 
         var instance = jsPlumb.getInstance({
-            DragOptions: { cursor: 'pointer', zIndex: 2000 },
-            PaintStyle: { strokeStyle: '#666' },
-            EndpointHoverStyle: { fillStyle: "orange" },
-            HoverPaintStyle: { strokeStyle: "orange" },
-            EndpointStyle: { width: 20, height: 16, strokeStyle: '#666' },
+            DragOptions: {cursor: 'pointer', zIndex: 2000},
+            PaintStyle: {strokeStyle: '#666'},
+            EndpointHoverStyle: {fillStyle: "orange"},
+            HoverPaintStyle: {strokeStyle: "orange"},
+            EndpointStyle: {width: 20, height: 16, strokeStyle: '#666'},
             Endpoint: "Rectangle",
             Anchors: ["TopCenter", "TopCenter"],
-            Container: "canvas",
-            MaxConnections: 1000
+            Container: "canvas"
         });
 
         // suspend drawing and initialise.
         instance.batch(function () {
+
             instance.bind("click", function (component, originalEvent) {
                 alert("click!")
             });
@@ -28,9 +28,9 @@
 
             var example3Color = "rgba(229,219,61,0.5)";
             var exampleEndpoint3 = {
-                endpoint: ["Dot", {radius: 17} ],
+                endpoint: ["Dot", {radius: 17}],
                 anchor: "BottomLeft",
-                paintStyle: { fillStyle: example3Color, opacity: 0.5 },
+                paintStyle: {fillStyle: example3Color, opacity: 0.5},
                 isSource: true,
                 scope: 'yellow',
                 connectorStyle: {
@@ -51,7 +51,7 @@
             // make .window divs draggable
             instance.draggable(jsPlumb.getSelector(".drag-drop-demo .window"));
 
-            // add endpoint of type 3 using a selector.
+            // add endpointTemplate of type 3 using a selector.
             instance.addEndpoint(jsPlumb.getSelector(".drag-drop-demo .window"), exampleEndpoint3);
 
             var hideLinks = jsPlumb.getSelector(".drag-drop-demo .hide");
@@ -82,4 +82,5 @@
         jsPlumb.fire("jsPlumbDemoLoaded", instance);
 
     });
-})();
+})
+();

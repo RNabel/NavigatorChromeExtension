@@ -462,11 +462,11 @@
     _ju.extend(_jp.Endpoints.svg.Rectangle, [_jp.Endpoints.Rectangle, SvgEndpoint]);
 
     /*
-     * SVG Image Endpoint is the default image endpoint.
+     * SVG Image Endpoint is the default image endpointTemplate.
      */
     _jp.Endpoints.svg.Image = _jp.Endpoints.Image;
     /*
-     * Blank endpoint in svg renderer is the default Blank endpoint.
+     * Blank endpointTemplate in svg renderer is the default Blank endpointTemplate.
      */
     _jp.Endpoints.svg.Blank = _jp.Endpoints.Blank;
     /*
