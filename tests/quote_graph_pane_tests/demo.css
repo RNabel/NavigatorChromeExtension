@@ -83,3 +83,8 @@
 #list table th, #list strong { color:black; font-size:12px; text-align: center; }
 
 path, .jsplumb-endpoint { cursor:pointer; }
+
+#leftPane {
+    width: 100%;
+    height: 200px;
+}

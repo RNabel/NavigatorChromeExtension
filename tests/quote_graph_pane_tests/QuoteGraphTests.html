@@ -4,13 +4,6 @@
     <meta charset="UTF-8">
     <title>History tree tests</title>
     <script src="../../lib/jquery-2.2.0.js"></script>
-    <style type="text/css">
-        #leftPane {
-            max-width: 400px;
-            height: 400px;
-            margin: auto;
-        }
-    </style>
 
     <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
     <meta name="viewport"
@@ -22,11 +15,13 @@
     <link rel="stylesheet" href="demo.css">
 </head>
 <body>
-<div class="drag-drop-demo">
-    <div id="leftPane"
+<div class="drag-drop-demo" id="leftPane">
+    <div
          class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>
 </div>
-
+<div id="content">
+    <p>Hello this is some sample text.</p>
+</div>
 </body>
 
 <!-- Include content script -->
@@ -53,6 +48,6 @@
 <script type="text/javascript">
     //  Instantiate graph using JS functionality.
     //    quo_gra.addInfoBubble("Test text", "<p>Test text</p>", "test.com", "/bookstore/book/title")
-    //    QuoteGraph.addNodeExperimental(100,100);
+    //    QuoteGraph.addNode(100,100);
 </script>
 </html>

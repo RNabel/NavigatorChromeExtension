@@ -16,10 +16,11 @@ Quote.prototype.setLocation = function (location) {
 };
 
 var QuoteGraph = {
+    
     quotes: [], // List of all quotes in the graph.
-
+    
     instance: undefined, // Contains the jsPlumb instance.
-
+    
     endpointTemplate: undefined,
     setup: function () {
         var instance = this.instance,
@@ -105,31 +106,38 @@ var QuoteGraph = {
     },
 
     allowDrop: function (ev) {
-
-
         ev.preventDefault();
         ev.stopPropagation();
+        console.log("allowDrop.");
     },
 
     startDrag: function (ev) {
+        console.log("startDrag.");
         var path = $(ev.originalEvent.path[1]).getPath(); // TODO update code to be resilient.
         ev.originalEvent.dataTransfer.setData('src', path);
     },
 
     drop: function (ev) {
+        debugger;
+        console.log("drop.");
         ev.preventDefault();
 
         var url = window.location.href;
         var text = ev.originalEvent.dataTransfer.getData('text/plain');
         var html_data = ev.originalEvent.dataTransfer.getData('text/html');
         var source_selector = ev.originalEvent.dataTransfer.getData('src');
-
+        
+        QuoteGraph.addNode(ev.offsetX, ev.offsetY);
         setUpInfoBubble(text, html_data, url, source_selector);
     },
-    addNodeExperimental: function (x, y) {
+    addNode: function (x, y) {
         // Create div.
-        var $div = $('<div class="window" id="dragDropWindow5">five<br/><br/><a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n    connections</a><br/><a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br/>\n    <a href="#"\n       class="cmdLink detach"\n       rel="dragDropWindow4">detach\n        all</a>\n</div>')
+        this.i = this.i || 0;
+        var id = this.i++;
+        var $div = $('<div class="window">five<br/><br/><a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n    connections</a><br/><a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br/>\n    <a href="#"\n       class="cmdLink detach"\n       rel="dragDropWindow4">detach\n        all</a>\n</div>')
 
+        $($div).text("hello" + this.i);
+        $($div).attr('id', this.i);
         // Append to container.
         $(LEFT_PANE_SELECTOR).append($div);
 
@@ -147,60 +155,14 @@ var QuoteGraph = {
 
     init: function () {
         // Register drag & drop event listeners.
-        $(LEFT_PANE_SELECTOR).on('drop', this.drop);
-        $(LEFT_PANE_SELECTOR).on('dragover', this.allowDrop);
-        $('#' + WEBSITE_CONTENT_WRAPPER).on('dragstart', this.startDrag);
+        console.log("init bruv");
+        $(LEFT_PANE_SELECTOR).on('drop', QuoteGraph.drop);
+        $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.allowDrop);
+        $('#' + WEBSITE_CONTENT_WRAPPER).on('dragstart', QuoteGraph.startDrag);
         QuoteGraph.setup(); // Register setup method.
-        QuoteGraph.addNodeExperimental(100,100); // TODO delete as experimental.
+        QuoteGraph.addNode(100,100); // TODO delete as experimental.
     }
 };
-
-
-// Function which adds a text bubble to the left pane.
-// dataTransfer - the object passed by the drop event.
-// originUrl - the origin url of the dropped element.
-
-
-//QuoteGraph.prototype.addInfoBubble = function (text, html_text, origin_url, source_selector) {
-//    console.log('Create new data bubble called with text:\n' + text);
-//
-//    // Send data to the backend to store.
-//    var obj_to_send = {
-//        type: 'new_snippet',
-//        text: text,
-//        html: html_text,
-//        url: origin_url,
-//        selector: source_selector
-//    };
-//
-//    // Send data to backing store.
-//    sendMessage(obj_to_send);
-//
-//    var $box = this.createQuoteBox(origin_url);
-//    $box.text(text);
-//
-//    // TODO set location of box.
-//
-//    $(LEFT_PANE_SELECTOR).append($box);
-//    // TODO scroll to element. http://stackoverflow.com/a/9272017/3918512
-//};
-//
-//QuoteGraph.prototype.createQuoteBox = function (url) {
-//    // Add text box to left pane.
-//    var $quoteBox = $('<div onclick="window.open(\'' + url + '\', \'_self\');">').css({
-//        'background-color': 'white',
-//        width: 100,
-//        height: 60,
-//        border: '1px solid #eee',
-//        'margin-left': '5%', 'margin-top': '30%'
-//    });
-//
-//    var quoteUrl = chrome.extension.getURL('assets/quotes.svg');
-//    $quoteBox.append($('<img>').attr('src', quoteUrl).attr('width', '7%').css('margin', '1px 1px'));
-//    $quoteBox.append($('<p>').attr('id', QUOTE_BUBBLE_CONTENT_ID));
-//
-//    return $quoteBox;
-//};
 
 (function () {
     jsPlumb.ready(QuoteGraph.init);
