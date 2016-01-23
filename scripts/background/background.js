@@ -34,6 +34,11 @@ var BackgroundScript = {
     history_graph: {
         history: new HistoryStorage(),
         currentTabUrls: {},
+        /**
+         * Creates new connection.
+         * @param source {string} - The URL (or id) of the source page.
+         * @param target {string} - The URL (or id) of the target page.
+         */
         createNewConnection: function (source, target) {
             // Check if history contains both source and target.
             var history = BackgroundScript.history_graph.history,
@@ -54,6 +59,13 @@ var BackgroundScript = {
             src.addChild(target);
             tar.addParent(source);
         },
+        /**
+         * Function handling tab URL changes. Called from event listener.
+         * [Official Google documentation]{@link https://developer.chrome.com/extensions/tabs#event-onUpdated}
+         * @param tabId {int} The id of the tab.
+         * @param changeInfo {object} Further information on occurred changes.
+         * @param tab {Tab} The state of the updated tab.
+         */
         onTabChange: function (tabId, changeInfo, tab) {
             var windowId = tab.windowId,
                 key = tabId + '_' + windowId,
@@ -76,6 +88,12 @@ var BackgroundScript = {
             // Insert url into array.
             history[key] = tab.url;
         },
+        /**
+         * Function handling tab closing. Called from event handler.
+         * [Official Google documentation]{@link https://developer.chrome.com/extensions/tabs#event-onRemoved}
+         * @param tabId {int} The id of the closed tab.
+         * @param removeInfo {object} The information about the closed tab.
+         */
         onTabClosed: function (tabId, removeInfo) {
             var key = tabId + "_" + removeInfo.windowId;
             delete BackgroundScript.history_graph.currentTabUrls[key];
@@ -83,7 +101,10 @@ var BackgroundScript = {
     },
 
     tools: {
-        // UUID generator, used to create indices for the text nodes.
+        /**
+         * UUID generator, used to create indices for the text nodes.
+         * @returns {string} The unique identifier.
+         */
         guid: function () {
             function s4() {
                 return Math.floor((1 + Math.random()) * 0x10000)
@@ -94,6 +115,10 @@ var BackgroundScript = {
             return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
                 s4() + '-' + s4() + s4() + s4();
         },
+        /**
+         * Creates UNIX-style timestamp.
+         * @returns {number} The current timestamp.
+         */
         timestamp: function () {
             return Math.floor(Date.now() / 1000);
         }
