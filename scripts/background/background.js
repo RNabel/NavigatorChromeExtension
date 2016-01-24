@@ -34,6 +34,7 @@ var BackgroundScript = {
     history_graph: {
         history: new HistoryStorage(),
         currentTabUrls: {},
+
         /**
          * Creates new connection.
          * @param source {string} - The URL (or id) of the source page.
@@ -58,7 +59,20 @@ var BackgroundScript = {
 
             src.addChild(target);
             tar.addParent(source);
+
+            // Notify all content scripts to update graph as necessary.
+            BackgroundScript.history_graph.notifyContentScripts(source, target);
         },
+
+        /**
+         * Creates the object to be sent to all content scripts.
+         * @param source
+         * @param target
+         */
+        notifyContentScripts: function(source, target) {
+
+        },
+
         /**
          * Function handling tab URL changes. Called from event listener.
          * [Official Google documentation]{@link https://developer.chrome.com/extensions/tabs#event-onUpdated}
@@ -88,6 +102,7 @@ var BackgroundScript = {
             // Insert url into array.
             history[key] = tab.url;
         },
+
         /**
          * Function handling tab closing. Called from event handler.
          * [Official Google documentation]{@link https://developer.chrome.com/extensions/tabs#event-onRemoved}
@@ -115,18 +130,34 @@ var BackgroundScript = {
             return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
                 s4() + '-' + s4() + s4() + s4();
         },
+
         /**
          * Creates UNIX-style timestamp.
          * @returns {number} The current timestamp.
          */
         timestamp: function () {
             return Math.floor(Date.now() / 1000);
+        },
+
+        /**
+         * Sends object to all content scripts, and allows setting a callback function.
+         * @param obj {object} The object to be sent.
+         * @param [tabID] {int} The ID of the tab. If not specified, message sent to all tabs.
+         */
+        sendMessage : function (obj, tabID) {
+            chrome.tabs.query({}, function(tabs) {
+                var i= tabID || 0;
+                for (; i<tabs.length; ++i) {
+                    chrome.tabs.sendMessage(tabs[i].id, obj);
+
+                    if (tabID !== undefined) { // If tab id specified do not broadcast.
+                        break;
+                    }
+                }
+            });
         }
     }
-
-
 };
-
 
 // Message end point.
 chrome.runtime.onMessage.addListener(

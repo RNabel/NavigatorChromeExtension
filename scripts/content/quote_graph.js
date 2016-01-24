@@ -118,7 +118,6 @@ var QuoteGraph = {
     },
 
     drop: function (ev) {
-        debugger;
         console.log("drop.");
         ev.preventDefault();
 
@@ -155,12 +154,15 @@ var QuoteGraph = {
 
     init: function () {
         // Register drag & drop event listeners.
-        console.log("init bruv");
+        console.log("Quote graph initializing.");
+
         $(LEFT_PANE_SELECTOR).on('drop', QuoteGraph.drop);
         $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.allowDrop);
         $('#' + WEBSITE_CONTENT_WRAPPER).on('dragstart', QuoteGraph.startDrag);
         QuoteGraph.setup(); // Register setup method.
         QuoteGraph.addNode(100,100); // TODO delete as experimental.
+
+        console.log("Quote graph initialized.");
     }
 };
 

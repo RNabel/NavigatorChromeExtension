@@ -237,3 +237,7 @@ HistoryGraph.prototype.addNodeToLevel = function (level, nodeName, dependentNode
     this.levels[level].push(nodeName);
     return true;
 };
+
+HistoryGraph.prototype.historyUpdate = function() {
+    // TODO finish this function.
+};
