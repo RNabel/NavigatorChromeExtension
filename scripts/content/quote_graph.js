@@ -16,11 +16,11 @@ Quote.prototype.setLocation = function (location) {
 };
 
 var QuoteGraph = {
-    
+
     quotes: [], // List of all quotes in the graph.
-    
+
     instance: undefined, // Contains the jsPlumb instance.
-    
+
     endpointTemplate: undefined,
     setup: function () {
         var instance = this.instance,
@@ -125,17 +125,16 @@ var QuoteGraph = {
         var text = ev.originalEvent.dataTransfer.getData('text/plain');
         var html_data = ev.originalEvent.dataTransfer.getData('text/html');
         var source_selector = ev.originalEvent.dataTransfer.getData('src');
-        
-        QuoteGraph.addNode(ev.offsetX, ev.offsetY);
-        setUpInfoBubble(text, html_data, url, source_selector);
+
+        QuoteGraph.addNode(ev.offsetX, ev.offsetY, url, text, html_data, source_selector);
     },
-    addNode: function (x, y) {
+    addNode: function (x, y, url, text, html_data, source_selector) {
         // Create div.
         this.i = this.i || 0;
         var id = this.i++;
         var $div = $('<div class="window">five<br/><br/><a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n    connections</a><br/><a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br/>\n    <a href="#"\n       class="cmdLink detach"\n       rel="dragDropWindow4">detach\n        all</a>\n</div>')
 
-        $($div).text("hello" + this.i);
+        $($div).text(text);
         $($div).attr('id', this.i);
         // Append to container.
         $(LEFT_PANE_SELECTOR).append($div);
@@ -160,9 +159,20 @@ var QuoteGraph = {
         $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.allowDrop);
         $('#' + WEBSITE_CONTENT_WRAPPER).on('dragstart', QuoteGraph.startDrag);
         QuoteGraph.setup(); // Register setup method.
-        QuoteGraph.addNode(100,100); // TODO delete as experimental.
+        QuoteGraph.addNode(100, 100); // TODO delete as experimental.
+
+        // Request information from back-end.
+        QuoteGraph.sendMessage({
+            type: HISTORY_INIT_DATA
+        });
 
         console.log("Quote graph initialized.");
+    },
+
+    tools: {
+        messageHandler: function (request, sender, sendResponse, sentFromExt) {
+            console.log("Quote Graph received message.")
+        }
     }
 };
 

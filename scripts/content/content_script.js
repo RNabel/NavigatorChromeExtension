@@ -70,10 +70,15 @@ var ContentScript = {
             // Initialize the history graph.
             console.log("Setting up History Graph");
             ContentScript.history_graph = new HistoryGraph();
+            ContentScript.history_graph.sendMessage =
+                ContentScript.tools.sendMessage;
             console.log("History Graph finished.");
 
-            // Initialize the quote graph.
+            // Initialize the quote graph and attach message handlers.
             console.log("Setting up Quote Graph.");
+            QuoteGraph.sendMessage =
+                ContentScript.tools.sendMessage;
+
             QuoteGraph.init();
             ContentScript.quote_graph = QuoteGraph;
             console.log("Quote Graph finished.")
@@ -92,7 +97,7 @@ var ContentScript = {
 
             // Add content to new div element.
             var $div = $('<div>');
-            $div.attr('id', 'content'); // TODO create UNIQUE id. Could use hash function.
+            $div.attr('id', 'content'); // TODO create UNIQUE id. Could use hash function. Why?
             $div.append($cont);
 
             // Append new div to body.
@@ -117,16 +122,24 @@ var ContentScript = {
 
     tools: {
         receiveMessages: function (request, sender, sendResponse) {
-            if (sender.tab) { // Sent from other tab.
+            var sentFromExt = !(sender.tab == undefined);
 
-            } else { // Sent from extension.
-                switch (request.type) {
-                    case "history_update":
-                        console.log("History update.");
+            if (request.deliver_to) {
+                switch (request.deliver_to) {
+                    case HISTORY_ID:
+                        ContentScript.history_graph.tools.messageHandler(request, sender, sendResponse, sentFromExt);
                         break;
+
+                    case QUOTE_ID:
+                        ContentScript.quote_graph.tools.messageHandler(request, sender, sendResponse, sentFromExt);
+                        break;
+
                     default:
-                        console.log("received message." + request);
+                        console.log("CONTENT_SCRIPT: Unknown deliver_to value: " + request.deliver_to);
+                        break;
                 }
+            } else {
+                console.log("CONTENT_SCRIPT: Received malformed request.");
             }
         },
 

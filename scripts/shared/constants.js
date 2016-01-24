@@ -7,3 +7,11 @@ var WEBSITE_CONTENT_WRAPPER = 'content',
 
     QUOTE_BUBBLE_CONTENT_ID = 'quoteContent',
     ENDPOINT_COLOR = "rgba(229,219,61,0.5)";
+
+// Messaging constants.
+
+var HISTORY_ID = "history",
+    HISTORY_UPDATE = "history_update",
+    HISTORY_INIT_DATA = "history_init_data";
+
+var QUOTE_ID = "quote_graph";

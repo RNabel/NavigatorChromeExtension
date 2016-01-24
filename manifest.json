@@ -36,6 +36,7 @@
   "background": {
     "scripts": [
       "lib/jquery-2.2.0.js",
+      "scripts/shared/constants.js",
       "scripts/shared/history_storage.js",
       "scripts/background/background.js"
     ]

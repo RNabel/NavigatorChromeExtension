@@ -61,7 +61,7 @@ var BackgroundScript = {
             tar.addParent(source);
 
             // Notify all content scripts to update graph as necessary.
-            BackgroundScript.history_graph.notifyContentScripts(source, target);
+            BackgroundScript.history_graph.notifyHistoryUpdate(source, target);
         },
 
         /**
@@ -69,8 +69,14 @@ var BackgroundScript = {
          * @param source
          * @param target
          */
-        notifyContentScripts: function(source, target) {
-
+        notifyHistoryUpdate: function (source, target) {
+            var message = {
+                deliver_to: HISTORY_ID,
+                source: source,
+                target: target,
+                type: HISTORY_UPDATE
+            };
+            BackgroundScript.tools.sendMessage(message);
         },
 
         /**
@@ -144,10 +150,11 @@ var BackgroundScript = {
          * @param obj {object} The object to be sent.
          * @param [tabID] {int} The ID of the tab. If not specified, message sent to all tabs.
          */
-        sendMessage : function (obj, tabID) {
-            chrome.tabs.query({}, function(tabs) {
-                var i= tabID || 0;
-                for (; i<tabs.length; ++i) {
+        sendMessage: function (obj, tabID) {
+            console.log("Sending message:" + obj);
+            chrome.tabs.query({}, function (tabs) {
+                var i = tabID || 0;
+                for (; i < tabs.length; ++i) {
                     chrome.tabs.sendMessage(tabs[i].id, obj);
 
                     if (tabID !== undefined) { // If tab id specified do not broadcast.

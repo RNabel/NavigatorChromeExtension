@@ -238,6 +238,19 @@ HistoryGraph.prototype.addNodeToLevel = function (level, nodeName, dependentNode
     return true;
 };
 
-HistoryGraph.prototype.historyUpdate = function() {
+HistoryGraph.prototype.historyUpdate = function () {
     // TODO finish this function.
+};
+
+HistoryGraph.prototype.tools = {};
+HistoryGraph.prototype.tools.messageHandler = function (request, sender, sendResponse, sentFromExt) {
+    console.log("History graph received message");
+
+    switch (request.type) {
+        case HISTORY_UPDATE:
+            console.log("History update.");
+            break;
+        default:
+            console.log("received message." + request);
+    }
 };
