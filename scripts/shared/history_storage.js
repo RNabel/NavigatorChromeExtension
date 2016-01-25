@@ -69,8 +69,9 @@ function HistoryStorage() {
  * @param {HistoryRecord} record - The record object.
  */
 HistoryStorage.prototype.addRecord = function (record) {
-    // TODO Check if already existent.
-    this.list.push(record);
+    if ($.inArray(record, this.list) === -1) {
+        this.list.push(record);
+    }
 };
 
 /**

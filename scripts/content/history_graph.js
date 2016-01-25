@@ -96,7 +96,6 @@ function HistoryGraph() {
     // Instantiate Sigma object.
     this.sig = new sigma(
         {
-            //graph: g, // TODO remove as testing code.
             container: 'rightPane',
             settings: {
                 defaultNodeColor: '#ec5148'

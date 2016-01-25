@@ -13,14 +13,11 @@ var ContentScript = {
         console.log('Entered entry point.');
         var $contentDiv = ContentScript.setup.wrapOriginalContentInDiv();
 
-        var leftContentPaneSize = '20%';
-        var rightContentPaneSize = '20%';
-
-        var contentSize = (100 - parseFloat(leftContentPaneSize) - parseFloat(rightContentPaneSize)) + '%';
+        var contentSize = (100 - parseFloat(QUOTE_PANE_WIDTH) - parseFloat(HISTORY_PANE_WIDTH)) + '%';
 
         ContentScript.setup.resizeContent(contentSize, $contentDiv);
 
-        ContentScript.setup.addSidePanes(leftContentPaneSize, rightContentPaneSize); // TODO add to func signature.
+        ContentScript.setup.addSidePanes();
     },
 
     setup: {
@@ -28,11 +25,8 @@ var ContentScript = {
          * Sets up the panes displaying the history and quote graph.
          * Adapted from: [link]{http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages}
          *
-         * @param leftPaneSize
-         * @param rightPaneSize
          */
-        // TODO update the constants, check that it works, and morphe the contents of the setup into the respective constructors.
-        addSidePanes: function (leftPaneSize, rightPaneSize) {
+        addSidePanes: function () {
             var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '"></div>');
             var left = $('<div class="drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '"><div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div></div></div>');
 
@@ -49,13 +43,13 @@ var ContentScript = {
                     el.css({
                         'left': '0px',
                         'box-shadow': 'inset 0 0 1em black',
-                        'width': leftPaneSize
+                        'width': QUOTE_PANE_WIDTH
                     });
                 } else {
                     el.css({
                         'right': '0px',
                         'box-shadow': 'inset 0 0 1em black',
-                        'width': rightPaneSize
+                        'width': HISTORY_PANE_WIDTH
                     });
                 }
             }
@@ -97,7 +91,17 @@ var ContentScript = {
 
             // Add content to new div element.
             var $div = $('<div>');
-            $div.attr('id', 'content'); // TODO create UNIQUE id. Could use hash function. Why?
+            var i = 0;
+
+            // Ensure unique ID for website wrapper.
+            var contentId = WEBSITE_CONTENT_WRAPPER_ID;
+            while ($("#" + contentId).length) {
+                 i++;
+                contentId = WEBSITE_CONTENT_WRAPPER_ID + i;
+            }
+            WEBSITE_CONTENT_WRAPPER_ID = contentId;
+
+            $div.attr('id', 'content');
             $div.append($cont);
 
             // Append new div to body.

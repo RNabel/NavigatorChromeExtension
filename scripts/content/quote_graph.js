@@ -147,8 +147,6 @@ var QuoteGraph = {
 
         // Make all nodes draggable, should use specific id, rather than class.
         this.instance.draggable(jsPlumb.getSelector(".drag-drop-demo .window"));
-
-        // TODO figure out how to position.
     },
 
     init: function () {
@@ -159,7 +157,6 @@ var QuoteGraph = {
         $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.allowDrop);
         $('#' + WEBSITE_CONTENT_WRAPPER).on('dragstart', QuoteGraph.startDrag);
         QuoteGraph.setup(); // Register setup method.
-        QuoteGraph.addNode(100, 100); // TODO delete as experimental.
 
         // Request information from back-end.
         QuoteGraph.sendMessage({
