@@ -73,8 +73,10 @@ var ContentScript = {
             QuoteGraph.sendMessage =
                 ContentScript.tools.sendMessage;
 
-            QuoteGraph.init();
             ContentScript.quote_graph = QuoteGraph;
+            (function () {
+                jsPlumb.ready(QuoteGraph.init);
+            })();
             console.log("Quote Graph finished.")
         },
 

@@ -36,6 +36,20 @@ var BackgroundScript = {
         currentTabUrls: {},
 
         /**
+         * Sends entire history to the specified tab.
+         * @param tabId
+         */
+        sendEntireHistory: function (tabId) {
+            var message = {
+                deliver_to : HISTORY_ID,
+                type: HISTORY_INIT_DATA,
+                data: BackgroundScript.history_graph.history
+            };
+            //BackgroundScript.tools.sendMessage(message, tabId); FIXME not sending to correct tab when tab id is specified.
+            BackgroundScript.tools.sendMessage(message);
+        },
+
+        /**
          * Creates new connection.
          * @param source {string} - The URL (or id) of the source page.
          * @param target {string} - The URL (or id) of the target page.
@@ -150,7 +164,7 @@ var BackgroundScript = {
          * @param obj {object} The object to be sent.
          * @param [tabID] {int} The ID of the tab. If not specified, message sent to all tabs.
          */
-        sendMessage: function (obj, tabID) {
+        sendMessage: function (obj, tabID) { // FIXME not working when tab id is specified.
             console.log("Sending message:" + obj);
             chrome.tabs.query({}, function (tabs) {
                 var i = tabID || 0;
@@ -162,27 +176,36 @@ var BackgroundScript = {
                     }
                 }
             });
+        },
+
+        /**
+         * The callback method triggered by a message received event.
+         * Further information can be found [Google's official documentation]{@link https://developer.chrome.com/extensions/runtime#event-onMessage}
+         * @param request {object} The message.
+         * @param sender {MessageSender} The sender of the message.
+         * @param sendResponse {function} The function to be used to deliver a response.
+         *
+         */
+        receiveMessage: function (request, sender, sendResponse) {
+            if (!request.type) {
+                console.log('Invalid request received by extension - type field not specified.');
+                return;
+            }
+
+            // Forward data to respective handler.
+            switch (request.type) {
+                case HISTORY_INIT_DATA: // A new tab was opened and requires the entire history data set.
+                    BackgroundScript.history_graph.sendEntireHistory(sender.tab.id);
+                    break;
+            }
         }
     }
 };
 
 // Message end point.
 chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (!request.type) {
-            console.log('Invalid request received by extension - type field not specified.');
-            return;
-        }
-        // Delete unnecessary data fields.
-        delete request.type;
-
-        // Forward data to respective handler.
-        switch (request.type) {
-            case 'new_snippet': // A new element was dragged onto the left pane.
-                newSnippetHandler(request);
-                break;
-        }
-    });
+    BackgroundScript.tools.receiveMessage
+);
 
 chrome.tabs.onUpdated.addListener(
     BackgroundScript.history_graph.onTabChange

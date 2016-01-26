@@ -58,10 +58,14 @@ HistoryRecord.prototype.addAccessTime = function (_access_time) {
 
 /**
  * Object which contains all HistoryRecords and makes accessor methods available.
+ * @param init_list {array | HistoryStorage} History storage / list of [History records]{@link HistoryRecord} to be copied.
  * @constructor The object's constructor.
  */
-function HistoryStorage() {
-    this.list = []
+function HistoryStorage(init_list) {
+    this.list = [];
+    if (init_list !== undefined) {
+        this.list = init_list;
+    }
 }
 
 /**

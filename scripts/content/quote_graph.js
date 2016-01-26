@@ -155,7 +155,7 @@ var QuoteGraph = {
 
         $(LEFT_PANE_SELECTOR).on('drop', QuoteGraph.drop);
         $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.allowDrop);
-        $('#' + WEBSITE_CONTENT_WRAPPER).on('dragstart', QuoteGraph.startDrag);
+        $('#' + WEBSITE_CONTENT_WRAPPER_ID).on('dragstart', QuoteGraph.startDrag);
         QuoteGraph.setup(); // Register setup method.
 
         // Request information from back-end.
@@ -173,6 +173,3 @@ var QuoteGraph = {
     }
 };
 
-(function () {
-    jsPlumb.ready(QuoteGraph.init);
-})();

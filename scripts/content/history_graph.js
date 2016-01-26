@@ -249,6 +249,9 @@ HistoryGraph.prototype.tools.messageHandler = function (request, sender, sendRes
         case HISTORY_UPDATE:
             console.log("History update.");
             break;
+        case HISTORY_INIT_DATA:
+            console.log("History initial data received");
+            break;
         default:
             console.log("received message." + request);
     }
