@@ -33,6 +33,7 @@ var BackgroundScript = {
 
     history_graph: {
         history: new HistoryStorage(),
+        title_cache: {},
         currentTabUrls: {},
 
         /**
@@ -40,8 +41,9 @@ var BackgroundScript = {
          * @param tabId
          */
         sendEntireHistory: function (tabId) {
+            console.log("Send entire history - initial.");
             var message = {
-                deliver_to : HISTORY_ID,
+                deliver_to: HISTORY_ID,
                 type: HISTORY_INIT_DATA,
                 data: BackgroundScript.history_graph.history
             };
@@ -51,28 +53,26 @@ var BackgroundScript = {
 
         /**
          * Creates new connection.
-         * @param source {string} - The URL (or id) of the source page.
-         * @param target {string} - The URL (or id) of the target page.
+         * @param source {object} - The URL (or id) of the source page.
+         * @param target {object} - The URL (or id) of the target page.
          */
         createNewConnection: function (source, target) {
             // Check if history contains both source and target.
             var history = BackgroundScript.history_graph.history,
-                src = history.findRecord(source),
-                tar = history.findRecord(target);
+                src = history.findRecord(source.url),
+                tar = history.findRecord(target.url);
 
             if (!src) { // Create records if not existent.
-                src = new HistoryRecord(source,
-                    BackgroundScript.tools.timestamp());
+                src = new HistoryRecord(source.url, BackgroundScript.tools.timestamp(), source.title);
                 history.addRecord(src);
             }
             if (!tar) {
-                tar = new HistoryRecord(target,
-                    BackgroundScript.tools.timestamp());
+                tar = new HistoryRecord(target.url, BackgroundScript.tools.timestamp(), target.title);
                 history.addRecord(tar);
             }
 
-            src.addChild(target);
-            tar.addParent(source);
+            src.addChild(target.url);
+            tar.addParent(source.url);
 
             // Notify all content scripts to update graph as necessary.
             BackgroundScript.history_graph.notifyHistoryUpdate(source, target);
@@ -84,10 +84,10 @@ var BackgroundScript = {
          * @param target
          */
         notifyHistoryUpdate: function (source, target) {
+            console.log("Sending history update.");
             var message = {
                 deliver_to: HISTORY_ID,
-                source: source,
-                target: target,
+                data: BackgroundScript.history_graph.history,
                 type: HISTORY_UPDATE
             };
             BackgroundScript.tools.sendMessage(message);
@@ -101,26 +101,39 @@ var BackgroundScript = {
          * @param tab {Tab} The state of the updated tab.
          */
         onTabChange: function (tabId, changeInfo, tab) {
+            if (changeInfo.status != "complete") {
+                return;
+            }
+
+            console.log("tab change detected.");
             var windowId = tab.windowId,
                 key = tabId + '_' + windowId,
                 history = BackgroundScript.history_graph.currentTabUrls;
+
+            // Create objects representing the start and end points.
+            var target = {
+                    url: tab.url,
+                    title: tab.title
+                },
+                source = history[key];
+
+            if (target.url == target.title) {
+                console.log("URL and TITLE are equal, chacking title cache.");
+                if (BackgroundScript.history_graph.title_cache.hasOwnProperty(target.url)) {
+                    target.title = BackgroundScript.history_graph.title_cache[target.url];
+                }
+            }
+
             // Check if tab is registered.
             if (key in history) {
-                if (history[key] == (changeInfo.url || tab.url)) {
-                    //console.log("URL of " + key + " was already in history.")
-                } else {
+                if (history[key] != (changeInfo.url || tab.url)) {
                     // Add new connection to background storage.
-                    var target = tab.url;
-                    var source = history[key];
-                    //console.log("URL transition " + source + " -> " + target + " was added.");
                     BackgroundScript.history_graph.createNewConnection(source, target);
                 }
-            } else {
-                //console.log("Inserted new history record. key:" + key + " tURL:" + tab.url + "\n\tciURL:" + changeInfo.url);
             }
 
             // Insert url into array.
-            history[key] = tab.url;
+            history[key] = target;
         },
 
         /**
@@ -184,7 +197,6 @@ var BackgroundScript = {
          * @param request {object} The message.
          * @param sender {MessageSender} The sender of the message.
          * @param sendResponse {function} The function to be used to deliver a response.
-         *
          */
         receiveMessage: function (request, sender, sendResponse) {
             if (!request.type) {
@@ -195,6 +207,9 @@ var BackgroundScript = {
             // Forward data to respective handler.
             switch (request.type) {
                 case HISTORY_INIT_DATA: // A new tab was opened and requires the entire history data set.
+                    console.log("Sending INIT history.");
+                    var data = request.data;
+                    BackgroundScript.history_graph.title_cache[data.url] = data.title;
                     BackgroundScript.history_graph.sendEntireHistory(sender.tab.id);
                     break;
             }

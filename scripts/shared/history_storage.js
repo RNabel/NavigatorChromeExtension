@@ -4,20 +4,31 @@
 
 /**
  * Function that creates an object to store a node in the history tree.
- * @param {string} URL - acts as unique ID.
- * @param {number} access_time - list of UNIX time stamps.
- * @param {string} [parent] - array of parent URLs.
+ * @param URL {string | object} - acts as unique ID; or is cloned HistoryRecord.
+ * @param [access_time] {number} - list of UNIX time stamps.
+ * @param [title] {string} -   The title of the web page.
+ * @param [parent] {string} - array of parent URLs.
  */
-function HistoryRecord(URL, access_time, parent) {
-    this.URL = URL;
-    this.access_times = [access_time];
-    this.children = [];
+function HistoryRecord(URL, access_time, title, parent) {
+    if (arguments.length > 1) { // Each parameter passed separately.
+        this.URL = URL;
+        this.access_times = [access_time];
+        this.children = [];
+        this.title = title;
+        if (parent) {
+            this.parents = [parent];
+        } else {
+            this.parents = [];
+        }
 
-    if (parent) {
-        this.parents = [parent];
-    } else {
-        this.parents = [];
+    } else { // A cloned HistoryRecord is passed.
+        this.URL = URL.URL;
+        this.access_times = URL.access_times;
+        this.children = URL.children;
+        this.parents = URL.parents;
+        this.title = URL.title;
     }
+
 }
 
 /**
@@ -56,15 +67,30 @@ HistoryRecord.prototype.addAccessTime = function (_access_time) {
     this.access_times.push(_access_time);
 };
 
+HistoryRecord.prototype.getChildren = function () {
+    return this.children;
+};
+
+HistoryRecord.prototype.getParents = function () {
+    return this.parents;
+};
+
+HistoryRecord.prototype.getTitle = function () {
+    return this.title;
+};
+
 /**
  * Object which contains all HistoryRecords and makes accessor methods available.
- * @param init_list {array | HistoryStorage} History storage / list of [History records]{@link HistoryRecord} to be copied.
+ * @param init_list {object[] | HistoryStorage} History storage / list of [History records]{@link HistoryRecord} to be copied.
  * @constructor The object's constructor.
  */
 function HistoryStorage(init_list) {
     this.list = [];
     if (init_list !== undefined) {
-        this.list = init_list;
+        for (var i = 0; i < init_list.length; i++) {
+            var rec = init_list[i];
+            this.list.push(new HistoryRecord(rec));
+        }
     }
 }
 
@@ -73,9 +99,14 @@ function HistoryStorage(init_list) {
  * @param {HistoryRecord} record - The record object.
  */
 HistoryStorage.prototype.addRecord = function (record) {
-    if ($.inArray(record, this.list) === -1) {
-        this.list.push(record);
+    for (var i = 0; i < this.list.length; i++) {
+        var element = this.list[i];
+        if (element.url == record.URL) {
+            return;
+        }
     }
+
+    this.list.push(record);
 };
 
 /**

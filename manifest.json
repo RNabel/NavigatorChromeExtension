@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://www.wired.com//*"
+        "*://*.wikipedia.org/*"
       ],
       "css": [
         "lib/css/bootstrap-3.2.0/dist/css/bootstrap.min.css",
@@ -26,6 +26,7 @@
         "lib/sigma.js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js",
         "lib/jsPlumb-2.0.5.js",
         "scripts/shared/constants.js",
+        "scripts/shared/history_storage.js",
         "scripts/content/history_graph.js",
         "scripts/content/quote_graph.js",
         "scripts/content/content_script.js"

@@ -11,6 +11,14 @@ var WEBSITE_CONTENT_WRAPPER_ID = 'content',// Can change at runtime, if ID name-
     QUOTE_PANE_WIDTH = '20%',
     HISTORY_PANE_WIDTH = '20%';
 
+// History graph.
+var TOTAL_LEVELS = 7,
+    MAX_X = 1.5,
+    MIN_X = -1.5,
+    MAX_Y = 3,
+    MIN_Y = -3;
+
+
 // Messaging constants.
 var HISTORY_ID = "history",
     HISTORY_UPDATE = "history_update",

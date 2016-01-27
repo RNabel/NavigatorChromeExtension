@@ -38,7 +38,8 @@
 
 <script type="text/javascript">
     //  Instantiate graph using JS functionality.
-    gra = new HistoryGraph();
+    gra = HistoryGraph;
+    gra.init();
     gra.addNodeToLevel(3, 'main');
     gra.addNodeToLevel(2, 'chi1', 'main');
     gra.addNodeToLevel(1, 'chichi1', 'chi1');

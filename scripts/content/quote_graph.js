@@ -37,11 +37,9 @@ var QuoteGraph = {
             MaxConnections: 1000
         });
         instance = this.instance;
-        console.log("WAHEEEY");
 
         // suspend drawing and initialise.
         this.instance.batch(function () {
-            console.log("BAAATCH");
             // configure some drop options for use by all endpoints.
             var exampleDropOptions = {
                 tolerance: "touch",
@@ -157,11 +155,6 @@ var QuoteGraph = {
         $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.allowDrop);
         $('#' + WEBSITE_CONTENT_WRAPPER_ID).on('dragstart', QuoteGraph.startDrag);
         QuoteGraph.setup(); // Register setup method.
-
-        // Request information from back-end.
-        QuoteGraph.sendMessage({
-            type: HISTORY_INIT_DATA
-        });
 
         console.log("Quote graph initialized.");
     },

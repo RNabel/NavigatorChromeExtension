@@ -63,15 +63,14 @@ var ContentScript = {
 
             // Initialize the history graph.
             console.log("Setting up History Graph");
-            ContentScript.history_graph = new HistoryGraph();
-            ContentScript.history_graph.sendMessage =
-                ContentScript.tools.sendMessage;
+            ContentScript.history_graph = HistoryGraph;
+            ContentScript.history_graph.sendMessage = ContentScript.tools.sendMessage;
+            ContentScript.history_graph.init();
             console.log("History Graph finished.");
 
             // Initialize the quote graph and attach message handlers.
             console.log("Setting up Quote Graph.");
-            QuoteGraph.sendMessage =
-                ContentScript.tools.sendMessage;
+            QuoteGraph.sendMessage = ContentScript.tools.sendMessage;
 
             ContentScript.quote_graph = QuoteGraph;
             (function () {
