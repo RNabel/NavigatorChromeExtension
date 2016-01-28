@@ -132,7 +132,15 @@ var QuoteGraph = {
         var id = this.i++;
         var $div = $('<div class="window">five<br/><br/><a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n    connections</a><br/><a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br/>\n    <a href="#"\n       class="cmdLink detach"\n       rel="dragDropWindow4">detach\n        all</a>\n</div>')
 
-        $($div).text(text);
+        // Check if image.
+        var htmlObj = $(html_data);
+        if (htmlObj.prop('tagName') == 'IMG') {
+            var source = htmlObj.attr('src');
+            $($div).append($('<img>').attr('src', source));
+        } else {
+            $($div).text(text);
+        }
+
         $($div).attr('id', this.i);
         // Append to container.
         $(LEFT_PANE_SELECTOR).append($div);
