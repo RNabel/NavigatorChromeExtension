@@ -8,8 +8,10 @@ var WEBSITE_CONTENT_WRAPPER_ID = 'content',// Can change at runtime, if ID name-
 
     QUOTE_BUBBLE_CONTENT_ID = 'quoteContent',
     ENDPOINT_COLOR = "rgba(229,219,61,0.5)",
-    QUOTE_PANE_WIDTH = '20%',
-    HISTORY_PANE_WIDTH = '20%';
+    QUOTE_PANE_WIDTH_ABS = 20,
+    QUOTE_PANE_WIDTH = QUOTE_PANE_WIDTH_ABS + '%',
+    HISTORY_PANE_HEIGHT_ABS = 20,
+    HISTORY_PANE_HEIGHT = HISTORY_PANE_HEIGHT_ABS + '%';
 
 // History graph.
 var TOTAL_LEVELS = 7,

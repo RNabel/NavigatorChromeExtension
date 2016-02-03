@@ -13,9 +13,9 @@ var ContentScript = {
         console.log('Entered entry point.');
         var $contentDiv = ContentScript.setup.wrapOriginalContentInDiv();
 
-        var contentSize = (100 - parseFloat(QUOTE_PANE_WIDTH) - parseFloat(HISTORY_PANE_WIDTH)) + '%';
+        var contentSize = (100 - parseFloat(QUOTE_PANE_WIDTH) - parseFloat(HISTORY_PANE_HEIGHT)) + '%';
 
-        ContentScript.setup.resizeContent(contentSize, $contentDiv);
+        ContentScript.setup.resizeAndPositionContent($contentDiv);
 
         ContentScript.setup.addSidePanes();
     },
@@ -33,23 +33,25 @@ var ContentScript = {
             function addStyle(el, isLeft) {
                 el.css({
                     'position': 'fixed',
-                    'top': '0px',
-                    'height': '100%',
                     'background': 'white',
                     'z-index': '999999',
                     'background-color': '#FAFAFA'
                 });
                 if (isLeft) {
                     el.css({
+                        'top': '0px',
                         'left': '0px',
                         'box-shadow': 'inset 0 0 1em black',
+                        'height': 100 - HISTORY_PANE_HEIGHT_ABS + '%',
+                        'bottom': HISTORY_PANE_HEIGHT,
                         'width': QUOTE_PANE_WIDTH
                     });
                 } else {
                     el.css({
-                        'right': '0px',
+                        'bottom': '0px',
                         'box-shadow': 'inset 0 0 1em black',
-                        'width': HISTORY_PANE_WIDTH
+                        'height': HISTORY_PANE_HEIGHT,
+                        'width': '100%'
                     });
                 }
             }
@@ -79,11 +81,15 @@ var ContentScript = {
             console.log("Quote Graph finished.")
         },
 
-        resizeContent: function (contentSize, $contentDiv) {
+        resizeAndPositionContent: function ($contentDiv) {
             // Resize body content. Potential issues relate to the
-            $contentDiv.width(contentSize);
-            $contentDiv.css('margin-left', '20%');
-            $contentDiv.css('position', 'absolute');
+            var width = 100 - QUOTE_PANE_WIDTH_ABS;
+
+            $contentDiv
+                .css('margin-left', QUOTE_PANE_WIDTH)
+                .css('margin-bottom', HISTORY_PANE_HEIGHT)
+                .css('width', width + '%')
+                .css('position', 'absolute');
         },
 
         wrapOriginalContentInDiv: function () {
@@ -97,7 +103,7 @@ var ContentScript = {
             // Ensure unique ID for website wrapper.
             var contentId = WEBSITE_CONTENT_WRAPPER_ID;
             while ($("#" + contentId).length) {
-                 i++;
+                i++;
                 contentId = WEBSITE_CONTENT_WRAPPER_ID + i;
             }
             WEBSITE_CONTENT_WRAPPER_ID = contentId;
