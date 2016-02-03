@@ -208,23 +208,23 @@ var HistoryGraph = {
         if (nodeID !== undefined) {
 
             // Calculate the location of the node.
-            var x,
-                y,
+            var yCoord,
+                xCoord,
                 diameter = 3,
                 nodeFound = false;
 
             // Calculate y coordinate.
-            y = level - HistoryGraph.currentNodeIndex;
+            xCoord = level - HistoryGraph.currentNodeIndex;
 
             // Calculate x coordinate.
             var numOfNodesInLevel = (HistoryGraph.levels[level] && HistoryGraph.levels[level].length) || 0;
 
             if (numOfNodesInLevel === 0) {
-                x = 0;
+                yCoord = 0;
                 nodeFound = true;
             } else {
                 var dist = (HistoryGraph.maxY - HistoryGraph.minY) / (numOfNodesInLevel);
-                x = HistoryGraph.minY;
+                yCoord = HistoryGraph.minY;
 
                 for (var i = 0; i < numOfNodesInLevel; i++) {
                     var currNodeName = HistoryGraph.levels[level][i];
@@ -238,8 +238,8 @@ var HistoryGraph = {
                         }
                     }
 
-                    HistoryGraph.sig.graph.nodes()[j].x = x;
-                    x += dist;
+                    HistoryGraph.sig.graph.nodes()[j].y = yCoord;
+                    yCoord += dist;
                 }
             }
 
@@ -248,8 +248,8 @@ var HistoryGraph = {
                 HistoryGraph.sig.graph.addNode({
                     id: nodeID, // FIXME potential duplicates, requires fixing if id is used uniquely.
                     label: nodeLabel,
-                    x: x,
-                    y: y,
+                    y: yCoord,
+                    x: xCoord,
                     size: diameter
                 });
             }

@@ -13,8 +13,6 @@ var ContentScript = {
         console.log('Entered entry point.');
         var $contentDiv = ContentScript.setup.wrapOriginalContentInDiv();
 
-        var contentSize = (100 - parseFloat(QUOTE_PANE_WIDTH) - parseFloat(HISTORY_PANE_HEIGHT)) + '%';
-
         ContentScript.setup.resizeAndPositionContent($contentDiv);
 
         ContentScript.setup.addSidePanes();
