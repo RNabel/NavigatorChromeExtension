@@ -26,4 +26,7 @@ var HISTORY_ID = "history",
     HISTORY_UPDATE = "history_update",
     HISTORY_INIT_DATA = "history_init_data";
 
-var QUOTE_ID = "quote_graph";
+var QUOTE_ID = "quote_graph",
+    QUOTE_UPDATE = "quote_update",
+    QUOTE_CONNECTION_UPDATE = "quote_connection_update",
+    QUOTE_INIT_DATA = "quote_init_data";

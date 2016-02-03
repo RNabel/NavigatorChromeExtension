@@ -7,7 +7,7 @@ var ContentScript = {
     quote_graph: undefined,
 
     /**
-     * Function which sets up the page.
+     * Set up page.
      */
     init: function () {
         console.log('Entered entry point.');
@@ -20,8 +20,8 @@ var ContentScript = {
 
     setup: {
         /**
-         * Sets up the panes displaying the history and quote graph.
-         * Adapted from: [link]{http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages}
+         * Set up the panes displaying the history and quote graph.
+         * Adapted from: [link]{@link http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages}
          *
          */
         addSidePanes: function () {
@@ -79,6 +79,10 @@ var ContentScript = {
             console.log("Quote Graph finished.")
         },
 
+        /**
+         * Resize and position the original content of the page.
+         * @param $contentDiv {jQuery | HTMLElement} The wrapper of the original page content.
+         */
         resizeAndPositionContent: function ($contentDiv) {
             // Resize body content. Potential issues relate to the
             var width = 100 - QUOTE_PANE_WIDTH_ABS;
@@ -90,6 +94,10 @@ var ContentScript = {
                 .css('position', 'absolute');
         },
 
+        /**
+         * Wrap original page content in div element.
+         * @returns {jQuery | HTMLElement}
+         */
         wrapOriginalContentInDiv: function () {
             // Get content of body tag.
             var $cont = $(document.body).children();
@@ -114,19 +122,7 @@ var ContentScript = {
             $bod.append($div);
 
             return $div;
-        },
-
-        getSelectionText: function () {
-            var text = '';
-            if (window.getSelection) {
-                text = window.getSelection().toString();
-            } else if (document.selection && document.selection.type != 'Control') {
-                text = document.selection.createRange().text;
-            }
-            return text;
         }
-
-
     },
 
     tools: {
@@ -158,6 +154,20 @@ var ContentScript = {
                 };
             }
             chrome.runtime.sendMessage(msgObj, responseHandler);
+        },
+
+        /**
+         * Extract text which is currently selected.
+         * @returns {string} The selected text.
+         */
+        getSelectionText: function () {
+            var text = '';
+            if (window.getSelection) {
+                text = window.getSelection().toString();
+            } else if (document.selection && document.selection.type != 'Control') {
+                text = document.selection.createRange().text;
+            }
+            return text;
         }
 
     }

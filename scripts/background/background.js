@@ -7,27 +7,35 @@ var BackgroundScript = {
         // The variable which holds content for the left pane to display
         savedText: {},
         uuidToUrlMap: {},
-        // Method used to handle the creation of a snippet. Is handed the data sent from the content script.
-        newSnippetHandler: function (object) {
-            var uuid = guid();
-            addLeftNode(uuid, object);
+        quoteStorage: new QuoteStorage(),
+
+        /**
+         * Sends entire history to the specified tab.
+         * @param tabId
+         */
+        sendAllQuotes: function (tabId) {
+            console.log("Send all quotes - initial.");
+            var message = {
+                deliver_to: QUOTE_ID,
+                type: QUOTE_INIT_DATA,
+                data: BackgroundScript.quote_graph.quoteStorage
+            };
+            //BackgroundScript.tools.sendMessage(message, tabId); FIXME not sending to correct tab when tab id is specified.
+            BackgroundScript.tools.sendMessage(message);
         },
-        addLeftNode: function (uuid, node) {
-            // Add node to node map.
-            savedText[uuid] = node;
 
-            // Add url to UUID map.
-            var li = uuidToUrlMap[node.url];
+        onQuoteUpdate: function (update) {
+            var quote = new QuoteRecord(update);
+            BackgroundScript.quote_graph.quoteStorage.addQuote(quote);
 
-            //  Check if it contains the url already.
-            if (li !== undefined) {
-                // Extend the list of UUIDs it.
-                li.push(uuid);
+            BackgroundScript.quote_graph.sendAllQuotes();
+        },
 
-            } else {
-                uuidToUrlMap[node.url] = [uuid];
-            }
+        onQuoteConnectionUpdate: function (source, target) {
+            var connection = new QuoteConnection({source: source, target: target});
+            BackgroundScript.quote_graph.quoteStorage.addConnection(connection);
 
+            BackgroundScript.quote_graph.sendAllQuotes();
         }
     },
 
@@ -63,11 +71,11 @@ var BackgroundScript = {
                 tar = history.findRecord(target.url);
 
             if (!src) { // Create records if not existent.
-                src = new HistoryRecord(source.url, BackgroundScript.tools.timestamp(), source.title);
+                src = new HistoryRecord(source.url, utils.timestamp(), source.title);
                 history.addRecord(src);
             }
             if (!tar) {
-                tar = new HistoryRecord(target.url, BackgroundScript.tools.timestamp(), target.title);
+                tar = new HistoryRecord(target.url, utils.timestamp(), target.title);
                 history.addRecord(tar);
             }
 
@@ -150,29 +158,6 @@ var BackgroundScript = {
 
     tools: {
         /**
-         * UUID generator, used to create indices for the text nodes.
-         * @returns {string} The unique identifier.
-         */
-        guid: function () {
-            function s4() {
-                return Math.floor((1 + Math.random()) * 0x10000)
-                    .toString(16)
-                    .substring(1);
-            }
-
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-                s4() + '-' + s4() + s4() + s4();
-        },
-
-        /**
-         * Creates UNIX-style timestamp.
-         * @returns {number} The current timestamp.
-         */
-        timestamp: function () {
-            return Math.floor(Date.now() / 1000);
-        },
-
-        /**
          * Sends object to all content scripts, and allows setting a callback function.
          * @param obj {object} The object to be sent.
          * @param [tabID] {int} The ID of the tab. If not specified, message sent to all tabs.
@@ -196,21 +181,41 @@ var BackgroundScript = {
          * Further information can be found [Google's official documentation]{@link https://developer.chrome.com/extensions/runtime#event-onMessage}
          * @param request {object} The message.
          * @param sender {MessageSender} The sender of the message.
-         * @param sendResponse {function} The function to be used to deliver a response.
          */
-        receiveMessage: function (request, sender, sendResponse) {
+        receiveMessage: function (request, sender) {
             if (!request.type) {
                 console.log('Invalid request received by extension - type field not specified.');
                 return;
             }
 
             // Forward data to respective handler.
+            var data = request.data;
             switch (request.type) {
                 case HISTORY_INIT_DATA: // A new tab was opened and requires the entire history data set.
                     console.log("Sending INIT history.");
-                    var data = request.data;
                     BackgroundScript.history_graph.title_cache[data.url] = data.title;
                     BackgroundScript.history_graph.sendEntireHistory(sender.tab.id);
+                    break;
+
+                case QUOTE_INIT_DATA:
+                    console.log("Sending INIT Quote.");
+                    BackgroundScript.quote_graph.sendAllQuotes();
+                    break;
+
+                case QUOTE_UPDATE:
+                    console.log("Quote update received.");
+                    console.log(data);
+
+                    BackgroundScript.quote_graph.onQuoteUpdate(data);
+                    break;
+
+                case QUOTE_CONNECTION_UPDATE:
+                    console.log("Quote connection update received");
+                    BackgroundScript.quote_graph.onQuoteConnectionUpdate(data.source, data.target);
+                    break;
+
+                default:
+                    console.log("Received message could not be routed.");
                     break;
             }
         }

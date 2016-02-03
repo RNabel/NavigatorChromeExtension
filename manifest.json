@@ -26,6 +26,8 @@
         "lib/sigma.js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js",
         "lib/jsPlumb-2.0.5.js",
         "scripts/shared/constants.js",
+        "scripts/shared/utils.js",
+        "scripts/shared/quote_storage.js",
         "scripts/shared/history_storage.js",
         "scripts/content/history_graph.js",
         "scripts/content/quote_graph.js",
@@ -38,6 +40,8 @@
     "scripts": [
       "lib/jquery-2.2.0.js",
       "scripts/shared/constants.js",
+      "scripts/shared/utils.js",
+      "scripts/shared/quote_storage.js",
       "scripts/shared/history_storage.js",
       "scripts/background/background.js"
     ]

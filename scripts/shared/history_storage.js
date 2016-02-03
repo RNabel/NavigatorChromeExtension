@@ -28,7 +28,6 @@ function HistoryRecord(URL, access_time, title, parent) {
         this.parents = URL.parents;
         this.title = URL.title;
     }
-
 }
 
 /**
@@ -81,7 +80,7 @@ HistoryRecord.prototype.getTitle = function () {
 
 /**
  * Object which contains all HistoryRecords and makes accessor methods available.
- * @param init_list {object[] | HistoryStorage} History storage / list of [History records]{@link HistoryRecord} to be copied.
+ * @param [init_list] {object[] | HistoryStorage} History storage / list of [History records]{@link HistoryRecord} to be copied.
  * @constructor The object's constructor.
  */
 function HistoryStorage(init_list) {
