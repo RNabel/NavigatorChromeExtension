@@ -38,9 +38,9 @@ var QuoteGraph = {
         });
         instance = this.instance;
 
-        // suspend drawing and initialise.
+        // Suspend drawing and initialise.
         this.instance.batch(function () {
-            // configure some drop options for use by all endpoints.
+            // Configure some drop options for use by all endpoints.
             var exampleDropOptions = {
                 tolerance: "touch",
                 hoverClass: "dropHover",
@@ -111,7 +111,7 @@ var QuoteGraph = {
             target = info.target.id;
 
         // Only notify of new connection if user induced new connection.
-        if (false || !QuoteGraph.quotes.existsConnection(source, target)) {
+        if (!QuoteGraph.quotes.existsConnection(source, target)) {
             QuoteGraph.sendMessage({
                 type: QUOTE_CONNECTION_UPDATE,
                 data: {
@@ -134,7 +134,7 @@ var QuoteGraph = {
 
         QuoteGraph.quotes = new QuoteStorage(quoteStorage);
         quoteStorage = QuoteGraph.quotes;
-        
+
         // Create all nodes.
         var nodes = quoteStorage.getAllQuotes();
         for (var i = 0; i < nodes.length; i++) {
@@ -211,11 +211,17 @@ var QuoteGraph = {
         $div.css({top: y, left: x});
 
         // Add the endpointTemplate to it.
+        endpointTemplate.uuid = id;
         var ret = this.instance.addEndpoint($div, endpointTemplate);
-        $(ret.getElement()).attr('id', id); // Set the id.
+        this.instance.setId(ret.getElement(), id);
 
         // Make all nodes draggable, should use specific id, rather than class.
-        this.instance.draggable(jsPlumb.getSelector(".drag-drop-demo .window"));
+        this.instance.draggable(jsPlumb.getSelector(".drag-drop-demo .window"),
+            {
+                drop: function (event, ui) {
+                    console.log("drop");
+                }
+            });
 
         return id;
     },
@@ -226,7 +232,7 @@ var QuoteGraph = {
      * @param target {string | int} The target id.
      */
     addConnection: function (source, target) {
-        QuoteGraph.instance.connect({source: source, target: target});
+        QuoteGraph.instance.connect({uuids: [source, target]});
     },
 
     init: function () {
