@@ -3,11 +3,13 @@
  */
 function QuoteRecord(id, text, html_data, type, URL, xPath, location) {
     if (typeof id == 'object') { // If constructor object is passed.
+        text = id.text;
         html_data = id.html_data;
+        type = id.type;
         URL = id.URL;
         xPath = id.xPath;
         location = id.location;
-        text = id.text;
+
         id = id.id;
     }
 
