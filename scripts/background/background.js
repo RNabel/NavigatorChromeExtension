@@ -31,6 +31,19 @@ var BackgroundScript = {
             BackgroundScript.quote_graph.sendAllQuotes();
         },
 
+        onQuoteLocationUpdate: function (update) {
+            // Find quote instance by UUID.
+            var quoteRecord = BackgroundScript.quote_graph.quoteStorage.getQuote(update.uuid);
+            // Update the location from update.
+
+            if (quoteRecord) {
+                quoteRecord.location = {
+                    x: update.x,
+                    y: update.y
+                };
+            }
+        },
+
         onQuoteConnectionUpdate: function (source, target) {
             var connection = new QuoteConnection({source: source, target: target});
             BackgroundScript.quote_graph.quoteStorage.addConnection(connection);
@@ -204,9 +217,14 @@ var BackgroundScript = {
 
                 case QUOTE_UPDATE:
                     console.log("Quote update received.");
-                    console.log(data);
 
                     BackgroundScript.quote_graph.onQuoteUpdate(data);
+                    break;
+
+                case QUOTE_LOCATION_UPDATE:
+                    console.log("Quote location update.");
+
+                    BackgroundScript.quote_graph.onQuoteLocationUpdate(data);
                     break;
 
                 case QUOTE_CONNECTION_UPDATE:

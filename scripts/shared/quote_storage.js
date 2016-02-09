@@ -78,6 +78,23 @@ QuoteStorage.prototype.existsConnection = function(source, target) {
 };
 
 /**
+ * Return QuoteRecord object if Uuid exists in record store or False
+ * @param uuid {string} The UUID of the QuoteRecord.
+ *
+ * @returns {QuoteRecord | boolean} The QuoteRecord instance if found, false otherwise.
+ */
+QuoteStorage.prototype.getQuote = function(uuid) {
+    for (var i = 0; i < this.quotes.length; i++) {
+        var quote = this.quotes[i];
+        if (quote.id == uuid) {
+            return quote;
+        }
+    }
+
+    return false;
+};
+
+/**
  * Return array of all quotes.
  * @returns {QuoteRecord[]}
  */

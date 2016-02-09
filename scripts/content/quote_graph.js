@@ -218,8 +218,22 @@ var QuoteGraph = {
         // Make all nodes draggable, should use specific id, rather than class.
         this.instance.draggable(jsPlumb.getSelector(".drag-drop-demo .window"),
             {
-                drop: function (event, ui) {
-                    console.log("drop");
+                stop: function (event, ui) {
+                    // Called when element is dropped.
+                    var $element = $(event.el),
+                        top = $element.css('top'),
+                        left = $element.css('left');
+                    console.log("Element dropped top:" + top + " left:" + left);
+                    var data = {
+                        uuid: $element.attr('id'),
+                        x: left,
+                        y: top
+                    };
+
+                    QuoteGraph.sendMessage({
+                        type: QUOTE_LOCATION_UPDATE,
+                        data: data
+                    })
                 }
             });
 
