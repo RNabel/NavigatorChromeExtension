@@ -58,8 +58,8 @@ var ContentScript = {
             addStyle(right, false);
 
             // Add the panes to the document.
-            $(document.body).append(left);
-            $(document.body).append(right);
+            $(document.documentElement).append(left);
+            $(document.documentElement).append(right);
 
             // Initialize the history graph.
             console.log("Setting up History Graph");
@@ -100,10 +100,10 @@ var ContentScript = {
          */
         wrapOriginalContentInDiv: function () {
             // Get content of body tag.
-            var $cont = $(document.body).children();
+            var $cont = $(document.body);
 
             // Add content to new div element.
-            var $div = $('<div>');
+            //var $div = $('<div>');
             var i = 0;
 
             // Ensure unique ID for website wrapper.
@@ -114,14 +114,14 @@ var ContentScript = {
             }
             WEBSITE_CONTENT_WRAPPER_ID = contentId;
 
-            $div.attr('id', 'content');
-            $div.append($cont);
+            $cont.attr('id', 'content');
+            //$cont.append($cont);
 
             // Append new div to body.
-            var $bod = $(document.body);
-            $bod.append($div);
+            //var $bod = $(document.body);
+            //$bod.append($div);
 
-            return $div;
+            return $cont;
         }
     },
 

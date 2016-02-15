@@ -33,7 +33,7 @@
         "scripts/content/quote_graph.js",
         "scripts/content/content_script.js"
       ],
-      "run_at": "document_end"
+      "run_at": "document_start"
     }
   ],
   "background": {
