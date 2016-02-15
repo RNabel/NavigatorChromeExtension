@@ -193,14 +193,23 @@ var QuoteGraph = {
             id = utils.guid(); // Create unique id.
         }
 
-        var $div = $('<div class="window">five<br/><br/><a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n    connections</a><br/><a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br/>\n    <a href="#"\n       class="cmdLink detach"\n       rel="dragDropWindow4">detach\n        all</a>\n</div>')
+        var $div = $(
+            '<div class="window">\n    <x-title>Sample Title here</x-title><img class="closing-x">\n    <br/><br/>\n    \n    <x-content>\n        Sample content here.\n    </x-content>\n    <!--Misc control items.-->\n    <a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n        connections</a><br/>\n    <a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br>\n    <a href="#" class="cmdLink detach" rel="dragDropWindow4">detach\n        all</a>\n</div>');
+
+        var $closeX = $('.closing-x', $div).attr('src', chrome.extension.getURL('/assets/black-x-hi.png'));
+
+        var $title = $('x-title', $div);
+        $title.text("Sample title");
+
+        var $content = $('x-content', $div);
+        $content.text("Sample content");
 
         // Check if image.
         if (type == 'IMG') {
-            var source = $(html_data).attr('src');
-            $($div).append($('<img>').attr('src', source));
+            var source = $(html_data).attr('src'); // Extract the source of the image.
+            $($content).append($('<img>').attr('src', source));
         } else {
-            $($div).text(text);
+            $($content).text(text);
         }
 
         $($div).attr('id', this.i);

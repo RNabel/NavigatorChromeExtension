@@ -25,6 +25,7 @@
         "lib/sigma.js/plugins/sigma.renderers.customShapes/shape-library.js",
         "lib/sigma.js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js",
         "lib/jsPlumb-2.0.5.js",
+        "lib/interact.js",
         "scripts/shared/constants.js",
         "scripts/shared/utils.js",
         "scripts/shared/quote_storage.js",
