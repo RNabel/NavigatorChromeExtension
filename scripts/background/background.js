@@ -31,6 +31,14 @@ var BackgroundScript = {
             BackgroundScript.quote_graph.sendAllQuotes();
         },
 
+        onQuoteDeleted: function(data) {
+            var nodeID = data.id;
+
+            BackgroundScript.quote_graph.quoteStorage.deleteQuote(nodeID);
+
+            BackgroundScript.quote_graph.sendAllQuotes();
+        },
+
         onQuoteLocationUpdate: function (update) {
             // Find quote instance by UUID.
             var quoteRecord = BackgroundScript.quote_graph.quoteStorage.getQuote(update.uuid);
@@ -219,6 +227,12 @@ var BackgroundScript = {
                     console.log("Quote update received.");
 
                     BackgroundScript.quote_graph.onQuoteUpdate(data);
+                    break;
+
+                case QUOTE_DELETED:
+                    console.log("Node deleted.");
+
+                    BackgroundScript.quote_graph.onQuoteDeleted(data);
                     break;
 
                 case QUOTE_LOCATION_UPDATE:

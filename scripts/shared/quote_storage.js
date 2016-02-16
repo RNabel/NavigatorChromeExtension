@@ -69,7 +69,7 @@ QuoteStorage.prototype.addConnection = function (connection) {
     this.connections.push(connection);
 };
 
-QuoteStorage.prototype.existsConnection = function(source, target) {
+QuoteStorage.prototype.existsConnection = function (source, target) {
     for (var i = 0; i < this.connections.length; i++) {
         var connection = this.connections[i];
         if (connection.source == source && connection.target == target) {
@@ -85,7 +85,7 @@ QuoteStorage.prototype.existsConnection = function(source, target) {
  *
  * @returns {QuoteRecord | boolean} The QuoteRecord instance if found, false otherwise.
  */
-QuoteStorage.prototype.getQuote = function(uuid) {
+QuoteStorage.prototype.getQuote = function (uuid) {
     for (var i = 0; i < this.quotes.length; i++) {
         var quote = this.quotes[i];
         if (quote.id == uuid) {
@@ -110,4 +110,19 @@ QuoteStorage.prototype.getAllQuotes = function () {
  */
 QuoteStorage.prototype.getAllConnections = function () {
     return this.connections;
+};
+
+QuoteStorage.prototype.deleteQuote = function (nodeID) {
+    var result = -1;
+    for (var i = 0; i < this.quotes.length; i++) {
+        var quote = this.quotes[i];
+        if (quote.id == nodeID) {
+            result = i;
+            break;
+        }
+    }
+
+    if (result !== -1) {
+        this.quotes.splice(result, 1);
+    }
 };
