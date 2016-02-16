@@ -1,11 +1,13 @@
 /**
  * Created by Robin Nabel on 03/11/15.
  */
-
+/**
+ *
+ * @type {{quote_graph: {uuidToUrlMap: {}, quoteStorage: QuoteStorage, sendAllQuotes: BackgroundScript.quote_graph.sendAllQuotes, onQuoteUpdate: BackgroundScript.quote_graph.onQuoteUpdate, onQuoteDeleted: BackgroundScript.quote_graph.onQuoteDeleted, onQuoteLocationUpdate: BackgroundScript.quote_graph.onQuoteLocationUpdate, onQuoteConnectionUpdate: BackgroundScript.quote_graph.onQuoteConnectionUpdate, onQuoteConnectionDeleted: BackgroundScript.quote_graph.onQuoteConnectionDeleted}, history_graph: {history: HistoryStorage, title_cache: {}, currentTabUrls: {}, sendEntireHistory: BackgroundScript.history_graph.sendEntireHistory, createNewConnection: BackgroundScript.history_graph.createNewConnection, notifyHistoryUpdate: BackgroundScript.history_graph.notifyHistoryUpdate, onTabChange: BackgroundScript.history_graph.onTabChange, onTabClosed: BackgroundScript.history_graph.onTabClosed}, tools: {sendMessage: BackgroundScript.tools.sendMessage, receiveMessage: BackgroundScript.tools.receiveMessage}}}
+ */
 var BackgroundScript = {
     quote_graph: {
         // The variable which holds content for the left pane to display
-        savedText: {},
         uuidToUrlMap: {},
         quoteStorage: new QuoteStorage(),
 
@@ -31,7 +33,7 @@ var BackgroundScript = {
             BackgroundScript.quote_graph.sendAllQuotes();
         },
 
-        onQuoteDeleted: function(data) {
+        onQuoteDeleted: function (data) {
             var nodeID = data.id;
 
             BackgroundScript.quote_graph.quoteStorage.deleteQuote(nodeID);
@@ -55,6 +57,15 @@ var BackgroundScript = {
         onQuoteConnectionUpdate: function (source, target) {
             var connection = new QuoteConnection({source: source, target: target});
             BackgroundScript.quote_graph.quoteStorage.addConnection(connection);
+
+            BackgroundScript.quote_graph.sendAllQuotes();
+        },
+
+        onQuoteConnectionDeleted: function (data) {
+            var source = data[0],
+                target = data[1];
+
+            BackgroundScript.quote_graph.quoteStorage.deleteConnection(source, target);
 
             BackgroundScript.quote_graph.sendAllQuotes();
         }
@@ -244,6 +255,11 @@ var BackgroundScript = {
                 case QUOTE_CONNECTION_UPDATE:
                     console.log("Quote connection update received");
                     BackgroundScript.quote_graph.onQuoteConnectionUpdate(data.source, data.target);
+                    break;
+
+                case QUOTE_CONNECTION_DELETED:
+                    console.log("Quote connection deleted.");
+                    BackgroundScript.quote_graph.onQuoteConnectionDeleted(data);
                     break;
 
                 default:

@@ -31,4 +31,5 @@ var QUOTE_ID = "quote_graph",
     QUOTE_DELETED = "quote_deleted",
     QUOTE_LOCATION_UPDATE = "quote_location_update",
     QUOTE_CONNECTION_UPDATE = "quote_connection_update",
+    QUOTE_CONNECTION_DELETED = "quote_connection_deleted",
     QUOTE_INIT_DATA = "quote_init_data";

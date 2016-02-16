@@ -79,6 +79,23 @@ QuoteStorage.prototype.existsConnection = function (source, target) {
     return false;
 };
 
+QuoteStorage.prototype.deleteConnection = function (source, target) {
+    for (var i = 0; i < this.connections.length; i++) {
+        var connection = this.connections[i],
+            currentSource = connection.source,
+            currentTarget = connection.target;
+
+        if ((currentSource == source && currentTarget == target) ||
+            (currentSource == target && currentTarget == source)
+        ) {
+            // Delete node.
+            this.connections.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+};
+
 /**
  * Return QuoteRecord object if Uuid exists in record store or False
  * @param uuid {string} The UUID of the QuoteRecord.
