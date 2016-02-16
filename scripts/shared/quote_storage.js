@@ -97,7 +97,7 @@ QuoteStorage.prototype.removeAttachedConnections = function (source) {
             this.connections.splice(i, 1);
         }
     }
-    
+
     return true;
 };
 

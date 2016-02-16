@@ -1,10 +1,6 @@
 /**
  * Created by Robin Nabel on 03/11/15.
  */
-/**
- *
- * @type {{quote_graph: {uuidToUrlMap: {}, quoteStorage: QuoteStorage, sendAllQuotes: BackgroundScript.quote_graph.sendAllQuotes, onQuoteUpdate: BackgroundScript.quote_graph.onQuoteUpdate, onQuoteDeleted: BackgroundScript.quote_graph.onQuoteDeleted, onQuoteLocationUpdate: BackgroundScript.quote_graph.onQuoteLocationUpdate, onQuoteConnectionUpdate: BackgroundScript.quote_graph.onQuoteConnectionUpdate, onQuoteConnectionDeleted: BackgroundScript.quote_graph.onQuoteConnectionDeleted}, history_graph: {history: HistoryStorage, title_cache: {}, currentTabUrls: {}, sendEntireHistory: BackgroundScript.history_graph.sendEntireHistory, createNewConnection: BackgroundScript.history_graph.createNewConnection, notifyHistoryUpdate: BackgroundScript.history_graph.notifyHistoryUpdate, onTabChange: BackgroundScript.history_graph.onTabChange, onTabClosed: BackgroundScript.history_graph.onTabClosed}, tools: {sendMessage: BackgroundScript.tools.sendMessage, receiveMessage: BackgroundScript.tools.receiveMessage}}}
- */
 var BackgroundScript = {
     quote_graph: {
         // The variable which holds content for the left pane to display
@@ -12,10 +8,9 @@ var BackgroundScript = {
         quoteStorage: new QuoteStorage(),
 
         /**
-         * Sends entire history to the specified tab.
-         * @param tabId
+         * Sends entire history to all tabs.
          */
-        sendAllQuotes: function (tabId) {
+        sendAllQuotes: function () {
             console.log("Send all quotes - initial.");
             var message = {
                 deliver_to: QUOTE_ID,
@@ -54,7 +49,10 @@ var BackgroundScript = {
             }
         },
 
-        onQuoteConnectionUpdate: function (source, target) {
+        onQuoteConnectionUpdate: function (data) {
+            var source = data.source,
+                target = data.target;
+
             var connection = new QuoteConnection({source: source, target: target});
             BackgroundScript.quote_graph.quoteStorage.addConnection(connection);
 
@@ -75,6 +73,12 @@ var BackgroundScript = {
         history: new HistoryStorage(),
         title_cache: {},
         currentTabUrls: {},
+
+        onInitHistory: function (data) {
+            console.log("Sending INIT history.");
+            BackgroundScript.history_graph.title_cache[data.url] = data.title;
+            BackgroundScript.history_graph.sendEntireHistory();
+        },
 
         /**
          * Sends entire history to the specified tab.
@@ -222,53 +226,25 @@ var BackgroundScript = {
 
             // Forward data to respective handler.
             var data = request.data;
-            switch (request.type) {
-                case HISTORY_INIT_DATA: // A new tab was opened and requires the entire history data set.
-                    console.log("Sending INIT history.");
-                    BackgroundScript.history_graph.title_cache[data.url] = data.title;
-                    BackgroundScript.history_graph.sendEntireHistory(sender.tab.id);
-                    break;
 
-                case QUOTE_INIT_DATA:
-                    console.log("Sending INIT Quote.");
-                    BackgroundScript.quote_graph.sendAllQuotes();
-                    break;
-
-                case QUOTE_UPDATE:
-                    console.log("Quote update received.");
-
-                    BackgroundScript.quote_graph.onQuoteUpdate(data);
-                    break;
-
-                case QUOTE_DELETED:
-                    console.log("Node deleted.");
-
-                    BackgroundScript.quote_graph.onQuoteDeleted(data);
-                    break;
-
-                case QUOTE_LOCATION_UPDATE:
-                    console.log("Quote location update.");
-
-                    BackgroundScript.quote_graph.onQuoteLocationUpdate(data);
-                    break;
-
-                case QUOTE_CONNECTION_UPDATE:
-                    console.log("Quote connection update received");
-                    BackgroundScript.quote_graph.onQuoteConnectionUpdate(data.source, data.target);
-                    break;
-
-                case QUOTE_CONNECTION_DELETED:
-                    console.log("Quote connection deleted.");
-                    BackgroundScript.quote_graph.onQuoteConnectionDeleted(data);
-                    break;
-
-                default:
-                    console.log("Received message could not be routed.");
-                    break;
-            }
+            // Pythonic map replacement for switch-case.
+            BackgroundScript.messageMap[request.type](data);
         }
     }
 };
+
+(function () {
+    // Maps incoming request types to handler functions.
+    BackgroundScript.messageMap = {};
+    BackgroundScript.messageMap[HISTORY_INIT_DATA] = BackgroundScript.history_graph.onInitHistory;
+    BackgroundScript.messageMap[QUOTE_INIT_DATA] = BackgroundScript.quote_graph.sendAllQuotes;
+    BackgroundScript.messageMap[QUOTE_UPDATE] = BackgroundScript.quote_graph.onQuoteUpdate;
+    BackgroundScript.messageMap[QUOTE_DELETED] = BackgroundScript.quote_graph.onQuoteDeleted;
+    BackgroundScript.messageMap[QUOTE_LOCATION_UPDATE] = BackgroundScript.quote_graph.onQuoteLocationUpdate;
+    BackgroundScript.messageMap[QUOTE_CONNECTION_UPDATE] = BackgroundScript.quote_graph.onQuoteConnectionUpdate;
+    BackgroundScript.messageMap[QUOTE_CONNECTION_DELETED] = BackgroundScript.quote_graph.onQuoteConnectionDeleted;
+})
+();
 
 // Message end point.
 chrome.runtime.onMessage.addListener(
