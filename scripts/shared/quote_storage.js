@@ -62,6 +62,46 @@ QuoteStorage.prototype.addQuote = function (quote) {
 };
 
 /**
+ * Delete quote.
+ * @param nodeID {string} The id of the node.
+ */
+QuoteStorage.prototype.deleteQuote = function (nodeID) {
+    var result = -1;
+    for (var i = 0; i < this.quotes.length; i++) {
+        var quote = this.quotes[i];
+        if (quote.id == nodeID) {
+            result = i;
+            break;
+        }
+    }
+
+    if (result !== -1) {
+        this.quotes.splice(result, 1);
+
+        // Delete all connected connections.
+        this.removeAttachedConnections(nodeID);
+    }
+};
+
+/**
+ * Remove all connections attached to the specified node.
+ * @param source {string} The id of the node.
+ * @returns {boolean} Whether function executed correctly.
+ */
+QuoteStorage.prototype.removeAttachedConnections = function (source) {
+    // Go through all connections and delete each connections which has source as an endpoint.
+    // Reversal of iteration order as deletion changes indexing of elements.
+    for (var i = this.connections.length - 1; i >= 0; i--) {
+        var connection = this.connections[i];
+        if (connection.source == source || connection.target == source) {
+            this.connections.splice(i, 1);
+        }
+    }
+    
+    return true;
+};
+
+/**
  * Add connection to storage object.
  * @param connection {QuoteConnection} The connection to add.
  */
@@ -69,6 +109,12 @@ QuoteStorage.prototype.addConnection = function (connection) {
     this.connections.push(connection);
 };
 
+/**
+ * Check whether connection between source and target exists.
+ * @param source {string} The id of the source.
+ * @param target {string} The id of the target.
+ * @returns {boolean} Whether the a connection exists.
+ */
 QuoteStorage.prototype.existsConnection = function (source, target) {
     for (var i = 0; i < this.connections.length; i++) {
         var connection = this.connections[i];
@@ -79,6 +125,12 @@ QuoteStorage.prototype.existsConnection = function (source, target) {
     return false;
 };
 
+/**
+ * Delete a connection between given target and source.
+ * @param source {string} The id of the source.
+ * @param target {string} The id of the target.
+ * @returns {boolean} Whether the function executed correctly.
+ */
 QuoteStorage.prototype.deleteConnection = function (source, target) {
     for (var i = 0; i < this.connections.length; i++) {
         var connection = this.connections[i],
@@ -127,19 +179,4 @@ QuoteStorage.prototype.getAllQuotes = function () {
  */
 QuoteStorage.prototype.getAllConnections = function () {
     return this.connections;
-};
-
-QuoteStorage.prototype.deleteQuote = function (nodeID) {
-    var result = -1;
-    for (var i = 0; i < this.quotes.length; i++) {
-        var quote = this.quotes[i];
-        if (quote.id == nodeID) {
-            result = i;
-            break;
-        }
-    }
-
-    if (result !== -1) {
-        this.quotes.splice(result, 1);
-    }
 };
