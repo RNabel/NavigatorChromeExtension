@@ -25,15 +25,19 @@ var ContentScript = {
          *
          */
         addSidePanes: function () {
-            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '"></div>');
-            var left = $('<div id="container_container" style="overflow: hidden">\n    <div class="drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>\n    </div>\n</div>');
+            var right = $('<div class="container_container">\n    <div class="container" id="' + RIGHT_PANE_IDENTIFIER + '"></div>\n</div>');
+            var left = $('<div class="container_container">\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
                 el.css({
                     'position': 'fixed',
                     'background': 'white',
                     'z-index': '999999',
-                    'background-color': '#FAFAFA'
+                    'background-color': '#FAFAFA',
+                    overflow: 'hidden'
+                });
+                $('.container', el).css({
+                    color: 'transparent'
                 });
                 if (isLeft) {
                     el.css({
