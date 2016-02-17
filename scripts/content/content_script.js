@@ -168,6 +168,34 @@ var ContentScript = {
                 text = document.selection.createRange().text;
             }
             return text;
+        },
+
+        /**
+         * Change zoom of specific jsPlumb instance.
+         * @param zoom {!number} The level of zoom, decimal where 1 equates to 100%.
+         * @param instance {!jsPlumbInstance} The instance which for which to change the zoom level.
+         * @param [transformOrigin] {number[]} 2-element array which contains the origin of the transformation,
+         *                                     defaults to [0.5, 0.5].
+         * @param [el] {HTMLElement} The parent element of all objects to be zoomed, defaults to the container
+         *                           of the jsPlumb instance.
+         */
+        zoom: function(zoom, instance, transformOrigin, el) {
+            transformOrigin = transformOrigin || [ 0.5, 0.5 ];
+            instance = instance || jsPlumb;
+            el = el || instance.getContainer();
+            var p = [ "webkit", "moz", "ms", "o" ],
+                s = "scale(" + zoom + ")",
+                oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+
+            for (var i = 0; i < p.length; i++) {
+                el.style[p[i] + "Transform"] = s;
+                el.style[p[i] + "TransformOrigin"] = oString;
+            }
+
+            el.style["transform"] = s;
+            el.style["transformOrigin"] = oString;
+
+            instance.setZoom(zoom);
         }
 
     }
