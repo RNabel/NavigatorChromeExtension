@@ -14,94 +14,32 @@ var HistoryGraph = {
     minY: MIN_Y,
 
     // Instantiate Sigma object.
-    sig: undefined,
+    instance: undefined,
 
     init: function () {
-        // Custom rendering code taken from https://github.com/jacomyal/sigma.js/blob/master/examples/plugin-customShapes.html
-        // Custom renderer component for image type nodes.
-        sigma.canvas.nodes.image = (function () {
-            var _cache = {},
-                _loading = {},
-                _callbacks = {};
-            // Return the renderer itself:
-            var renderer = function (node, context, settings) {
-                var prefix = settings('prefix') || '',
-                    size = node[prefix + 'size'],
-                    color = node.color || settings('defaultNodeColor'),
-                    url = node.url;
-                if (_cache[url]) {
-                    context.save();
-                    // Draw the clipping disc:
-                    context.beginPath();
-                    context.arc(
-                        node[prefix + 'x'],
-                        node[prefix + 'y'],
-                        node[prefix + 'size'],
-                        0,
-                        Math.PI * 2,
-                        true
-                    );
-                    context.closePath();
-                    context.clip();
-                    // Draw the image
-                    context.drawImage(
-                        _cache[url],
-                        node[prefix + 'x'] - size,
-                        node[prefix + 'y'] - size,
-                        2 * size,
-                        2 * size
-                    );
-                    // Quit the "clipping mode":
-                    context.restore();
-                    // Draw the border:
-                    context.beginPath();
-                    context.arc(
-                        node[prefix + 'x'],
-                        node[prefix + 'y'],
-                        node[prefix + 'size'],
-                        0,
-                        Math.PI * 2,
-                        true
-                    );
+        // Initialize jsPlumb instance.
+        this.instance = jsPlumb.getInstance({
+            Container: RIGHT_PANE_IDENTIFIER,
+            Endpoint: "Rectangle"
+        });
 
-                    context.lineWidth = size / 5;
-                    context.strokeStyle = node.color || settings('defaultNodeColor');
-                    context.stroke();
-                } else {
-                    sigma.canvas.nodes.image.cache(url);
-                    sigma.canvas.nodes.def.apply(
-                        sigma.canvas.nodes,
-                        arguments
-                    );
-                }
-            };
-            // Let's add a public method to cache images, to make it possible to
-            // preload images before the initial rendering:
-            renderer.cache = function (url, callback) {
-                if (callback)
-                    _callbacks[url] = callback;
-                if (_loading[url])
-                    return;
-                var img = new Image();
-                img.onload = function () {
-                    _loading[url] = false;
-                    _cache[url] = img;
-                    if (_callbacks[url]) {
-                        _callbacks[url].call(this, img);
-                        delete _callbacks[url];
-                    }
-                };
-                _loading[url] = true;
-                img.src = url;
-            };
-            return renderer;
-        })();
-
-        HistoryGraph.initialiseSigmaInstance();
-
-        CustomShapes.init(HistoryGraph.sig);
-        HistoryGraph.sig.refresh();
-
+        this.endpointTemplate = {
+            endpoint: ["Dot", {radius: 3}],
+            anchor: "BottomLeft",
+            paintStyle: {fillStyle: "rgba(229,219,61,0.5)", opacity: 0.5},
+            isSource: true,
+            scope: 'yellow',
+            connectorStyle: {
+                strokeStyle: "rgba(229,219,61,0.5)",
+                lineWidth: 4
+            },
+            connector: "Straight",
+            isTarget: true,
+            onMaxConnections: function (info) {
+                alert("Cannot drop connection " + info.connection.id + " : maxConnections has been reached on Endpoint " + info.endpointTemplate.id);
+            }
+        };
+        this.addNode(10, 10, "bla", "text",  "html_data", "", "", undefined);
         // Request information from back-end, supplying current title.
         HistoryGraph.sendMessage({
             type: HISTORY_INIT_DATA,
@@ -117,7 +55,8 @@ var HistoryGraph = {
      * @param historyStorage {Array} The entire session's history used initialise the tree.
      */
     drawGraphFromStorage: function (historyStorage) {
-        HistoryGraph.sig.kill();
+        console.log("Drawing entire history.");
+        HistoryGraph.instance.kill();
         HistoryGraph.initialiseSigmaInstance();
         HistoryGraph.levels = [];
 
@@ -137,7 +76,7 @@ var HistoryGraph = {
      * (Re-)Initialises the instance of sigma.js used to draw the graph.
      */
     initialiseSigmaInstance: function () {
-        HistoryGraph.sig = new sigma({
+        HistoryGraph.instance = new sigma({
             container: RIGHT_PANE_IDENTIFIER,
             settings: {
                 defaultNodeColor: '#ec5148'
@@ -151,7 +90,7 @@ var HistoryGraph = {
             }
         });
 
-        HistoryGraph.sig.bind('clickNode', HistoryGraph.onNodeClick);
+        HistoryGraph.instance.bind('clickNode', HistoryGraph.onNodeClick);
     },
 
     /**
@@ -228,22 +167,22 @@ var HistoryGraph = {
                     var currNodeName = HistoryGraph.levels[level][i];
 
                     // Find index in graph nodes array.
-                    for (var j = 0; j < HistoryGraph.sig.graph.nodes().length; j++) {
-                        var node = HistoryGraph.sig.graph.nodes()[j];
+                    for (var j = 0; j < HistoryGraph.instance.graph.nodes().length; j++) {
+                        var node = HistoryGraph.instance.graph.nodes()[j];
                         if (node.id == currNodeName) {
                             nodeFound = true;
                             break;
                         }
                     }
 
-                    HistoryGraph.sig.graph.nodes()[j].y = yCoord;
+                    HistoryGraph.instance.graph.nodes()[j].y = yCoord;
                     yCoord += dist;
                 }
             }
 
             // Add node to graph if node found.
             if (nodeFound) {
-                HistoryGraph.sig.graph.addNode({
+                HistoryGraph.instance.graph.addNode({
                     id: nodeID, // FIXME potential duplicates, requires fixing if id is used uniquely.
                     label: nodeLabel,
                     y: yCoord,
@@ -259,7 +198,7 @@ var HistoryGraph = {
                 for (i = 0; i < edges.length; i++) {
                     var target = edges[i],
                         id = "e" + HistoryGraph.edgeCount++;
-                    HistoryGraph.sig.graph.addEdge({
+                    HistoryGraph.instance.graph.addEdge({
                         id: id,
                         // Reference extremities:
                         source: nodeID,
@@ -270,9 +209,42 @@ var HistoryGraph = {
             }
 
             // Refresh the graph.
-            HistoryGraph.sig.refresh();
+            HistoryGraph.instance.refresh();
         }
     },
+
+    addNode: function (x, y, url, text, html_data, source_selector, type, id) {
+        // Create div.
+        if (id === undefined) {
+            id = utils.guid(); // Create unique id.
+        }
+
+        var $div = $(
+            '<div class="window">\n    <x-title>Sample Title here</x-title><img class="closing-x">\n    <br/><br/>\n    \n    <x-content>\n        Sample content here.\n    </x-content>\n    <!--Misc control items.-->\n    <a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n        connections</a><br/>\n    <a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br>\n    <a href="#" class="cmdLink detach" rel="dragDropWindow4">detach\n        all</a>\n</div>');
+
+        var $closeX = $('.closing-x', $div).attr('src', chrome.extension.getURL('/assets/black-x-hi.png'));
+        $closeX.on('click', QuoteGraph.deleteQuote);
+        var $title = $('x-title', $div);
+        $title.text("Sample title");
+
+        var $content = $('x-content', $div);
+        $content.text("Sample content");
+
+        $($div).attr('id', id);
+        // Append to container.
+        $(RIGHT_PANE_SELECTOR).append($div);
+
+        // Set position.
+        $div.css({top: y, left: x});
+
+        // Add the endpointTemplate to it.
+        this.endpointTemplate.uuid = id;
+        var ret = this.instance.addEndpoint($div, this.endpointTemplate);
+        this.instance.setId(ret.getElement(), id);
+
+        return id;
+    },
+
 
     /**
      * HistoryGraph interface function for graph creation from data source, validates input and stated dependencies,
@@ -321,17 +293,6 @@ var HistoryGraph = {
         }
         HistoryGraph.levels[level].push(nodeID);
         return true;
-    },
-
-    /**
-     * Callback function to add new entries to the history.
-     * @param source {string} The URL/ID of the source page.
-     * @param target {string} The URL/ID of the source page.
-     */
-    historyUpdate: function (source, target) {
-        // TODO finish this function.
-        // Delete all current nodes, and add all current nodes.
-
     },
 
     onNodeClick: function (ev) {
