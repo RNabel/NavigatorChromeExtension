@@ -25,8 +25,8 @@ var ContentScript = {
          *
          */
         addSidePanes: function () {
-            var right = $('<div class="container_container">\n    <div class="container" id="' + RIGHT_PANE_IDENTIFIER + '"></div>\n</div>');
-            var left = $('<div class="container_container">\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>\n    </div>\n</div>');
+            var right = $('<div class="container_container" mag-thumb="drag">\n    <div class="container" id="' + RIGHT_PANE_IDENTIFIER + '"></div>\n</div>');
+            var left = $('<div class="container_container" mag-thumb="drag">\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
                 el.css({
@@ -65,22 +65,36 @@ var ContentScript = {
             $(document.documentElement).append(left);
             $(document.documentElement).append(right);
 
+            // Attach panzoom.
+            var $panzoom = $('.container').panzoom({
+                disablePan: false,
+                disableZoom: false
+            });
+
+            // Make mousewheel zooming possible.
+            $panzoom.parent().on('mousewheel', function( e ) {
+                e.preventDefault();
+                var delta = e.delta || e.originalEvent.wheelDelta;
+                var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+                $panzoom.panzoom('zoom', zoomOut, {
+                    increment: 0.1,
+                    animate: false,
+                    focal: e
+                });
+            });
+
             // Initialize the history graph.
-            console.log("Setting up History Graph");
             ContentScript.history_graph = HistoryGraph;
             ContentScript.history_graph.sendMessage = ContentScript.tools.sendMessage;
             ContentScript.history_graph.init();
-            console.log("History Graph finished.");
 
             // Initialize the quote graph and attach message handlers.
-            console.log("Setting up Quote Graph.");
             QuoteGraph.sendMessage = ContentScript.tools.sendMessage;
 
             ContentScript.quote_graph = QuoteGraph;
             (function () {
                 jsPlumb.ready(QuoteGraph.init);
             })();
-            console.log("Quote Graph finished.")
         },
 
         /**

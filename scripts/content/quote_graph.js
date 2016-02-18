@@ -159,17 +159,14 @@ var QuoteGraph = {
     allowDrop: function (ev) {
         ev.preventDefault();
         ev.stopPropagation();
-        console.log("allowDrop.");
     },
 
     startDrag: function (ev) {
-        console.log("startDrag.");
         var path = $(ev.originalEvent.path[1]).getPath(); // TODO update code to be resilient.
         ev.originalEvent.dataTransfer.setData('src', path);
     },
 
     drop: function (ev) {
-        console.log("drop.");
         ev.preventDefault();
 
         var url = window.location.href,
@@ -303,8 +300,6 @@ var QuoteGraph = {
 
     tools: {
         messageHandler: function (request, sender, sendResponse, sentFromExt) {
-            console.log("Quote Graph received message.");
-
             switch (request.type) {
                 case QUOTE_UPDATE:
                     QuoteGraph.onQuoteUpdate(request.data);

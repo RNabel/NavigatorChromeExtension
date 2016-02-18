@@ -117,7 +117,6 @@ var HistoryGraph = {
      * @param historyStorage {Array} The entire session's history used initialise the tree.
      */
     drawGraphFromStorage: function (historyStorage) {
-        console.log("Drawing entire history.");
         HistoryGraph.sig.kill();
         HistoryGraph.initialiseSigmaInstance();
         HistoryGraph.levels = [];
@@ -163,7 +162,6 @@ var HistoryGraph = {
      * @param [lastNodeName] {string} The id of the node the current node needs to be linked to.
      */
     recursiveAddNode: function (currentLevel, lastID, isChild, lastNodeName) {
-        console.log("Entered recursive add node");
         // Return if level too large.
         if (currentLevel === 0 || currentLevel > TOTAL_LEVELS) {
             return;
@@ -349,12 +347,10 @@ var HistoryGraph = {
             switch (request.type) {
                 case HISTORY_UPDATE:
                     HistoryGraph.drawGraphFromStorage(request.data.list);
-                    console.log("History update.");
                     break;
                 case HISTORY_INIT_DATA:
                     // TODO validation with validate.js
                     HistoryGraph.drawGraphFromStorage(request.data.list);
-                    console.log("History initial data received");
                     break;
                 default:
                     console.log("received message." + request);
