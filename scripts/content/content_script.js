@@ -25,7 +25,7 @@ var ContentScript = {
          *
          */
         addSidePanes: function () {
-            var right = $('<div class="container_container" mag-thumb="drag">\n    <div class="container" id="' + RIGHT_PANE_IDENTIFIER + '"></div>\n</div>');
+            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '"></div>\n');
             var left = $('<div class="container_container" mag-thumb="drag">\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
@@ -40,6 +40,7 @@ var ContentScript = {
                     color: 'transparent'
                 });
                 if (isLeft) {
+                    // Wrapping element.
                     el.css({
                         'top': '0px',
                         'left': '0px',
@@ -47,6 +48,18 @@ var ContentScript = {
                         'height': 100 - HISTORY_PANE_HEIGHT_ABS + '%',
                         'bottom': HISTORY_PANE_HEIGHT,
                         'width': QUOTE_PANE_WIDTH
+                    });
+
+                    // Contained element.
+                    var width = $('.container',el).css('width'),
+                        height = $('.container',el).css('height');
+
+                    $('.container', el).css({
+                        position: "relative",
+                        left: "-50%",
+                        top: "-50%",
+                        height: 210 / QUOTE_GRAPH_MIN_SCALE + "%",
+                        width: 210 / QUOTE_GRAPH_MIN_SCALE + "%"
                     });
                 } else {
                     el.css({
@@ -68,7 +81,9 @@ var ContentScript = {
             // Attach panzoom.
             var $panzoom = $('.container').panzoom({
                 disablePan: false,
-                disableZoom: false
+                disableZoom: false,
+                minScale: QUOTE_GRAPH_MIN_SCALE,
+                maxScale: QUOTE_GRAPH_MAX_SCALE
             });
 
             // Make mousewheel zooming possible.
