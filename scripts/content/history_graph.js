@@ -25,7 +25,7 @@ var HistoryGraph = {
 
         this.endpointTemplate = {
             endpoint: ["Dot", {radius: 3}],
-            anchor: "BottomLeft",
+            anchors: ["Left", "Right"],
             paintStyle: {fillStyle: "rgba(229,219,61,0.5)", opacity: 0.5},
             isSource: true,
             scope: 'yellow',
@@ -39,7 +39,7 @@ var HistoryGraph = {
                 alert("Cannot drop connection " + info.connection.id + " : maxConnections has been reached on Endpoint " + info.endpointTemplate.id);
             }
         };
-        this.addNode(10, 10, "bla", "text",  "html_data", "", "", undefined);
+        this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 3);
         // Request information from back-end, supplying current title.
         HistoryGraph.sendMessage({
             type: HISTORY_INIT_DATA,
@@ -51,13 +51,13 @@ var HistoryGraph = {
     },
 
     /**
-     * Creates the initial graph based on recorded history.
-     * @param historyStorage {Array} The entire session's history used initialise the tree.
+     * Create the initial graph based on recorded history.
+     * @param historyStorage {HistoryStorage} The entire session's history used initialise the tree.
      */
     drawGraphFromStorage: function (historyStorage) {
         console.log("Drawing entire history.");
-        HistoryGraph.instance.kill();
-        HistoryGraph.initialiseSigmaInstance();
+        //HistoryGraph.instance.kill();
+        //HistoryGraph.initialiseSigmaInstance();
         HistoryGraph.levels = [];
 
         // Instantiate history object from passed list.
@@ -73,7 +73,7 @@ var HistoryGraph = {
     },
 
     /**
-     * (Re-)Initialises the instance of sigma.js used to draw the graph.
+     * (Re-)Initialise the instance of sigma.js used to draw the graph.
      */
     initialiseSigmaInstance: function () {
         HistoryGraph.instance = new sigma({
@@ -131,111 +131,26 @@ var HistoryGraph = {
         }
     },
 
-    /**
-     * Function which places a node in a specific level and interfaces with Sigma's HistoryGraph API.
-     * @param nodeID {string} The ID of the node.
-     * @param nodeLabel {string} The string label of the node.
-     * @param edges {string[]} ids of parent and child nodes.
-     * @param level - integer; the level for node insertion, range: [1 - max level].
-     */
-    _addNode: function (nodeID, nodeLabel, edges, level) {
-        // Code adapted from tutorial:
-        // https://github.com/jacomyal/sigma.js/wiki
-
-        if (nodeID !== undefined) {
-
-            // Calculate the location of the node.
-            var yCoord,
-                xCoord,
-                diameter = 3,
-                nodeFound = false;
-
-            // Calculate y coordinate.
-            xCoord = level - HistoryGraph.currentNodeIndex;
-
-            // Calculate x coordinate.
-            var numOfNodesInLevel = (HistoryGraph.levels[level] && HistoryGraph.levels[level].length) || 0;
-
-            if (numOfNodesInLevel === 0) {
-                yCoord = 0;
-                nodeFound = true;
-            } else {
-                var dist = (HistoryGraph.maxY - HistoryGraph.minY) / (numOfNodesInLevel);
-                yCoord = HistoryGraph.minY;
-
-                for (var i = 0; i < numOfNodesInLevel; i++) {
-                    var currNodeName = HistoryGraph.levels[level][i];
-
-                    // Find index in graph nodes array.
-                    for (var j = 0; j < HistoryGraph.instance.graph.nodes().length; j++) {
-                        var node = HistoryGraph.instance.graph.nodes()[j];
-                        if (node.id == currNodeName) {
-                            nodeFound = true;
-                            break;
-                        }
-                    }
-
-                    HistoryGraph.instance.graph.nodes()[j].y = yCoord;
-                    yCoord += dist;
-                }
-            }
-
-            // Add node to graph if node found.
-            if (nodeFound) {
-                HistoryGraph.instance.graph.addNode({
-                    id: nodeID, // FIXME potential duplicates, requires fixing if id is used uniquely.
-                    label: nodeLabel,
-                    y: yCoord,
-                    x: xCoord,
-                    size: diameter
-                });
-            }
-
-
-            // Add edges to children and parents.
-            if (edges !== undefined && edges.constructor === Array) {
-
-                for (i = 0; i < edges.length; i++) {
-                    var target = edges[i],
-                        id = "e" + HistoryGraph.edgeCount++;
-                    HistoryGraph.instance.graph.addEdge({
-                        id: id,
-                        // Reference extremities:
-                        source: nodeID,
-                        target: target
-                    });
-
-                }
-            }
-
-            // Refresh the graph.
-            HistoryGraph.instance.refresh();
-        }
-    },
-
-    addNode: function (x, y, url, text, html_data, source_selector, type, id) {
+    addNode: function (y, title, faviconUrl, column) {
         // Create div.
-        if (id === undefined) {
-            id = utils.guid(); // Create unique id.
-        }
+        var id = utils.guid(); // Create unique id.
 
         var $div = $(
-            '<div class="window">\n    <x-title>Sample Title here</x-title><img class="closing-x">\n    <br/><br/>\n    \n    <x-content>\n        Sample content here.\n    </x-content>\n    <!--Misc control items.-->\n    <a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n        connections</a><br/>\n    <a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br>\n    <a href="#" class="cmdLink detach" rel="dragDropWindow4">detach\n        all</a>\n</div>');
+            '<div class="history_entry">\n    <img class="favicon" align="middle"><x-title>Website title</x-title>\n</div>');
 
-        var $closeX = $('.closing-x', $div).attr('src', chrome.extension.getURL('/assets/black-x-hi.png'));
-        $closeX.on('click', QuoteGraph.deleteQuote);
+        var $favicon = $('.favicon', $div).attr('src', faviconUrl);
+        //$favicon.on('click', QuoteGraph.deleteQuote);
         var $title = $('x-title', $div);
-        $title.text("Sample title");
+        $title.text("Web title");
 
-        var $content = $('x-content', $div);
-        $content.text("Sample content");
+        $div.attr('id', id);
+        $div.addClass('column-' + column);
 
-        $($div).attr('id', id);
         // Append to container.
         $(RIGHT_PANE_SELECTOR).append($div);
 
         // Set position.
-        $div.css({top: y, left: x});
+        $div.css({top: y});
 
         // Add the endpointTemplate to it.
         this.endpointTemplate.uuid = id;
@@ -310,7 +225,6 @@ var HistoryGraph = {
                     HistoryGraph.drawGraphFromStorage(request.data.list);
                     break;
                 case HISTORY_INIT_DATA:
-                    // TODO validation with validate.js
                     HistoryGraph.drawGraphFromStorage(request.data.list);
                     break;
                 default:
