@@ -25,17 +25,22 @@ var ContentScript = {
          *
          */
         addSidePanes: function () {
-            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '"></div>');
-            var left = $('<div class="drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '"><div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div></div></div>');
+            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '"></div>\n');
+            var left = $('<div class="container_container" mag-thumb="drag">\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
                 el.css({
                     'position': 'fixed',
                     'background': 'white',
                     'z-index': '999999',
-                    'background-color': '#FAFAFA'
+                    'background-color': '#FAFAFA',
+                    overflow: 'hidden'
+                });
+                $('.container', el).css({
+                    color: 'transparent'
                 });
                 if (isLeft) {
+                    // Wrapping element.
                     el.css({
                         'top': '0px',
                         'left': '0px',
@@ -43,6 +48,18 @@ var ContentScript = {
                         'height': 100 - HISTORY_PANE_HEIGHT_ABS + '%',
                         'bottom': HISTORY_PANE_HEIGHT,
                         'width': QUOTE_PANE_WIDTH
+                    });
+
+                    // Contained element.
+                    var width = $('.container',el).css('width'),
+                        height = $('.container',el).css('height');
+
+                    $('.container', el).css({
+                        position: "relative",
+                        left: "-50%",
+                        top: "-50%",
+                        height: 210 / QUOTE_GRAPH_MIN_SCALE + "%",
+                        width: 210 / QUOTE_GRAPH_MIN_SCALE + "%"
                     });
                 } else {
                     el.css({
@@ -61,22 +78,38 @@ var ContentScript = {
             $(document.documentElement).append(left);
             $(document.documentElement).append(right);
 
+            // Attach panzoom.
+            var $panzoom = $('.container').panzoom({
+                disablePan: false,
+                disableZoom: false,
+                minScale: QUOTE_GRAPH_MIN_SCALE,
+                maxScale: QUOTE_GRAPH_MAX_SCALE
+            });
+
+            // Make mousewheel zooming possible.
+            $panzoom.parent().on('mousewheel', function( e ) {
+                e.preventDefault();
+                var delta = e.delta || e.originalEvent.wheelDelta;
+                var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+                $panzoom.panzoom('zoom', zoomOut, {
+                    increment: 0.1,
+                    animate: false,
+                    focal: e
+                });
+            });
+
             // Initialize the history graph.
-            console.log("Setting up History Graph");
             ContentScript.history_graph = HistoryGraph;
             ContentScript.history_graph.sendMessage = ContentScript.tools.sendMessage;
             ContentScript.history_graph.init();
-            console.log("History Graph finished.");
 
             // Initialize the quote graph and attach message handlers.
-            console.log("Setting up Quote Graph.");
             QuoteGraph.sendMessage = ContentScript.tools.sendMessage;
 
             ContentScript.quote_graph = QuoteGraph;
             (function () {
                 jsPlumb.ready(QuoteGraph.init);
             })();
-            console.log("Quote Graph finished.")
         },
 
         /**
@@ -168,6 +201,34 @@ var ContentScript = {
                 text = document.selection.createRange().text;
             }
             return text;
+        },
+
+        /**
+         * Change zoom of specific jsPlumb instance.
+         * @param zoom {!number} The level of zoom, decimal where 1 equates to 100%.
+         * @param instance {!jsPlumbInstance} The instance which for which to change the zoom level.
+         * @param [transformOrigin] {number[]} 2-element array which contains the origin of the transformation,
+         *                                     defaults to [0.5, 0.5].
+         * @param [el] {HTMLElement} The parent element of all objects to be zoomed, defaults to the container
+         *                           of the jsPlumb instance.
+         */
+        zoom: function(zoom, instance, transformOrigin, el) {
+            transformOrigin = transformOrigin || [ 0.5, 0.5 ];
+            instance = instance || jsPlumb;
+            el = el || instance.getContainer();
+            var p = [ "webkit", "moz", "ms", "o" ],
+                s = "scale(" + zoom + ")",
+                oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+
+            for (var i = 0; i < p.length; i++) {
+                el.style[p[i] + "Transform"] = s;
+                el.style[p[i] + "TransformOrigin"] = oString;
+            }
+
+            el.style["transform"] = s;
+            el.style["transformOrigin"] = oString;
+
+            instance.setZoom(zoom);
         }
 
     }
