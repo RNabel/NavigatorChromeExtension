@@ -180,7 +180,7 @@ var HistoryGraph = {
         $(RIGHT_PANE_SELECTOR).append($div);
 
         // Set position.
-        $div.css({top: y});
+        $div.css({top: y * HIST_BOX_HEIGHT_DISTANCE});
 
         return _id;
     },
@@ -254,6 +254,7 @@ var HistoryGraph = {
         // Clear current canvas.
         HistoryGraph.instance.detachEveryConnection();
         HistoryGraph.instance.deleteEveryEndpoint();
+        HistoryGraph.instance.empty(RIGHT_PANE_IDENTIFIER);
 
         // Add all nodes in each column.
         for (var col = 0; col < HistoryGraph.columns.length; col++) {
