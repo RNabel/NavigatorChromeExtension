@@ -268,7 +268,8 @@ var QuoteGraph = {
      * @param target {string | int} The target id.
      */
     addConnection: function (source, target) {
-        var connection = QuoteGraph.instance.connect({uuids: [source, target]});
+        var connection = QuoteGraph.instance.connect({
+            uuids: [source, target]});
         connection.bind("dblclick", QuoteGraph.deleteConnection);
     },
 

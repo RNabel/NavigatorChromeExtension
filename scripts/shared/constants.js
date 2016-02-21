@@ -18,8 +18,12 @@ var TOTAL_LEVELS = 7,
     MAX_X = 1.5,
     MIN_X = -1.5,
     MAX_Y = 3,
-    MIN_Y = -3;
+    MIN_Y = -3,
 
+    HIST_CONNECTOR_WIDTH = 2,
+    HIST_CONNECTOR_OPACITY = 1,
+    HIST_CONNECTOR_COLOR = "rgba(229,219,61,0.5)",
+    HIST_ENDPOINT_RADIUS = 1;
 
 // Quote graph constants.
 var QUOTE_GRAPH_MAX_SCALE = 1,

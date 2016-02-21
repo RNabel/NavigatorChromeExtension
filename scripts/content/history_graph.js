@@ -13,7 +13,7 @@ var HistoryGraph = {
     maxY: MAX_Y,
     minY: MIN_Y,
 
-    // Instantiate Sigma object.
+    // Instantiate jsPlumb object.
     instance: undefined,
 
     init: function () {
@@ -24,22 +24,36 @@ var HistoryGraph = {
         });
 
         this.endpointTemplate = {
-            endpoint: ["Dot", {radius: 3}],
-            anchors: ["Left", "Right"],
-            paintStyle: {fillStyle: "rgba(229,219,61,0.5)", opacity: 0.5},
+            endpoint: ["Dot", {radius: HIST_ENDPOINT_RADIUS}],
+            anchor: ["Left", "Right"],
+            paintStyle: {fillStyle: HIST_CONNECTOR_COLOR, opacity: HIST_CONNECTOR_OPACITY},
             isSource: true,
             scope: 'yellow',
             connectorStyle: {
-                strokeStyle: "rgba(229,219,61,0.5)",
-                lineWidth: 4
+                strokeStyle: HIST_CONNECTOR_COLOR,
+                lineWidth: HIST_CONNECTOR_WIDTH
             },
             connector: "Straight",
             isTarget: true,
             onMaxConnections: function (info) {
                 alert("Cannot drop connection " + info.connection.id + " : maxConnections has been reached on Endpoint " + info.endpointTemplate.id);
-            }
+            },
+            maxConnections: 1000
         };
-        this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 3);
+
+        // Add sample nodes.
+        var id1 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 0);
+        var id2 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 1);
+        var id3 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 2);
+        var id4 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 3);
+        var id5 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 4);
+
+        // Add sample connections.
+        this.connections.connect(id1, id2);
+        this.connections.connect(id2, id3);
+        this.connections.connect(id3, id4);
+        this.connections.connect(id4, id5);
+
         // Request information from back-end, supplying current title.
         HistoryGraph.sendMessage({
             type: HISTORY_INIT_DATA,
@@ -56,41 +70,40 @@ var HistoryGraph = {
      */
     drawGraphFromStorage: function (historyStorage) {
         console.log("Drawing entire history.");
-        //HistoryGraph.instance.kill();
-        //HistoryGraph.initialiseSigmaInstance();
         HistoryGraph.levels = [];
 
         // Instantiate history object from passed list.
         HistoryGraph.history = new HistoryStorage(historyStorage);
 
-        // Create the root node.
+        // Find and create the root node.
         var currentURL = document.URL;
-        HistoryGraph.addNodeToLevel(HistoryGraph.currentNodeIndex, currentURL, document.title);
+        var rootNode = HistoryGraph.history.findRecord(currentURL);
+
+        // Escape if the current page does not exist in the history storage (yet). History will be updated and re-braodcast.
+        if (!rootNode) return;
+
+        HistoryGraph.addNodeToLevel(HistoryGraph.currentNodeIndex, rootNode.getURL(), rootNode.getURL());
 
         // Start recursive adding of parents and children.
         HistoryGraph.recursiveAddNode(3, currentURL, false);
         HistoryGraph.recursiveAddNode(3, currentURL, true);
     },
 
-    /**
-     * (Re-)Initialise the instance of sigma.js used to draw the graph.
-     */
-    initialiseSigmaInstance: function () {
-        HistoryGraph.instance = new sigma({
-            container: RIGHT_PANE_IDENTIFIER,
-            settings: {
-                defaultNodeColor: '#ec5148'
-            },
-            renderer: {
-                // IMPORTANT:
-                // This works only with the canvas renderer, so the
-                // renderer type set as "canvas" is necessary here.
-                container: document.getElementById(RIGHT_PANE_IDENTIFIER),
-                type: 'canvas'
-            }
-        });
+    connections: {
+        connect: function (source, target) {
+            // Create the relevant endpoints.
+            var $source = $('#' + source),
+                $target = $('#' + target);
 
-        HistoryGraph.instance.bind('clickNode', HistoryGraph.onNodeClick);
+            var sourceEndpointID = HistoryGraph.addEndpoint($source),
+                targetEndpointID = HistoryGraph.addEndpoint($target);
+
+            var connection = HistoryGraph.instance.connect({
+                uuids: [sourceEndpointID, targetEndpointID],
+                overlays: [["Arrow", {width: 12, length: 12, location: 1}]]
+            });
+            // Any event listeners like so: connection.bind("dblclick", QuoteGraph.deleteConnection);
+        }
     },
 
     /**
@@ -152,10 +165,20 @@ var HistoryGraph = {
         // Set position.
         $div.css({top: y});
 
-        // Add the endpointTemplate to it.
+        return id;
+    },
+
+    /**
+     * Attach new endpoint to the passed node, and return its ID.
+     * @param $element {jQuery | object} The node to which to add the endpoint.
+     * @returns {number}
+     */
+    addEndpoint: function ($element) {
+        var id = utils.guid(); // Create unique id.
+
         this.endpointTemplate.uuid = id;
-        var ret = this.instance.addEndpoint($div, this.endpointTemplate);
-        this.instance.setId(ret.getElement(), id);
+        var ret = this.instance.addEndpoint($element, this.endpointTemplate);
+        //this.instance.setId(ret.getElement(), id);
 
         return id;
     },
@@ -188,7 +211,7 @@ var HistoryGraph = {
         } else if (level < HistoryGraph.currentNodeIndex) { // If child.
             dependentLevelIndex = level + 1;
         } else { // If current node.
-            HistoryGraph._addNode(nodeID, nodeLabel, [], level);
+            HistoryGraph.addNode(nodeID, nodeLabel, [], level);
             isNodeAdded = true;
         }
 
@@ -201,19 +224,13 @@ var HistoryGraph = {
             }
 
             // Add node to graph.
-            HistoryGraph._addNode(nodeID, nodeLabel, [dependentNodeName], level);
+            //HistoryGraph._addNode(nodeID, nodeLabel, [dependentNodeName], level);
         }
         if (!HistoryGraph.levels[level]) {
             HistoryGraph.levels[level] = [];
         }
         HistoryGraph.levels[level].push(nodeID);
         return true;
-    },
-
-    onNodeClick: function (ev) {
-        console.log("Node clicked");
-        console.log(ev);
-        location.replace(ev.data.node.id)
     },
 
     tools: {
