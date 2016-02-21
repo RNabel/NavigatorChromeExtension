@@ -103,8 +103,8 @@ var HistoryGraph = {
     connections: {
         connect: function (source, target) {
             // Create the relevant endpoints.
-            var $source = $('#' + source),
-                $target = $('#' + target);
+            var $source = $(document.getElementById(source)),
+                $target = $(document.getElementById(target));
 
             var sourceEndpointID = HistoryGraph.addEndpoint($source),
                 targetEndpointID = HistoryGraph.addEndpoint($target);
@@ -261,15 +261,15 @@ var HistoryGraph = {
             for (var row = 0; row < HistoryGraph.columns[col].length; row++) {
                 var currentNode = HistoryGraph.columns[col][row];
 
-                HistoryGraph.addNode(row, currentNode.getTitle(), currentNode.getFaviconURL(), col);
+                HistoryGraph.addNode(row, currentNode.getTitle(), currentNode.getFaviconURL(), col, currentNode.getID());
             }
         }
 
         // Add all connections.
-        //for (var i = 0; i < HistoryGraph.connectors.length; i++) {
-        //    var currentPair = HistoryGraph.connectors[i];
-        //    HistoryGraph.connections.connect(currentPair[0].getID(), currentPair[1].getID())
-        //}
+        for (var i = 0; i < HistoryGraph.connectors.length; i++) {
+            var currentPair = HistoryGraph.connectors[i];
+            HistoryGraph.connections.connect(currentPair[0].getID(), currentPair[1].getID())
+        }
     },
 
     tools: {

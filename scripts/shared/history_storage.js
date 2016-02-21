@@ -37,10 +37,18 @@ function HistoryRecord(URL, access_time, title, parent, faviconURL) {
 }
 
 /**
- * Retrieve value of URL of HistoryRecord.
- * @returns {*} The URL.
+ * Retrieve value of the ID of HistoryRecord.
+ * @returns {string} The b64 encoded URL.
  */
 HistoryRecord.prototype.getID = function () {
+    return btoa(this.URL);
+};
+
+/**
+ * Return the URL of this history record.
+ * @returns {string} The URL.
+ */
+HistoryRecord.prototype.getURL = function() {
     return this.URL;
 };
 
