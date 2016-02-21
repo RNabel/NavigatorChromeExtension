@@ -4,12 +4,13 @@
 
 /**
  * Create an object to store a node in the history tree.
- * @param URL {string | object} - acts as unique ID; or is cloned HistoryRecord.
+ * @param URL {string | HistoryRecord} - acts as unique ID; or is cloned HistoryRecord.
  * @param [access_time] {number} - list of UNIX time stamps.
- * @param [title] {string} -   The title of the web page.
- * @param [parent] {string} - array of parent URLs.
+ * @param [title] {string} The title of the web page.
+ * @param [parent] {string} Array of parent URLs.
+ * @param faviconURL {string} The url to the site's favicon.
  */
-function HistoryRecord(URL, access_time, title, parent) {
+function HistoryRecord(URL, access_time, title, parent, faviconURL) {
     if (arguments.length > 1) { // Each parameter passed separately.
         this.URL = URL;
         this.access_times = [access_time];
@@ -21,12 +22,17 @@ function HistoryRecord(URL, access_time, title, parent) {
             this.parents = [];
         }
 
+        // TODO fetch the favicon URL. More information can be found here: http://stackoverflow.com/a/34160462/3918512
+        // Fall back to Wikipedia's icon if icon not found.
+        this.faviconURL = faviconURL || "https://www.wikipedia.org/static/favicon/wikipedia.ico";
+
     } else { // A cloned HistoryRecord is passed.
         this.URL = URL.URL;
         this.access_times = URL.access_times;
         this.children = URL.children;
         this.parents = URL.parents;
         this.title = URL.title;
+        this.faviconURL = URL.faviconURL;
     }
 }
 
@@ -34,8 +40,16 @@ function HistoryRecord(URL, access_time, title, parent) {
  * Retrieve value of URL of HistoryRecord.
  * @returns {*} The URL.
  */
-HistoryRecord.prototype.getURL = function () {
+HistoryRecord.prototype.getID = function () {
     return this.URL;
+};
+
+/**
+ * Return the entry's favicon URL.
+ * @returns {string} The url to the element's favicon.
+ */
+HistoryRecord.prototype.getFaviconURL = function() {
+    return this.faviconURL;
 };
 
 /**

@@ -14,7 +14,7 @@ var WEBSITE_CONTENT_WRAPPER_ID = 'content',// Can change at runtime, if ID name-
     HISTORY_PANE_HEIGHT = HISTORY_PANE_HEIGHT_ABS + '%';
 
 // History graph.
-var TOTAL_LEVELS = 7,
+var TOTAL_COLUMNS = 5,
     MAX_X = 1.5,
     MIN_X = -1.5,
     MAX_Y = 3,
