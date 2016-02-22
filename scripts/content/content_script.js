@@ -28,14 +28,13 @@ var ContentScript = {
          *
          */
         addSidePanes: function () {
-            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '"></div>\n');
-            var left = $('<div class="container_container" mag-thumb="drag">\n    <i class="material-icons fullscreen">fullscreen</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
+            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '" style="z-index: '+ Z_INDEX_BACKGROUND+'"></div>\n');
+            var left = $('<div class="container_container" mag-thumb="drag" style="z-index: '+ Z_INDEX_BACKGROUND +'">\n    <i class="material-icons no-select fullscreen ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
                 el.css({
                     'position': 'fixed',
                     'background': 'white',
-                    'z-index': '999999',
                     'background-color': '#FAFAFA',
                     overflow: 'hidden'
                 });
@@ -54,8 +53,8 @@ var ContentScript = {
                     });
 
                     // Contained element.
-                    var width = $('.container',el).css('width'),
-                        height = $('.container',el).css('height');
+                    var width = $('.container', el).css('width'),
+                        height = $('.container', el).css('height');
 
                     $('.container', el).css({
                         position: "relative",
@@ -90,7 +89,7 @@ var ContentScript = {
             });
 
             // Make mousewheel zooming possible.
-            $panzoom.parent().on('mousewheel', function( e ) {
+            $panzoom.parent().on('mousewheel', function (e) {
                 e.preventDefault();
                 var delta = e.delta || e.originalEvent.wheelDelta;
                 var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
@@ -113,6 +112,8 @@ var ContentScript = {
             (function () {
                 jsPlumb.ready(QuoteGraph.init);
             })();
+
+            ContentScript.setup.addEventListenersToMaximizers();
         },
 
         /**
@@ -158,6 +159,41 @@ var ContentScript = {
             //$bod.append($div);
 
             return $cont;
+        },
+
+        /**
+         * Add the requires event listeners to the fullscreen and minimize images.
+         */
+        addEventListenersToMaximizers: function () {
+            $('.' + QUOTE_MAXIMIZE_CLASS).bind('click', function () {
+                // Get current state.
+                var $maximizer = $('.' + QUOTE_MAXIMIZE_CLASS);
+                var isMaximized = $maximizer.text() == 'fullscreen_exit';
+
+                // Update z-index of container pane.
+                var newZIndex = isMaximized ? Z_INDEX_BACKGROUND : Z_INDEX_FOREGROUND;
+                var $parent = $('div:has(> ' + LEFT_PANE_SELECTOR +')');
+                $parent.css({
+                    'z-index': newZIndex
+                });
+
+                // Update size.
+                if (isMaximized) {
+                    $parent.css({
+                        height: (100 - HISTORY_PANE_HEIGHT_ABS) + '%',
+                        width: QUOTE_PANE_WIDTH
+                    })
+                } else {
+                    $parent.css({
+                        height: '100%',
+                        width: '100%'
+                    })
+                }
+
+                // Update maximizer icon.
+                var newIcon = isMaximized ? 'fullscreen' : 'fullscreen_exit';
+                $maximizer.text(newIcon);
+            });
         }
     },
 
@@ -215,11 +251,11 @@ var ContentScript = {
          * @param [el] {HTMLElement} The parent element of all objects to be zoomed, defaults to the container
          *                           of the jsPlumb instance.
          */
-        zoom: function(zoom, instance, transformOrigin, el) {
-            transformOrigin = transformOrigin || [ 0.5, 0.5 ];
+        zoom: function (zoom, instance, transformOrigin, el) {
+            transformOrigin = transformOrigin || [0.5, 0.5];
             instance = instance || jsPlumb;
             el = el || instance.getContainer();
-            var p = [ "webkit", "moz", "ms", "o" ],
+            var p = ["webkit", "moz", "ms", "o"],
                 s = "scale(" + zoom + ")",
                 oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
 

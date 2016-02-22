@@ -141,3 +141,8 @@ path, .jsplumb-endpoint {
     right:0;
     z-index: 100;
 }
+
+.no-select {
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+    user-select: none;
+}

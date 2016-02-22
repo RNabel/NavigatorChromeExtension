@@ -11,7 +11,9 @@ var WEBSITE_CONTENT_WRAPPER_ID = 'content',// Can change at runtime, if ID name-
     QUOTE_PANE_WIDTH_ABS = 20,
     QUOTE_PANE_WIDTH = QUOTE_PANE_WIDTH_ABS + '%',
     HISTORY_PANE_HEIGHT_ABS = 20,
-    HISTORY_PANE_HEIGHT = HISTORY_PANE_HEIGHT_ABS + '%';
+    HISTORY_PANE_HEIGHT = HISTORY_PANE_HEIGHT_ABS + '%',
+    Z_INDEX_FOREGROUND = 9100,
+    Z_INDEX_BACKGROUND = 9000;
 
 // History graph.
 var TOTAL_COLUMNS = 5,
@@ -46,4 +48,5 @@ var QUOTE_ID = "quote_graph",
     QUOTE_LOCATION_UPDATE = "quote_location_update",
     QUOTE_CONNECTION_UPDATE = "quote_connection_update",
     QUOTE_CONNECTION_DELETED = "quote_connection_deleted",
-    QUOTE_INIT_DATA = "quote_init_data";
+    QUOTE_INIT_DATA = "quote_init_data",
+    QUOTE_MAXIMIZE_CLASS = "quote_maximize";
