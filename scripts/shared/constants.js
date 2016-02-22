@@ -14,12 +14,20 @@ var WEBSITE_CONTENT_WRAPPER_ID = 'content',// Can change at runtime, if ID name-
     HISTORY_PANE_HEIGHT = HISTORY_PANE_HEIGHT_ABS + '%';
 
 // History graph.
-var TOTAL_LEVELS = 7,
+var TOTAL_COLUMNS = 5,
     MAX_X = 1.5,
     MIN_X = -1.5,
     MAX_Y = 3,
-    MIN_Y = -3;
+    MIN_Y = -3,
 
+    HIST_CONNECTOR_WIDTH = 2,
+    HIST_CONNECTOR_OPACITY = 1,
+    HIST_CONNECTOR_COLOR = "rgba(229,219,61,0.5)",
+    HIST_ENDPOINT_RADIUS = 1,
+
+    HIST_BOX_HEIGHT_DISTANCE = "35",
+    HIST_COLUMN_INDENTIFIER_PREFIX = "column-",
+    HIST_TOP_OFFSET = 5;
 
 // Quote graph constants.
 var QUOTE_GRAPH_MAX_SCALE = 1,

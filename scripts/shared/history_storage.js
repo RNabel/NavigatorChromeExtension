@@ -3,13 +3,14 @@
  */
 
 /**
- * Function that creates an object to store a node in the history tree.
- * @param URL {string | object} - acts as unique ID; or is cloned HistoryRecord.
+ * Create an object to store a node in the history tree.
+ * @param URL {string | HistoryRecord} - acts as unique ID; or is cloned HistoryRecord.
  * @param [access_time] {number} - list of UNIX time stamps.
- * @param [title] {string} -   The title of the web page.
- * @param [parent] {string} - array of parent URLs.
+ * @param [title] {string} The title of the web page.
+ * @param [parent] {string} Array of parent URLs.
+ * @param faviconURL {string} The url to the site's favicon.
  */
-function HistoryRecord(URL, access_time, title, parent) {
+function HistoryRecord(URL, access_time, title, parent, faviconURL) {
     if (arguments.length > 1) { // Each parameter passed separately.
         this.URL = URL;
         this.access_times = [access_time];
@@ -21,25 +22,46 @@ function HistoryRecord(URL, access_time, title, parent) {
             this.parents = [];
         }
 
+        // TODO fetch the favicon URL. More information can be found here: http://stackoverflow.com/a/34160462/3918512
+        // Fall back to Wikipedia's icon if icon not found.
+        this.faviconURL = faviconURL || "https://www.wikipedia.org/static/favicon/wikipedia.ico";
+
     } else { // A cloned HistoryRecord is passed.
         this.URL = URL.URL;
         this.access_times = URL.access_times;
         this.children = URL.children;
         this.parents = URL.parents;
         this.title = URL.title;
+        this.faviconURL = URL.faviconURL;
     }
 }
 
 /**
- * Retrieves value of URL of HistoryRecord.
- * @returns {*} The URL.
+ * Retrieve value of the ID of HistoryRecord.
+ * @returns {string} The b64 encoded URL.
  */
-HistoryRecord.prototype.getURL = function () {
+HistoryRecord.prototype.getID = function () {
+    return btoa(this.URL).replace(/([ #;&,.+*~\':"!^$[\]()=>|\/@])/g,'');
+};
+
+/**
+ * Return the URL of this history record.
+ * @returns {string} The URL.
+ */
+HistoryRecord.prototype.getURL = function() {
     return this.URL;
 };
 
 /**
- * Adds a parent to the object.
+ * Return the entry's favicon URL.
+ * @returns {string} The url to the element's favicon.
+ */
+HistoryRecord.prototype.getFaviconURL = function() {
+    return this.faviconURL;
+};
+
+/**
+ * Add a parent to the object.
  * @param {string} _parent - The parent URL.
  */
 HistoryRecord.prototype.addParent = function (_parent) {
@@ -49,7 +71,7 @@ HistoryRecord.prototype.addParent = function (_parent) {
 };
 
 /**
- * Adds a child node to the object.
+ * Add a child node to the object.
  * @param {string} _child - The child URL.
  */
 HistoryRecord.prototype.addChild = function (_child) {
@@ -59,7 +81,7 @@ HistoryRecord.prototype.addChild = function (_child) {
 };
 
 /**
- * Adds a UNIX access time to the object.
+ * Add a UNIX access time to the object.
  * @param {number} _access_time - The time of access.
  */
 HistoryRecord.prototype.addAccessTime = function (_access_time) {
@@ -94,7 +116,7 @@ function HistoryStorage(init_list) {
 }
 
 /**
- * Adds a record to the history storage.
+ * Add a record to the history storage.
  * @param {HistoryRecord} record - The record object.
  */
 HistoryStorage.prototype.addRecord = function (record) {
@@ -109,7 +131,7 @@ HistoryStorage.prototype.addRecord = function (record) {
 };
 
 /**
- * Searches for record by URL and deletes it.
+ * Search for record by URL and deletes it.
  * @param {string | HistoryRecord} record - The URL string.
  */
 HistoryStorage.prototype.deleteRecord = function (record) {
@@ -151,9 +173,9 @@ HistoryStorage.prototype.deleteRecord = function (record) {
 };
 
 /**
- * Finds a record in the history storage.
+ * Find a record in the history storage.
  * @param {string} record_id - The URL (or id) associated with the record.
- * @returns {*}
+ * @returns {HistoryRecord | boolean} The relevant record of false.
  */
 HistoryStorage.prototype.findRecord = function (record_id) {
     for (var i = 0; i < this.list.length; i++) {
