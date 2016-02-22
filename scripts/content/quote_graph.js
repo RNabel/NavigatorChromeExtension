@@ -198,7 +198,7 @@ var QuoteGraph = {
         var $div = $(
             '<div class="window">\n    <x-title>Sample Title here</x-title><img class="closing-x">\n    <br/><br/>\n    \n    <x-content>\n        Sample content here.\n    </x-content>\n    <!--Misc control items.-->\n    <a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n        connections</a><br/>\n    <a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br>\n    <a href="#" class="cmdLink detach" rel="dragDropWindow4">detach\n        all</a>\n</div>');
 
-        var $closeX = $('.closing-x', $div).attr('src', chrome.extension.getID('/assets/black-x-hi.png'));
+        var $closeX = $('.closing-x', $div).attr('src', chrome.extension.getURL('/assets/black-x-hi.png'));
         $closeX.on('click', QuoteGraph.deleteQuote);
         var $title = $('x-title', $div);
         $title.text("Sample title");

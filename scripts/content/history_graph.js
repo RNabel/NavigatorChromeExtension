@@ -169,20 +169,24 @@ var HistoryGraph = {
      * @param title {string} The title of the webpage.
      * @param faviconUrl {string} The URL of the favicon of the webpage.
      * @param column {int} The index of the column of the node.
-     * @param websiteURL {string} The unique identifier of the webpage, i.e. its URL.
+     * @param nodeID {string} The unique identifier of the webpage, i.e. its URL.
      * @returns {string} The unique identifier of the node element.
      */
-    addNode: function (y, title, faviconUrl, column, websiteURL) {
+    addNode: function (y, title, faviconUrl, column, nodeID, websiteURL) {
         // Create div.
         var $div = $(
             '<div class="history_entry">\n    <img class="favicon" align="middle"><x-title>Website title</x-title>\n</div>');
 
-        var $favicon = $('.favicon', $div).attr('src', faviconUrl);
-        //$favicon.on('click', QuoteGraph.deleteQuote);
+        var $favicon = $('.favicon', $div).attr({
+            'src': faviconUrl
+        });
+        $favicon.on('click', function() {
+            window.location.href = websiteURL
+        });
         var $title = $('x-title', $div);
         $title.text(title);
 
-        $div.addClass(websiteURL);
+        $div.addClass(nodeID);
         $div.addClass('column-' + column);
 
         var id = utils.guid();
@@ -273,7 +277,7 @@ var HistoryGraph = {
                 for (var row = 0; row < HistoryGraph.columns[col].length; row++) {
                     var currentNode = HistoryGraph.columns[col][row];
 
-                    HistoryGraph.addNode(row, currentNode.getTitle(), currentNode.getFaviconURL(), col, currentNode.getID());
+                    HistoryGraph.addNode(row, currentNode.getTitle(), currentNode.getFaviconURL(), col, currentNode.getID(), currentNode.getURL());
                 }
             }
 
