@@ -22,6 +22,7 @@ var QuoteGraph = {
     instance: undefined, // Contains the jsPlumb instance.
 
     endpointTemplate: undefined,
+
     setup: function () {
         var instance = this.instance,
             endpointTemplate = this.endpointTemplate;
@@ -97,7 +98,7 @@ var QuoteGraph = {
             })
         });
 
-        this.instance.bind('connection', QuoteGraph.onNewConnection);
+        this.instance.bind('connection', QuoteGraph.eventHandlers.onNewConnection);
 
         jsPlumb.bind("jsPlumbConnection", function (ci) {
             ci.connection.bind("click", function (con) {
@@ -107,86 +108,106 @@ var QuoteGraph = {
         jsPlumb.fire("jsPlumbDemoLoaded", instance);
     },
 
-    onNewConnection: function (info, ev) {
-        console.log("---------------------");
-        console.log("New connection! Info:");
-        console.log(info);
+    init: function () {
+        // Register drag & drop event listeners.
+        console.log("Quote graph initializing.");
 
-        var source = info.sourceId,
-            target = info.target.id;
+        $(LEFT_PANE_SELECTOR).on('drop', QuoteGraph.eventHandlers.drop);
+        $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.eventHandlers.allowDrop);
+        $('#' + WEBSITE_CONTENT_WRAPPER_ID).on('dragstart', QuoteGraph.eventHandlers.startDrag);
+        QuoteGraph.setup(); // Register setup method.
 
-        // Only notify of new connection if user induced new connection.
-        if (!QuoteGraph.quotes.existsConnection(source, target)) {
-            QuoteGraph.sendMessage({
-                type: QUOTE_CONNECTION_UPDATE,
-                data: {
-                    source: source,
-                    target: target
-                }
-            })
-        }
-    },
+        console.log("Quote graph initialized.");
 
-    /**
-     *
-     * @param quoteStorage {QuoteStorage} updated quote storage object.
-     */
-    onQuoteUpdate: function (quoteStorage) {
-        // Reset the canvas.
-        this.instance.detachEveryConnection();
-        this.instance.deleteEveryEndpoint();
-        this.instance.empty(LEFT_PANE_IDENTIFIER);
-
-        QuoteGraph.quotes = new QuoteStorage(quoteStorage);
-        quoteStorage = QuoteGraph.quotes;
-
-        // Create all nodes.
-        var nodes = quoteStorage.getAllQuotes();
-        for (var i = 0; i < nodes.length; i++) {
-            var node = nodes[i];
-            QuoteGraph.addNode(node.location.x, node.location.y,
-                node.URL, node.text, node.html_data, node.xPath, node.type, node.id);
-        }
-
-        // Create all connections.
-        var connections = quoteStorage.getAllConnections();
-        for (i = 0; i < connections.length; i++) {
-            var connection = connections[i];
-            QuoteGraph.addConnection(connection.source, connection.target);
-        }
-    },
-
-    allowDrop: function (ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-    },
-
-    startDrag: function (ev) {
-        var path = $(ev.originalEvent.path[1]).getPath(); // TODO update code to be resilient.
-        ev.originalEvent.dataTransfer.setData('src', path);
-    },
-
-    drop: function (ev) {
-        ev.preventDefault();
-
-        var url = window.location.href,
-            text = ev.originalEvent.dataTransfer.getData('text/plain'),
-            html_data = ev.originalEvent.dataTransfer.getData('text/html'),
-            source_selector = ev.originalEvent.dataTransfer.getData('src'),
-            x = ev.offsetX,
-            y = ev.offsetY,
-            htmlObj = $(html_data),
-            type = htmlObj.prop('tagName');
-
-        var id = QuoteGraph.addNode(x, y, url, text, html_data, source_selector, type);
-
-        // Save the node to backend.
-        var newRecord = new QuoteRecord(id, text, html_data, type, url, source_selector, {x: x, y: y});
-
+        // Request quote data update.
         QuoteGraph.sendMessage({
-            type: QUOTE_UPDATE,
-            data: newRecord
-        });
+            type: QUOTE_INIT_DATA
+        })
+    },
+
+    eventHandlers : {
+        onNewConnection: function (info, ev) {
+            console.log("---------------------");
+            console.log("New connection! Info:");
+            console.log(info);
+
+            var source = info.sourceId,
+                target = info.target.id;
+
+            // Only notify of new connection if user induced new connection.
+            if (!QuoteGraph.quotes.existsConnection(source, target)) {
+                QuoteGraph.sendMessage({
+                    type: QUOTE_CONNECTION_UPDATE,
+                    data: {
+                        source: source,
+                        target: target
+                    }
+                })
+            }
+        },
+
+        /**
+         *
+         * @param quoteStorage {QuoteStorage} updated quote storage object.
+         */
+        onQuoteUpdate: function (quoteStorage) {
+            // Reset the canvas.
+            QuoteGraph.instance.detachEveryConnection();
+            QuoteGraph.instance.deleteEveryEndpoint();
+            QuoteGraph.instance.empty(LEFT_PANE_IDENTIFIER);
+
+            QuoteGraph.quotes = new QuoteStorage(quoteStorage);
+            quoteStorage = QuoteGraph.quotes;
+
+            // Create all nodes.
+            var nodes = quoteStorage.getAllQuotes();
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                QuoteGraph.addNode(node.location.x, node.location.y,
+                    node.URL, node.text, node.html_data, node.xPath, node.type, node.id);
+            }
+
+            // Create all connections.
+            var connections = quoteStorage.getAllConnections();
+            for (i = 0; i < connections.length; i++) {
+                var connection = connections[i];
+                QuoteGraph.addConnection(connection.source, connection.target);
+            }
+        },
+
+        allowDrop: function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        },
+
+        startDrag: function (ev) {
+            var path = $(ev.originalEvent.path[1]).getPath(); // TODO update code to be resilient.
+            ev.originalEvent.dataTransfer.setData('src', path);
+        },
+
+        drop: function (ev) {
+            ev.preventDefault();
+
+            var url = window.location.href,
+                text = ev.originalEvent.dataTransfer.getData('text/plain'),
+                html_data = ev.originalEvent.dataTransfer.getData('text/html'),
+                source_selector = ev.originalEvent.dataTransfer.getData('src'),
+                x = ev.offsetX,
+                y = ev.offsetY,
+                htmlObj = $(html_data),
+                type = htmlObj.prop('tagName');
+
+            var id = QuoteGraph.addNode(x, y, url, text, html_data, source_selector, type);
+
+            // Save the node to backend.
+            var newRecord = new QuoteRecord(id, text, html_data, type, url, source_selector, {x: x, y: y});
+
+            QuoteGraph.sendMessage({
+                type: QUOTE_UPDATE,
+                data: newRecord
+            });
+        }
+
     },
 
     addNode: function (x, y, url, text, html_data, source_selector, type, id) {
@@ -214,7 +235,7 @@ var QuoteGraph = {
             $($content).text(text);
         }
 
-        $($div).attr('id', this.i);
+        $($div).attr('id', QuoteGraph.i);
         // Append to container.
         $(LEFT_PANE_SELECTOR).append($div);
 
@@ -282,32 +303,15 @@ var QuoteGraph = {
         });
     },
 
-    init: function () {
-        // Register drag & drop event listeners.
-        console.log("Quote graph initializing.");
-
-        $(LEFT_PANE_SELECTOR).on('drop', QuoteGraph.drop);
-        $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.allowDrop);
-        $('#' + WEBSITE_CONTENT_WRAPPER_ID).on('dragstart', QuoteGraph.startDrag);
-        QuoteGraph.setup(); // Register setup method.
-
-        console.log("Quote graph initialized.");
-
-        // Request quote data update.
-        QuoteGraph.sendMessage({
-            type: QUOTE_INIT_DATA
-        })
-    },
-
     tools: {
         messageHandler: function (request, sender, sendResponse, sentFromExt) {
             switch (request.type) {
                 case QUOTE_UPDATE:
-                    QuoteGraph.onQuoteUpdate(request.data);
+                    QuoteGraph.eventHandlers.onQuoteUpdate(request.data);
                     break;
 
                 case QUOTE_INIT_DATA:
-                    QuoteGraph.onQuoteUpdate(request.data);
+                    QuoteGraph.eventHandlers.onQuoteUpdate(request.data);
                     break;
 
                 default:

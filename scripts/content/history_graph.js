@@ -169,7 +169,8 @@ var HistoryGraph = {
      * @param title {string} The title of the webpage.
      * @param faviconUrl {string} The URL of the favicon of the webpage.
      * @param column {int} The index of the column of the node.
-     * @param nodeID {string} The unique identifier of the webpage, i.e. its URL.
+     * @param nodeID {string} The unique selector of the webpage.
+     * @param websiteURL {string} The URL of the webpage.
      * @returns {string} The unique identifier of the node element.
      */
     addNode: function (y, title, faviconUrl, column, nodeID, websiteURL) {
@@ -180,7 +181,7 @@ var HistoryGraph = {
         var $favicon = $('.favicon', $div).attr({
             'src': faviconUrl
         });
-        $favicon.on('click', function() {
+        $favicon.on('click', function () {
             window.location.href = websiteURL
         });
         var $title = $('x-title', $div);

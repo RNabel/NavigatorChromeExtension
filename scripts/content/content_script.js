@@ -16,6 +16,9 @@ var ContentScript = {
         ContentScript.setup.resizeAndPositionContent($contentDiv);
 
         ContentScript.setup.addSidePanes();
+
+        // Add css file.
+        $('head').append('<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">')
     },
 
     setup: {
@@ -26,7 +29,7 @@ var ContentScript = {
          */
         addSidePanes: function () {
             var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '"></div>\n');
-            var left = $('<div class="container_container" mag-thumb="drag">\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>\n    </div>\n</div>');
+            var left = $('<div class="container_container" mag-thumb="drag">\n    <i class="material-icons fullscreen">fullscreen</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
                 el.css({
