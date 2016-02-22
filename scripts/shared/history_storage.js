@@ -41,7 +41,7 @@ function HistoryRecord(URL, access_time, title, parent, faviconURL) {
  * @returns {string} The b64 encoded URL.
  */
 HistoryRecord.prototype.getID = function () {
-    return btoa(this.URL);
+    return btoa(this.URL).replace(/([ #;&,.+*~\':"!^$[\]()=>|\/@])/g,'');
 };
 
 /**

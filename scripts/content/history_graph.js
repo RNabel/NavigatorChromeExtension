@@ -93,11 +93,11 @@ var HistoryGraph = {
         if (!rootNode) return;
 
         // Start recursive adding of parents and children.
-        HistoryGraph.recursiveAddNode(rootNode, 3, undefined, false);
-        HistoryGraph.recursiveAddNode(rootNode, 3, undefined, true);
+        HistoryGraph.recursiveAddNode(rootNode, 2, undefined, false);
+        HistoryGraph.recursiveAddNode(rootNode, 2, undefined, true);
 
         // Render all nodes.
-        HistoryGraph.render();
+        HistoryGraph.rendering.render();
     },
 
     connections: {
@@ -126,7 +126,7 @@ var HistoryGraph = {
      */
     recursiveAddNode: function (currentNode, currentColumnIndex, lastNode, isChildDirection) {
         // Return if level too large.
-        if (currentColumnIndex === 0 || currentColumnIndex > TOTAL_COLUMNS) {
+        if (currentColumnIndex < 0 || currentColumnIndex >= TOTAL_COLUMNS) {
             return;
         }
 
@@ -145,7 +145,7 @@ var HistoryGraph = {
         // Only add the currentNode, if it is not already added to the current column.
         var currentNodeID = currentNode.getID();
         var alreadyExists = false;
-        for (i=0; i < HistoryGraph.columns[currentColumnIndex].length; i++) {
+        for (i = 0; i < HistoryGraph.columns[currentColumnIndex].length; i++) {
             if (HistoryGraph.columns[currentColumnIndex][i].getID() == currentNodeID) {
                 alreadyExists = true;
                 break; // Could return here, but may make flow difficult to follow.
@@ -156,15 +156,24 @@ var HistoryGraph = {
         if (!alreadyExists) {
             HistoryGraph.columns[currentColumnIndex].push(currentNode);
 
-            var connectorPair = isChildDirection ? [lastNode, currentNode] : [currentNode, lastNode];
-            HistoryGraph.connectors.push(connectorPair);
+            if (lastNode !== undefined) { // Only add connection if lastNode exists.
+                var connectorPair = isChildDirection ? [lastNode, currentNode] : [currentNode, lastNode];
+                HistoryGraph.connectors.push(connectorPair);
+            }
         }
     },
 
-    addNode: function (y, title, faviconUrl, column, id) {
+    /**
+     * Adds new node to the history graph.
+     * @param y {int} The height of the element measured from the top.
+     * @param title {string} The title of the webpage.
+     * @param faviconUrl {string} The URL of the favicon of the webpage.
+     * @param column {int} The index of the column of the node.
+     * @param websiteURL {string} The unique identifier of the webpage, i.e. its URL.
+     * @returns {string} The unique identifier of the node element.
+     */
+    addNode: function (y, title, faviconUrl, column, websiteURL) {
         // Create div.
-        var _id = id || utils.guid(); // Create unique id.
-
         var $div = $(
             '<div class="history_entry">\n    <img class="favicon" align="middle"><x-title>Website title</x-title>\n</div>');
 
@@ -173,16 +182,19 @@ var HistoryGraph = {
         var $title = $('x-title', $div);
         $title.text(title);
 
-        $div.attr('id', _id);
+        $div.addClass(websiteURL);
         $div.addClass('column-' + column);
+
+        var id = utils.guid();
+        $div.attr('id', id); // Assign unique id.
 
         // Append to container.
         $(RIGHT_PANE_SELECTOR).append($div);
 
         // Set position.
-        $div.css({top: y * HIST_BOX_HEIGHT_DISTANCE});
+        $div.css({top: (HIST_TOP_OFFSET + y * HIST_BOX_HEIGHT_DISTANCE) + "px"});
 
-        return _id;
+        return id;
     },
 
     /**
@@ -195,7 +207,6 @@ var HistoryGraph = {
 
         this.endpointTemplate.uuid = id;
         var ret = this.instance.addEndpoint($element, this.endpointTemplate);
-        //this.instance.setId(ret.getElement(), id);
 
         return id;
     },
@@ -250,27 +261,59 @@ var HistoryGraph = {
     //    return true;
     //},
 
-    render: function () {
-        // Clear current canvas.
-        HistoryGraph.instance.detachEveryConnection();
-        HistoryGraph.instance.deleteEveryEndpoint();
-        HistoryGraph.instance.empty(RIGHT_PANE_IDENTIFIER);
+    rendering: {
+        render: function () {
+            // Clear current canvas.
+            HistoryGraph.instance.detachEveryConnection();
+            HistoryGraph.instance.deleteEveryEndpoint();
+            HistoryGraph.instance.empty(RIGHT_PANE_IDENTIFIER);
 
-        // Add all nodes in each column.
-        for (var col = 0; col < HistoryGraph.columns.length; col++) {
-            for (var row = 0; row < HistoryGraph.columns[col].length; row++) {
-                var currentNode = HistoryGraph.columns[col][row];
+            // Add all nodes in each column.
+            for (var col = 0; col < HistoryGraph.columns.length; col++) {
+                for (var row = 0; row < HistoryGraph.columns[col].length; row++) {
+                    var currentNode = HistoryGraph.columns[col][row];
 
-                HistoryGraph.addNode(row, currentNode.getTitle(), currentNode.getFaviconURL(), col, currentNode.getID());
+                    HistoryGraph.addNode(row, currentNode.getTitle(), currentNode.getFaviconURL(), col, currentNode.getID());
+                }
             }
-        }
 
-        // Add all connections.
-        for (var i = 0; i < HistoryGraph.connectors.length; i++) {
-            var currentPair = HistoryGraph.connectors[i];
-            HistoryGraph.connections.connect(currentPair[0].getID(), currentPair[1].getID())
+            // Add all connections.
+            for (var i = 0; i < HistoryGraph.connectors.length; i++) {
+                var currentPair = HistoryGraph.connectors[i],
+                    origin = currentPair[0].getID(),
+                    target = currentPair[1].getID();
+
+                // For each column.
+                for (var columnIndex = 0; columnIndex < TOTAL_COLUMNS; columnIndex++) {
+                    var originElement = HistoryGraph.rendering.getElementByColumnAndURL(origin, columnIndex.toString());
+
+                    if (originElement) {
+                        var targetElement = HistoryGraph.rendering.getElementByColumnAndURL(target, (columnIndex + 1).toString())
+
+                        // If both origin and target exist in the correct columns, create connection.
+                        if (targetElement) {
+                            HistoryGraph.connections.connect($(originElement).attr('id'), $(targetElement).attr('id'));
+                        }
+                    }
+
+                }
+            }
+        },
+
+        /**
+         * Return the element with classes websiteURL and columnIndex.
+         * @param websiteURL {string} The website's URL.
+         * @param columnIndex {string} The index of the column.
+         * @returns {object | boolean} The element matching the criteria.
+         */
+        getElementByColumnAndURL: function (websiteURL, columnIndex) {
+            // Get the column.
+            var rows = $('.' + HIST_COLUMN_INDENTIFIER_PREFIX + columnIndex + '.' + websiteURL);
+
+            return (rows.length) ? rows[0] : false;
         }
     },
+
 
     tools: {
         messageHandler: function (request, sender, sendResponse, sentFromExt) {
