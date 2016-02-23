@@ -75,7 +75,6 @@ var HistoryGraph = {
      * @param historyStorage {HistoryStorage} The entire session's history used initialise the tree.
      */
     drawGraphFromStorage: function (historyStorage) {
-        console.log("Drawing entire history.");
         HistoryGraph.columns = [];
         HistoryGraph.connectors = [];
 
@@ -274,8 +273,6 @@ var HistoryGraph = {
 
     tools: {
         messageHandler: function (request, sender, sendResponse, sentFromExt) {
-            console.log("History graph received message");
-
             switch (request.type) {
                 case HISTORY_UPDATE:
                     HistoryGraph.drawGraphFromStorage(request.data.list);
