@@ -199,6 +199,11 @@ x-favicon-wrapper {
 }
 
 .container-1 {
+    z-index:80;
     height: 100%;
     width: 100%;
+}
+
+#bigpicture-container {
+    z-index: 90;
 }
