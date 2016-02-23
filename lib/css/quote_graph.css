@@ -106,9 +106,14 @@ path, .jsplumb-endpoint {
     font-size: 1vw;
 }
 
-.favicon {
-    height: 100%;
+x-favicon-wrapper {
+    width: 50%; /* This is relative to the tile's width. */
     padding: 0px 5px 1px;
+}
+
+.favicon {
+    height:32px;
+    width:32px;
 }
 
 /*
@@ -163,6 +168,12 @@ path, .jsplumb-endpoint {
     user-select: none;
 }
 
+.container-1 {
+    position: relative;
+    height:100%;
+    width: 100%;
+}
+
 /* CSS for containers. */
 .container {
     color: transparent;
@@ -186,4 +197,9 @@ path, .jsplumb-endpoint {
 .quote-container {
     top: 0;
     left: 0;
+}
+
+.container-1 {
+    height: 100%;
+    width: 100%;
 }

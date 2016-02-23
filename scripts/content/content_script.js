@@ -27,7 +27,7 @@ var ContentScript = {
          * Adapted from: [link]{@link http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages}
          */
         addSidePanes: function () {
-            var right = $('<div class="container-container hist-container">\n    <div id="' + RIGHT_PANE_IDENTIFIER + '" style="z-index: '+ Z_INDEX_BACKGROUND+'">\n        <i class="material-icons no-select fullscreen '+ HIST_MAXIMIZE_CLASS +'">fullscreen</i>\n        <i class="material-icons no-select '+ HIST_COLLAPSE_CLASS +'">expand_more</i>\n    </div>\n</div>');
+            var right = $('<div class="container-container hist-container" style="z-index: '+ Z_INDEX_BACKGROUND+'">\n    <i class="material-icons no-select fullscreen '+ HIST_MAXIMIZE_CLASS +'">fullscreen</i>\n    <i class="material-icons no-select '+ HIST_COLLAPSE_CLASS +'">expand_more</i>\n    <div id="' + RIGHT_PANE_IDENTIFIER + '" class="container-1">\n    </div>\n</div>');
             var left = $('<div class="quote-container container-container" mag-thumb="drag" style="z-index: '+ Z_INDEX_BACKGROUND +'">\n    <i class="material-icons no-select fullscreen ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i class="material-icons no-select '+ QUOTE_COLLAPSE_CLASS +'">chevron_left</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
@@ -148,7 +148,7 @@ var ContentScript = {
 
                 // Update z-index of container pane.
                 var newZIndex = isMaximized ? Z_INDEX_BACKGROUND : Z_INDEX_FOREGROUND;
-                var $parent = $(RIGHT_PANE_SELECTOR);
+                var $parent = $('div:has(> ' + RIGHT_PANE_SELECTOR +')');
                 $parent.css({
                     'z-index': newZIndex
                 });
@@ -158,12 +158,14 @@ var ContentScript = {
                     $parent.css({
                         height: HISTORY_PANE_HEIGHT,
                         width: '100%'
-                    })
+                    });
+                    $('.history_entry').css('height', HIST_HEIGHT_SMALL);
                 } else {
                     $parent.css({
                         height: '100%',
                         width: '100%'
-                    })
+                    });
+                    $('.history_entry').css('height', HIST_HEIGHT_FULLSCREEN);
                 }
 
                 // Update maximizer icon.

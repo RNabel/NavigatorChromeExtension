@@ -31,7 +31,9 @@ var TOTAL_COLUMNS = 5,
     HIST_COLUMN_INDENTIFIER_PREFIX = "column-",
     HIST_TOP_OFFSET = 5,
     HIST_MAXIMIZE_CLASS = "hist_maximize",
-    HIST_COLLAPSE_CLASS = "hist-collapse";
+    HIST_COLLAPSE_CLASS = "hist-collapse",
+    HIST_HEIGHT_SMALL = "30%",
+    HIST_HEIGHT_FULLSCREEN = "auto";
 
 // Quote graph constants.
 var QUOTE_GRAPH_MAX_SCALE = 1,
