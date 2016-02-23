@@ -11,62 +11,41 @@ var ContentScript = {
      */
     init: function () {
         console.log('Entered entry point.');
-        var $contentDiv = ContentScript.setup.wrapOriginalContentInDiv();
+        var $contentDiv = $(document.body);
 
         ContentScript.setup.resizeAndPositionContent($contentDiv);
 
         ContentScript.setup.addSidePanes();
+
+        // Add css file.
+        $('head').append('<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">')
     },
 
     setup: {
         /**
          * Set up the panes displaying the history and quote graph.
          * Adapted from: [link]{@link http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages}
-         *
          */
         addSidePanes: function () {
-            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '"></div>\n');
-            var left = $('<div class="container_container" mag-thumb="drag">\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan"></div>\n    </div>\n</div>');
+            var right = $('<div class="container-container hist-container" style="z-index: '+ Z_INDEX_BACKGROUND+'">\n    <i class="material-icons no-select fullscreen '+ HIST_MAXIMIZE_CLASS +'">fullscreen</i>\n    <i class="material-icons no-select '+ HIST_COLLAPSE_CLASS +'">expand_more</i>\n    <div id="' + RIGHT_PANE_IDENTIFIER + '" class="container-1">\n    </div>\n</div>');
+            var left = $('<div class="quote-container container-container" mag-thumb="drag" style="z-index: '+ Z_INDEX_BACKGROUND +'">\n    <i class="material-icons no-select fullscreen ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i class="material-icons no-select '+ QUOTE_COLLAPSE_CLASS +'">chevron_left</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
-                el.css({
-                    'position': 'fixed',
-                    'background': 'white',
-                    'z-index': '999999',
-                    'background-color': '#FAFAFA',
-                    overflow: 'hidden'
-                });
-                $('.container', el).css({
-                    color: 'transparent'
-                });
                 if (isLeft) {
                     // Wrapping element.
                     el.css({
-                        'top': '0px',
-                        'left': '0px',
-                        'box-shadow': 'inset 0 0 1em black',
                         'height': 100 - HISTORY_PANE_HEIGHT_ABS + '%',
                         'bottom': HISTORY_PANE_HEIGHT,
                         'width': QUOTE_PANE_WIDTH
                     });
 
-                    // Contained element.
-                    var width = $('.container',el).css('width'),
-                        height = $('.container',el).css('height');
-
                     $('.container', el).css({
-                        position: "relative",
-                        left: "-50%",
-                        top: "-50%",
                         height: 210 / QUOTE_GRAPH_MIN_SCALE + "%",
                         width: 210 / QUOTE_GRAPH_MIN_SCALE + "%"
                     });
                 } else {
                     el.css({
-                        'bottom': '0px',
-                        'box-shadow': 'inset 0 0 1em black',
-                        'height': HISTORY_PANE_HEIGHT,
-                        'width': '100%'
+                        'height': HISTORY_PANE_HEIGHT
                     });
                 }
             }
@@ -87,7 +66,7 @@ var ContentScript = {
             });
 
             // Make mousewheel zooming possible.
-            $panzoom.parent().on('mousewheel', function( e ) {
+            $panzoom.parent().on('mousewheel', function (e) {
                 e.preventDefault();
                 var delta = e.delta || e.originalEvent.wheelDelta;
                 var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
@@ -110,6 +89,8 @@ var ContentScript = {
             (function () {
                 jsPlumb.ready(QuoteGraph.init);
             })();
+
+            ContentScript.setup.addEventListenersToMaximizers();
         },
 
         /**
@@ -128,33 +109,69 @@ var ContentScript = {
         },
 
         /**
-         * Wrap original page content in div element.
-         * @returns {jQuery | HTMLElement}
+         * Add the requires event listeners to the fullscreen and minimize images.
          */
-        wrapOriginalContentInDiv: function () {
-            // Get content of body tag.
-            var $cont = $(document.body);
+        addEventListenersToMaximizers: function () {
+            $('.' + QUOTE_MAXIMIZE_CLASS).bind('click', function () {
+                // Get current state.
+                var $maximizer = $('.' + QUOTE_MAXIMIZE_CLASS);
+                var isMaximized = $maximizer.text() == 'fullscreen_exit';
 
-            // Add content to new div element.
-            //var $div = $('<div>');
-            var i = 0;
+                // Update z-index of container pane.
+                var newZIndex = isMaximized ? Z_INDEX_BACKGROUND : Z_INDEX_FOREGROUND;
+                var $parent = $('div:has(> ' + LEFT_PANE_SELECTOR +')');
+                $parent.css({
+                    'z-index': newZIndex
+                });
 
-            // Ensure unique ID for website wrapper.
-            var contentId = WEBSITE_CONTENT_WRAPPER_ID;
-            while ($("#" + contentId).length) {
-                i++;
-                contentId = WEBSITE_CONTENT_WRAPPER_ID + i;
-            }
-            WEBSITE_CONTENT_WRAPPER_ID = contentId;
+                // Update size.
+                if (isMaximized) {
+                    $parent.css({
+                        height: (100 - HISTORY_PANE_HEIGHT_ABS) + '%',
+                        width: QUOTE_PANE_WIDTH
+                    })
+                } else {
+                    $parent.css({
+                        height: '100%',
+                        width: '100%'
+                    })
+                }
 
-            $cont.attr('id', 'content');
-            //$cont.append($cont);
+                // Update maximizer icon.
+                var newIcon = isMaximized ? 'fullscreen' : 'fullscreen_exit';
+                $maximizer.text(newIcon);
+            });
+            $('.' + HIST_MAXIMIZE_CLASS).bind('click', function () {
+                // Get current state.
+                var $maximizer = $('.' + HIST_MAXIMIZE_CLASS);
+                var isMaximized = $maximizer.text() == 'fullscreen_exit';
 
-            // Append new div to body.
-            //var $bod = $(document.body);
-            //$bod.append($div);
+                // Update z-index of container pane.
+                var newZIndex = isMaximized ? Z_INDEX_BACKGROUND : Z_INDEX_FOREGROUND;
+                var $parent = $('div:has(> ' + RIGHT_PANE_SELECTOR +')');
+                $parent.css({
+                    'z-index': newZIndex
+                });
 
-            return $cont;
+                // Update size.
+                if (isMaximized) {
+                    $parent.css({
+                        height: HISTORY_PANE_HEIGHT,
+                        width: '100%'
+                    });
+                    $('.history_entry').css('height', HIST_HEIGHT_SMALL);
+                } else {
+                    $parent.css({
+                        height: '100%',
+                        width: '100%'
+                    });
+                    $('.history_entry').css('height', HIST_HEIGHT_FULLSCREEN);
+                }
+
+                // Update maximizer icon.
+                var newIcon = isMaximized ? 'fullscreen' : 'fullscreen_exit';
+                $maximizer.text(newIcon);
+            });
         }
     },
 
@@ -212,11 +229,11 @@ var ContentScript = {
          * @param [el] {HTMLElement} The parent element of all objects to be zoomed, defaults to the container
          *                           of the jsPlumb instance.
          */
-        zoom: function(zoom, instance, transformOrigin, el) {
-            transformOrigin = transformOrigin || [ 0.5, 0.5 ];
+        zoom: function (zoom, instance, transformOrigin, el) {
+            transformOrigin = transformOrigin || [0.5, 0.5];
             instance = instance || jsPlumb;
             el = el || instance.getContainer();
-            var p = [ "webkit", "moz", "ms", "o" ],
+            var p = ["webkit", "moz", "ms", "o"],
                 s = "scale(" + zoom + ")",
                 oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
 

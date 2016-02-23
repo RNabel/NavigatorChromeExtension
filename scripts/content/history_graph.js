@@ -169,18 +169,19 @@ var HistoryGraph = {
      * @param title {string} The title of the webpage.
      * @param faviconUrl {string} The URL of the favicon of the webpage.
      * @param column {int} The index of the column of the node.
-     * @param nodeID {string} The unique identifier of the webpage, i.e. its URL.
+     * @param nodeID {string} The unique selector of the webpage.
+     * @param websiteURL {string} The URL of the webpage.
      * @returns {string} The unique identifier of the node element.
      */
     addNode: function (y, title, faviconUrl, column, nodeID, websiteURL) {
         // Create div.
         var $div = $(
-            '<div class="history_entry">\n    <img class="favicon" align="middle"><x-title>Website title</x-title>\n</div>');
+            '<div class="history_entry">\n    <x-favicon-wrapper>\n        <img class="favicon" align="middle">\n    </x-favicon-wrapper>\n    <x-title>Website title</x-title>\n</div>');
 
         var $favicon = $('.favicon', $div).attr({
             'src': faviconUrl
         });
-        $favicon.on('click', function() {
+        $favicon.on('click', function () {
             window.location.href = websiteURL
         });
         var $title = $('x-title', $div);
@@ -214,56 +215,6 @@ var HistoryGraph = {
 
         return id;
     },
-
-
-    ///**
-    // * HistoryGraph interface function for graph creation from data source, validates input and stated dependencies,
-    // *     and takes care of positioning.
-    // * @param level {int} the number of the level [1 - max level]
-    // * @param nodeID {string} the name of the node to be inserted.
-    // * @param nodeLabel {string} The title of the page.
-    // * @param [dependentNodeName] {string} the name of the node it connects to.
-    // * @returns {boolean} - whether the node insertion was successful.
-    // */
-    //addNodeToLevel: function (level, nodeID, nodeLabel, dependentNodeName) {
-    //    // Add the node to the internal data storage.
-    //
-    //    if (!(typeof dependentNodeName === 'string') && level != HistoryGraph.currentNodeIndex) {
-    //        // Possible error-checking.
-    //        console.log('No dependent stated for node "' + nodeID + '"')
-    //        return false;
-    //    }
-    //
-    //    var dependentLevelIndex;
-    //    var isNodeAdded = false;
-    //
-    //    // Find the level of the dependent.
-    //    if (level > HistoryGraph.currentNodeIndex) { // If parent.
-    //        dependentLevelIndex = level - 1;
-    //    } else if (level < HistoryGraph.currentNodeIndex) { // If child.
-    //        dependentLevelIndex = level + 1;
-    //    } else { // If current node.
-    //        HistoryGraph.addNode(nodeID, nodeLabel, [], level);
-    //        isNodeAdded = true;
-    //    }
-    //
-    //    // Check if dependent exists in other level.
-    //    if (!isNodeAdded) {
-    //        // Ensure dependent node exists.
-    //        if ($.inArray(dependentNodeName, HistoryGraph.columns[dependentLevelIndex])) {
-    //            // Possible error-handling.
-    //            return false;
-    //        }
-    //
-    //        // Add node to graph.
-    //        //HistoryGraph._addNode(nodeID, nodeLabel, [dependentNodeName], level);
-    //    }
-    //    if (!HistoryGraph.columns[level]) {
-    //        HistoryGraph.columns[level] = [];
-    //    }
-    //    HistoryGraph.columns[level].push(nodeID);
-    //    return true;
-    //},
 
     rendering: {
         render: function () {
@@ -299,7 +250,6 @@ var HistoryGraph = {
                             HistoryGraph.connections.connect($(originElement).attr('id'), $(targetElement).attr('id'));
                         }
                     }
-
                 }
             }
         },

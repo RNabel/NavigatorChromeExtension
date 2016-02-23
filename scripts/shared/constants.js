@@ -11,7 +11,9 @@ var WEBSITE_CONTENT_WRAPPER_ID = 'content',// Can change at runtime, if ID name-
     QUOTE_PANE_WIDTH_ABS = 20,
     QUOTE_PANE_WIDTH = QUOTE_PANE_WIDTH_ABS + '%',
     HISTORY_PANE_HEIGHT_ABS = 20,
-    HISTORY_PANE_HEIGHT = HISTORY_PANE_HEIGHT_ABS + '%';
+    HISTORY_PANE_HEIGHT = HISTORY_PANE_HEIGHT_ABS + '%',
+    Z_INDEX_FOREGROUND = 9100,
+    Z_INDEX_BACKGROUND = 9000;
 
 // History graph.
 var TOTAL_COLUMNS = 5,
@@ -27,13 +29,19 @@ var TOTAL_COLUMNS = 5,
 
     HIST_BOX_HEIGHT_DISTANCE = "35",
     HIST_COLUMN_INDENTIFIER_PREFIX = "column-",
-    HIST_TOP_OFFSET = 5;
+    HIST_TOP_OFFSET = 5,
+    HIST_MAXIMIZE_CLASS = "hist_maximize",
+    HIST_COLLAPSE_CLASS = "hist-collapse",
+    HIST_HEIGHT_SMALL = "30%",
+    HIST_HEIGHT_FULLSCREEN = "auto";
 
 // Quote graph constants.
 var QUOTE_GRAPH_MAX_SCALE = 1,
     QUOTE_GRAPH_MIN_SCALE = 0.1,
     QUOTE_CONTAINER_CLASS = "container",
-    QUOTE_OUTER_CONTAINER_CLASS = "container";
+    QUOTE_OUTER_CONTAINER_CLASS = "container",
+    QUOTE_MAXIMIZE_CLASS = "quote_maximize",
+    QUOTE_COLLAPSE_CLASS = "quote-collapse";
 
 // Messaging constants.
 var HISTORY_ID = "history",
