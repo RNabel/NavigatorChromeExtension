@@ -69,7 +69,7 @@ path, .jsplumb-endpoint {
     cursor: pointer;
 }
 
-.jsplumb-endpoint .jsplumb-endpoint-anchor{
+.jsplumb-endpoint .jsplumb-endpoint-anchor {
     z-index: 119;
 }
 
@@ -134,27 +134,26 @@ path, .jsplumb-endpoint {
     left: 82%;
 }
 
-
 /*Fullscreen buttons.*/
 .fullscreen {
     position: absolute;
-    right:0;
+    right: 0;
     z-index: 100;
     cursor: pointer;
 }
 
 .hist-collapse {
     position: absolute;
-    right:0;
-    bottom:0;
+    right: 0;
+    bottom: 0;
     z-index: 100;
     cursor: pointer;
 }
 
 .quote-collapse {
     position: absolute;
-    left:0;
-    top:0;
+    left: 0;
+    top: 0;
     z-index: 100;
     cursor: pointer;
 }
@@ -162,4 +161,29 @@ path, .jsplumb-endpoint {
 .no-select {
     -webkit-user-select: none; /* Chrome/Safari/Opera */
     user-select: none;
+}
+
+/* CSS for containers. */
+.container {
+    color: transparent;
+    position: relative;
+    left: -50%;
+    top: -50%;
+}
+
+.container-container {
+    position: fixed;
+    background-color: #FAFAFA;
+    overflow: hidden;
+    box-shadow: inset 0 0 1em black;
+}
+
+.hist-container {
+    bottom: 0;
+    width: 100%;
+}
+
+.quote-container {
+    top: 0;
+    left: 0;
 }

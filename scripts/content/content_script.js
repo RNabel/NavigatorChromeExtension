@@ -27,47 +27,25 @@ var ContentScript = {
          * Adapted from: [link]{@link http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages}
          */
         addSidePanes: function () {
-            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '" style="z-index: '+ Z_INDEX_BACKGROUND+'">\n    <i class="material-icons no-select fullscreen '+ HIST_MAXIMIZE_CLASS +'">fullscreen</i>\n    <i class="material-icons no-select '+ HIST_COLLAPSE_CLASS +'">expand_more</i>\n</div>\n');
-            var left = $('<div class="container_container" mag-thumb="drag" style="z-index: '+ Z_INDEX_BACKGROUND +'">\n    <i class="material-icons no-select fullscreen ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i class="material-icons no-select '+ QUOTE_COLLAPSE_CLASS +'">chevron_left</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
+            var right = $('<div class="container-container hist-container">\n    <div id="' + RIGHT_PANE_IDENTIFIER + '" style="z-index: '+ Z_INDEX_BACKGROUND+'">\n        <i class="material-icons no-select fullscreen '+ HIST_MAXIMIZE_CLASS +'">fullscreen</i>\n        <i class="material-icons no-select '+ HIST_COLLAPSE_CLASS +'">expand_more</i>\n    </div>\n</div>');
+            var left = $('<div class="quote-container container-container" mag-thumb="drag" style="z-index: '+ Z_INDEX_BACKGROUND +'">\n    <i class="material-icons no-select fullscreen ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i class="material-icons no-select '+ QUOTE_COLLAPSE_CLASS +'">chevron_left</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
-                el.css({
-                    'position': 'fixed',
-                    'background': 'white',
-                    'background-color': '#FAFAFA',
-                    overflow: 'hidden'
-                });
-                $('.container', el).css({
-                    color: 'transparent'
-                });
                 if (isLeft) {
                     // Wrapping element.
                     el.css({
-                        'top': '0px',
-                        'left': '0px',
-                        'box-shadow': 'inset 0 0 1em black',
                         'height': 100 - HISTORY_PANE_HEIGHT_ABS + '%',
                         'bottom': HISTORY_PANE_HEIGHT,
                         'width': QUOTE_PANE_WIDTH
                     });
 
-                    // Contained element.
-                    var width = $('.container', el).css('width'),
-                        height = $('.container', el).css('height');
-
                     $('.container', el).css({
-                        position: "relative",
-                        left: "-50%",
-                        top: "-50%",
                         height: 210 / QUOTE_GRAPH_MIN_SCALE + "%",
                         width: 210 / QUOTE_GRAPH_MIN_SCALE + "%"
                     });
                 } else {
                     el.css({
-                        'bottom': '0px',
-                        'box-shadow': 'inset 0 0 1em black',
-                        'height': HISTORY_PANE_HEIGHT,
-                        'width': '100%'
+                        'height': HISTORY_PANE_HEIGHT
                     });
                 }
             }
