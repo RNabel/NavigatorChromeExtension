@@ -142,6 +142,20 @@ path, .jsplumb-endpoint {
     z-index: 100;
 }
 
+.hist-collapse {
+    position: absolute;
+    right:0;
+    bottom:0;
+    z-index: 100;
+}
+
+.quote-collapse {
+    position: absolute;
+    left:0;
+    top:0;
+    z-index: 100;
+}
+
 .no-select {
     -webkit-user-select: none; /* Chrome/Safari/Opera */
     user-select: none;

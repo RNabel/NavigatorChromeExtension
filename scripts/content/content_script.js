@@ -27,8 +27,8 @@ var ContentScript = {
          * Adapted from: [link]{@link http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages}
          */
         addSidePanes: function () {
-            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '" style="z-index: '+ Z_INDEX_BACKGROUND+'">\n    <i class="material-icons no-select fullscreen '+ HIST_MAXIMIZE_CLASS +'">fullscreen</i>\n</div>\n');
-            var left = $('<div class="container_container" mag-thumb="drag" style="z-index: '+ Z_INDEX_BACKGROUND +'">\n    <i class="material-icons no-select fullscreen ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
+            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '" style="z-index: '+ Z_INDEX_BACKGROUND+'">\n    <i class="material-icons no-select fullscreen '+ HIST_MAXIMIZE_CLASS +'">fullscreen</i>\n    <i class="material-icons no-select '+ HIST_COLLAPSE_CLASS +'">expand_more</i>\n</div>\n');
+            var left = $('<div class="container_container" mag-thumb="drag" style="z-index: '+ Z_INDEX_BACKGROUND +'">\n    <i class="material-icons no-select fullscreen ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i class="material-icons no-select '+ QUOTE_COLLAPSE_CLASS +'">chevron_left</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
                 el.css({

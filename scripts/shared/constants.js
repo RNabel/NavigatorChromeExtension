@@ -30,13 +30,16 @@ var TOTAL_COLUMNS = 5,
     HIST_BOX_HEIGHT_DISTANCE = "35",
     HIST_COLUMN_INDENTIFIER_PREFIX = "column-",
     HIST_TOP_OFFSET = 5,
-    HIST_MAXIMIZE_CLASS = "hist_maximize";
+    HIST_MAXIMIZE_CLASS = "hist_maximize",
+    HIST_COLLAPSE_CLASS = "hist-collapse";
 
 // Quote graph constants.
 var QUOTE_GRAPH_MAX_SCALE = 1,
     QUOTE_GRAPH_MIN_SCALE = 0.1,
     QUOTE_CONTAINER_CLASS = "container",
-    QUOTE_OUTER_CONTAINER_CLASS = "container";
+    QUOTE_OUTER_CONTAINER_CLASS = "container",
+    QUOTE_MAXIMIZE_CLASS = "quote_maximize",
+    QUOTE_COLLAPSE_CLASS = "quote-collapse";
 
 // Messaging constants.
 var HISTORY_ID = "history",
@@ -49,5 +52,4 @@ var QUOTE_ID = "quote_graph",
     QUOTE_LOCATION_UPDATE = "quote_location_update",
     QUOTE_CONNECTION_UPDATE = "quote_connection_update",
     QUOTE_CONNECTION_DELETED = "quote_connection_deleted",
-    QUOTE_INIT_DATA = "quote_init_data",
-    QUOTE_MAXIMIZE_CLASS = "quote_maximize";
+    QUOTE_INIT_DATA = "quote_init_data";
