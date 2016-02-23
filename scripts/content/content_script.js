@@ -11,7 +11,7 @@ var ContentScript = {
      */
     init: function () {
         console.log('Entered entry point.');
-        var $contentDiv = ContentScript.setup.wrapOriginalContentInDiv();
+        var $contentDiv = $(document.body);
 
         ContentScript.setup.resizeAndPositionContent($contentDiv);
 
@@ -25,10 +25,9 @@ var ContentScript = {
         /**
          * Set up the panes displaying the history and quote graph.
          * Adapted from: [link]{@link http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages}
-         *
          */
         addSidePanes: function () {
-            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '" style="z-index: '+ Z_INDEX_BACKGROUND+'"></div>\n');
+            var right = $('<div id="' + RIGHT_PANE_IDENTIFIER + '" style="z-index: '+ Z_INDEX_BACKGROUND+'">\n    <i class="material-icons no-select fullscreen '+ HIST_MAXIMIZE_CLASS +'">fullscreen</i>\n</div>\n');
             var left = $('<div class="container_container" mag-thumb="drag" style="z-index: '+ Z_INDEX_BACKGROUND +'">\n    <i class="material-icons no-select fullscreen ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
@@ -132,36 +131,6 @@ var ContentScript = {
         },
 
         /**
-         * Wrap original page content in div element.
-         * @returns {jQuery | HTMLElement}
-         */
-        wrapOriginalContentInDiv: function () {
-            // Get content of body tag.
-            var $cont = $(document.body);
-
-            // Add content to new div element.
-            //var $div = $('<div>');
-            var i = 0;
-
-            // Ensure unique ID for website wrapper.
-            var contentId = WEBSITE_CONTENT_WRAPPER_ID;
-            while ($("#" + contentId).length) {
-                i++;
-                contentId = WEBSITE_CONTENT_WRAPPER_ID + i;
-            }
-            WEBSITE_CONTENT_WRAPPER_ID = contentId;
-
-            $cont.attr('id', 'content');
-            //$cont.append($cont);
-
-            // Append new div to body.
-            //var $bod = $(document.body);
-            //$bod.append($div);
-
-            return $cont;
-        },
-
-        /**
          * Add the requires event listeners to the fullscreen and minimize images.
          */
         addEventListenersToMaximizers: function () {
@@ -182,6 +151,35 @@ var ContentScript = {
                     $parent.css({
                         height: (100 - HISTORY_PANE_HEIGHT_ABS) + '%',
                         width: QUOTE_PANE_WIDTH
+                    })
+                } else {
+                    $parent.css({
+                        height: '100%',
+                        width: '100%'
+                    })
+                }
+
+                // Update maximizer icon.
+                var newIcon = isMaximized ? 'fullscreen' : 'fullscreen_exit';
+                $maximizer.text(newIcon);
+            });
+            $('.' + HIST_MAXIMIZE_CLASS).bind('click', function () {
+                // Get current state.
+                var $maximizer = $('.' + HIST_MAXIMIZE_CLASS);
+                var isMaximized = $maximizer.text() == 'fullscreen_exit';
+
+                // Update z-index of container pane.
+                var newZIndex = isMaximized ? Z_INDEX_BACKGROUND : Z_INDEX_FOREGROUND;
+                var $parent = $(RIGHT_PANE_SELECTOR);
+                $parent.css({
+                    'z-index': newZIndex
+                });
+
+                // Update size.
+                if (isMaximized) {
+                    $parent.css({
+                        height: HISTORY_PANE_HEIGHT,
+                        width: '100%'
                     })
                 } else {
                     $parent.css({

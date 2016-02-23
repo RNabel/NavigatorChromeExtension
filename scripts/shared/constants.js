@@ -29,7 +29,8 @@ var TOTAL_COLUMNS = 5,
 
     HIST_BOX_HEIGHT_DISTANCE = "35",
     HIST_COLUMN_INDENTIFIER_PREFIX = "column-",
-    HIST_TOP_OFFSET = 5;
+    HIST_TOP_OFFSET = 5,
+    HIST_MAXIMIZE_CLASS = "hist_maximize";
 
 // Quote graph constants.
 var QUOTE_GRAPH_MAX_SCALE = 1,
