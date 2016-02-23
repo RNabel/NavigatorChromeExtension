@@ -28,7 +28,6 @@
         "lib/sigma.js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js",
         "lib/jsPlumb-2.0.5.js",
         "lib/jquery.panzoom.js",
-        "lib/bigpicture.js",
         "scripts/shared/constants.js",
         "scripts/shared/utils.js",
         "scripts/shared/quote_storage.js",
@@ -52,7 +51,8 @@
     ]
   },
   "web_accessible_resources": [
-    "assets/*"
+    "assets/*",
+    "lib/*"
   ],
   "manifest_version": 2
 }

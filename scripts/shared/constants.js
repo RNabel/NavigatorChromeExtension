@@ -38,6 +38,8 @@ var TOTAL_COLUMNS = 5,
 // Quote graph constants.
 var QUOTE_GRAPH_MAX_SCALE = 1,
     QUOTE_GRAPH_MIN_SCALE = 0.1,
+    QUOTE_MAXIMIZE_CLASS = "quote-maximize",
+    QUOTE_COLLAPSE_CLASS = "quote-collapse";
     QUOTE_MAXIMIZE_CLASS = "quote_maximize",
     QUOTE_COLLAPSE_CLASS = "quote-collapse",
     QUOTE_NODE_CLASS = "quote_node",

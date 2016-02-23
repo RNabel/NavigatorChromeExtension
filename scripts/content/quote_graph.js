@@ -255,7 +255,10 @@ var QuoteGraph = {
         $(LEFT_PANE_SELECTOR).append($div);
 
         // Set position.
-        $div.css({top: y, left: x});
+        //$div.css({top: y, left: x});
+        $div.attr('data-x', x);
+        $div.attr('data-y', y);
+        $div.attr('data-size', 60);
 
         // Add the endpointTemplate to it.
         endpointTemplate.uuid = id;
