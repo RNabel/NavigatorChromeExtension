@@ -106,6 +106,13 @@ var QuoteGraph = {
             });
         });
         jsPlumb.fire("jsPlumbDemoLoaded", instance);
+
+        // Set in-place editing mode.
+        $.fn.editable.defaults.mode = 'inline';
+
+        $(document).ready(function () {
+            $('.' + QUOTE_NODE_CLASS).editable();
+        });
     },
 
     init: function () {
@@ -125,7 +132,7 @@ var QuoteGraph = {
         })
     },
 
-    eventHandlers : {
+    eventHandlers: {
         onNewConnection: function (info, ev) {
             console.log("---------------------");
             console.log("New connection! Info:");
@@ -217,13 +224,12 @@ var QuoteGraph = {
         }
 
         var $div = $(
-            '<div class="card tiny">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content">\n        <span class="card-title cyan-text">Card Title</span>\n        <p class="x-content cyan-text text-darken-3">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="#" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
+            '<div class="card tiny">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content">\n        <span class="card-title cyan-text ' + QUOTE_NODE_CLASS + '">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="#" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
 
         var $closeX = $('.closing-x', $div)
             .on('click', QuoteGraph.deleteQuote);
 
-        var $title = $('x-title', $div);
-        $title.text("Sample title");
+        var $title = QuoteGraph.addNodeHelpers.addHandlersToTitle($('.quote-title', $div).parent());
 
         var $content = $('.x-content', $div);
         $content.text("Sample content");
@@ -270,7 +276,46 @@ var QuoteGraph = {
                 }
             });
 
+        //$('.' + QUOTE_NODE_CLASS).editable();
+
         return id;
+    },
+
+    addNodeHelpers: {
+        handleTitleInlineEdit: function (ev) {
+            ev.preventDefault();
+            var isClick = ev.originalEvent.type == "click";
+            var child = $(":first-child", this);
+            var childInput = $(":first-child", child);
+            var isInput = childInput.length ? childInput.prop('tagName').toLowerCase() == "input" : false;
+
+            if (isClick && !isInput) {
+                child.empty();
+                child.append($('<input placeholder="Sample Text" id="first_name" type="text" class="validate">'));
+                childInput = $(":first-child", child);
+                childInput.keypress(function (e) {
+                    if (e.which == 13) {
+                        $(this).blur();
+                    }
+                });
+                childInput.focus();
+            } else if (!isClick) {
+                // Extract the text.
+                var newTitle = childInput.val();
+                child.text(newTitle);
+
+                // TODO save new title to backend.
+            }
+
+            // Refresh event listeners.
+            //QuoteGraph.addNodeHelpers.addHandlersToTitle($(this));
+        },
+
+        addHandlersToTitle: function ($element) {
+            $element
+                .on("click", QuoteGraph.addNodeHelpers.handleTitleInlineEdit)
+                .on("focusout", QuoteGraph.addNodeHelpers.handleTitleInlineEdit);
+        }
     },
 
     deleteQuote: function (ev) {
@@ -291,7 +336,8 @@ var QuoteGraph = {
      */
     addConnection: function (source, target) {
         var connection = QuoteGraph.instance.connect({
-            uuids: [source, target]});
+            uuids: [source, target]
+        });
         connection.bind("dblclick", QuoteGraph.deleteConnection);
     },
 

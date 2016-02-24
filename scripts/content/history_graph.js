@@ -90,7 +90,10 @@ var HistoryGraph = {
         var rootNode = HistoryGraph.history.findRecord(currentURL);
 
         // Escape if the current page does not exist in the history storage (yet). History will be updated and re-braodcast.
-        if (!rootNode) return;
+        if (!rootNode) {
+            HistoryGraph.addNode(0, document.title, "", 2, "0", document.URL);
+            return;
+        }
 
         // Start recursive adding of parents and children.
         HistoryGraph.recursiveAddNode(rootNode, 2, undefined, false);
