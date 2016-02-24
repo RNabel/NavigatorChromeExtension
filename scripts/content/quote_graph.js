@@ -224,7 +224,7 @@ var QuoteGraph = {
         }
 
         var $div = $(
-            '<div class="card tiny">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content">\n        <span class="card-title cyan-text ' + QUOTE_NODE_CLASS + '">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="#" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
+            '<div class="card tiny">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content">\n        <span class="card-title cyan-text ' + QUOTE_NODE_CLASS + '">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="'+ url + '" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
 
         var $closeX = $('.closing-x', $div)
             .on('click', QuoteGraph.deleteQuote);
