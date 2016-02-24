@@ -15,11 +15,13 @@
       ],
       "css": [
         "lib/css/quote_graph.css",
-        "lib/css/materialize.css"
+        "lib/css/materialize.css",
+        "lib/css/jquery-editable.css"
       ],
       "js": [
         "lib/d3.js",
         "lib/jquery-2.2.0.js",
+        "lib/jChangeType.js",
         "lib/sigma.js/sigma.min.js",
         "lib/sigma.js/plugins/sigma.parsers.json/sigma.parsers.json.js",
         "lib/sigma.js/plugins/sigma.renderers.customShapes/shape-library.js",
@@ -33,7 +35,8 @@
         "scripts/content/history_graph.js",
         "scripts/content/quote_graph.js",
         "scripts/content/content_script.js",
-        "lib/materialize.js"
+        "lib/materialize.js",
+        "lib/jquery-editable-poshytip.js"
       ],
       "run_at": "document_start"
     }
