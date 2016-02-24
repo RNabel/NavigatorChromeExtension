@@ -176,7 +176,7 @@ var HistoryGraph = {
     addNode: function (y, title, faviconUrl, column, nodeID, websiteURL) {
         // Create div.
         var $div = $(
-            '<div class="history_entry">\n    <x-favicon-wrapper>\n        <img class="favicon" align="middle">\n    </x-favicon-wrapper>\n    <x-title>Website title</x-title>\n</div>');
+            '<div class="history_entry chip truncate">\n    <x-favicon-wrapper>\n        <img class="favicon" align="middle">\n    </x-favicon-wrapper>\n    <x-title>Website title</x-title>\n</div>');
 
         var $favicon = $('.favicon', $div).attr({
             'src': faviconUrl
