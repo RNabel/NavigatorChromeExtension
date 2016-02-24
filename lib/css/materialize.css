@@ -7790,8 +7790,14 @@ small {
   background-color: inherit;
 }
 
+.card.tiny {
+  height: auto;
+  width:200px;
+}
+
 .card.small {
-  height: 300px;
+  height: auto;
+  width: 300px;
 }
 
 .card.medium {

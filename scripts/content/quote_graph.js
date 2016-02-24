@@ -217,14 +217,15 @@ var QuoteGraph = {
         }
 
         var $div = $(
-            '<div class="window">\n    <x-title>Sample Title here</x-title><img class="closing-x">\n    <br/><br/>\n    \n    <x-content>\n        Sample content here.\n    </x-content>\n    <!--Misc control items.-->\n    <a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle\n        connections</a><br/>\n    <a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br>\n    <a href="#" class="cmdLink detach" rel="dragDropWindow4">detach\n        all</a>\n</div>');
+            '<div class="card tiny">\n    <i class="material-icons closing-x black-text right">close</i>\n    <div class="card-content">\n        <span class="card-title cyan-text">Card Title</span>\n        <p class="x-content cyan-text text-darken-3">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="#" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
 
-        var $closeX = $('.closing-x', $div).attr('src', chrome.extension.getURL('/assets/black-x-hi.png'));
-        $closeX.on('click', QuoteGraph.deleteQuote);
+        var $closeX = $('.closing-x', $div)
+            .on('click', QuoteGraph.deleteQuote);
+
         var $title = $('x-title', $div);
         $title.text("Sample title");
 
-        var $content = $('x-content', $div);
+        var $content = $('.x-content', $div);
         $content.text("Sample content");
 
         // Check if image.
@@ -248,7 +249,7 @@ var QuoteGraph = {
         this.instance.setId(ret.getElement(), id);
 
         // Make all nodes draggable, should use specific id, rather than class.
-        this.instance.draggable(jsPlumb.getSelector(".drag-drop-demo .window"),
+        this.instance.draggable(jsPlumb.getSelector(".card.tiny"),
             {
                 stop: function (event, ui) {
                     // Called when element is dropped.
