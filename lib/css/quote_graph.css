@@ -97,8 +97,6 @@ path, .jsplumb-endpoint {
 .history_entry {
     position: absolute;
     width: 16%;
-    height: 30%;
-    border-bottom: thin solid;
     display: flex;
     flex-flow: row nowrap;
     overflow: hidden;

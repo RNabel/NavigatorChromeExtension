@@ -10,12 +10,12 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.wikipedia.org/*"
+        "*://*.wikipedia.org/*",
+        "http://localhost/*"
       ],
       "css": [
-        "lib/css/bootstrap-3.2.0/dist/css/bootstrap.min.css",
-        "lib/css/LatoFont.css",
-        "lib/css/quote_graph.css"
+        "lib/css/quote_graph.css",
+        "lib/css/materialize.css"
       ],
       "js": [
         "lib/d3.js",
@@ -32,7 +32,8 @@
         "scripts/shared/history_storage.js",
         "scripts/content/history_graph.js",
         "scripts/content/quote_graph.js",
-        "scripts/content/content_script.js"
+        "scripts/content/content_script.js",
+        "lib/materialize.js"
       ],
       "run_at": "document_start"
     }
