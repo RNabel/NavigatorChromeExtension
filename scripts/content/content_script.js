@@ -17,8 +17,9 @@ var ContentScript = {
 
         ContentScript.setup.addSidePanes();
 
-        // Add css file.
-        $('head').append('<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">')
+        // Add css files.
+        $('head')
+            .append('<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">');
     },
 
     setup: {
@@ -27,8 +28,8 @@ var ContentScript = {
          * Adapted from: [link]{@link http://stackoverflow.com/questions/14290428/how-can-a-chrome-extension-add-a-floating-bar-at-the-bottom-of-pages}
          */
         addSidePanes: function () {
-            var right = $('<div class="container-container hist-container" style="z-index: '+ Z_INDEX_BACKGROUND+'">\n    <i class="material-icons no-select fullscreen '+ HIST_MAXIMIZE_CLASS +'">fullscreen</i>\n    <i class="material-icons no-select '+ HIST_COLLAPSE_CLASS +'">expand_more</i>\n    <div id="' + RIGHT_PANE_IDENTIFIER + '" class="container-1">\n    </div>\n</div>');
-            var left = $('<div class="quote-container container-container" mag-thumb="drag" style="z-index: '+ Z_INDEX_BACKGROUND +'">\n    <i class="material-icons no-select fullscreen ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i class="material-icons no-select '+ QUOTE_COLLAPSE_CLASS +'">chevron_left</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
+            var right = $('<div class="container-container hist-container" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + HIST_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="left" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + HIST_COLLAPSE_CLASS + '">expand_more</i>\n    <div id="' + RIGHT_PANE_IDENTIFIER + '" class="container-1">\n    </div>\n</div>');
+            var left = $('<div class="quote-container container-container" mag-thumb="drag" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="right" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + QUOTE_COLLAPSE_CLASS + '">chevron_left</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
                 if (isLeft) {
@@ -119,7 +120,7 @@ var ContentScript = {
 
                 // Update z-index of container pane.
                 var newZIndex = isMaximized ? Z_INDEX_BACKGROUND : Z_INDEX_FOREGROUND;
-                var $parent = $('div:has(> ' + LEFT_PANE_SELECTOR +')');
+                var $parent = $('div:has(> ' + LEFT_PANE_SELECTOR + ')');
                 $parent.css({
                     'z-index': newZIndex
                 });
@@ -140,6 +141,7 @@ var ContentScript = {
                 // Update maximizer icon.
                 var newIcon = isMaximized ? 'fullscreen' : 'fullscreen_exit';
                 $maximizer.text(newIcon);
+                $maximizer.attr('data-tooltip', isMaximized ? 'Fullscreen': 'End fullscreen')
             });
             $('.' + HIST_MAXIMIZE_CLASS).bind('click', function () {
                 // Get current state.
@@ -148,7 +150,7 @@ var ContentScript = {
 
                 // Update z-index of container pane.
                 var newZIndex = isMaximized ? Z_INDEX_BACKGROUND : Z_INDEX_FOREGROUND;
-                var $parent = $('div:has(> ' + RIGHT_PANE_SELECTOR +')');
+                var $parent = $('div:has(> ' + RIGHT_PANE_SELECTOR + ')');
                 $parent.css({
                     'z-index': newZIndex
                 });
@@ -171,6 +173,7 @@ var ContentScript = {
                 // Update maximizer icon.
                 var newIcon = isMaximized ? 'fullscreen' : 'fullscreen_exit';
                 $maximizer.text(newIcon);
+                $maximizer.attr('data-tooltip', isMaximized ? 'Fullscreen': 'End fullscreen')
             });
         }
     },
