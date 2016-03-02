@@ -22,9 +22,6 @@ function HistoryRecord(URL, access_time, title, parent, faviconURL) {
             this.parents = [];
         }
 
-        // TODO fetch the favicon URL. More information can be found here: http://stackoverflow.com/a/34160462/3918512
-        // Fall back to Wikipedia's icon if icon not found.
-        this.faviconURL = faviconURL || "https://www.wikipedia.org/static/favicon/wikipedia.ico";
 
     } else { // A cloned HistoryRecord is passed.
         this.URL = URL.URL;
@@ -34,6 +31,11 @@ function HistoryRecord(URL, access_time, title, parent, faviconURL) {
         this.title = URL.title;
         this.faviconURL = URL.faviconURL;
     }
+
+    // Fall back to generic favicon if faviconURL not specified. Using answer from Stackoverflow question:
+    //      http://stackoverflow.com/a/15750809/3918512 and http://stackoverflow.com/a/23945027/3918512
+    // If particular site not working, it is because it does not store its favicon in the expected location: domain.com/favicon.ico
+    this.faviconURL = this.faviconURL || "http://" + utils.extractDomain(URL) + "/favicon.ico";
 }
 
 /**
