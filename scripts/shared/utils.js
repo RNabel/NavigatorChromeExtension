@@ -40,5 +40,20 @@ utils = {
         domain = domain.split(':')[0];
 
         return domain;
+    },
+
+    /**
+     * HTML-Escape an input string to make it safe to be inserted by .innerHTML .
+     * Taken from [StackOverflow Answer]{@link http://stackoverflow.com/a/6234804/3918512}.
+     * @param unsafe {string} The unsafe string to be escaped.
+     * @returns {XML|string} The escaped string.
+     */
+    escapeHtml: function (unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 };

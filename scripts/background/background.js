@@ -66,6 +66,16 @@ var BackgroundScript = {
             BackgroundScript.quote_graph.quoteStorage.deleteConnection(source, target);
 
             BackgroundScript.quote_graph.sendAllQuotes();
+        },
+
+        onQuoteTitleChanged: function (data) {
+            var newTitle = data.new_title,
+                quoteID = data.quote_id;
+
+            var quoteRecord = BackgroundScript.quote_graph.quoteStorage.getQuote(quoteID);
+            quoteRecord.title = newTitle;
+
+            BackgroundScript.quote_graph.sendAllQuotes();
         }
     },
 
@@ -243,6 +253,7 @@ var BackgroundScript = {
     BackgroundScript.messageMap[QUOTE_LOCATION_UPDATE] = BackgroundScript.quote_graph.onQuoteLocationUpdate;
     BackgroundScript.messageMap[QUOTE_CONNECTION_UPDATE] = BackgroundScript.quote_graph.onQuoteConnectionUpdate;
     BackgroundScript.messageMap[QUOTE_CONNECTION_DELETED] = BackgroundScript.quote_graph.onQuoteConnectionDeleted;
+    BackgroundScript.messageMap[QUOTE_TITLE_CHANGED] = BackgroundScript.quote_graph.onQuoteTitleChanged;
 })
 ();
 
