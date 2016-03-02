@@ -1,25 +1,40 @@
 /**
  * Created by Robin Nabel on 03/02/16.
  */
-function QuoteRecord(id, text, html_data, type, URL, xPath, location) {
+
+/**
+ * An instance which contains all information relevant for a quote object.
+ * @param id {string | QuoteRecord} The unique identifier of this node.
+ * @param [text] {string} The plain text content of the quote.
+ * @param [htmlData] {string} The html formatted content of the quote.
+ * @param [type] {string} The type of the htmlData, i.e. whether image or plain text.
+ * @param [URL] {string} The URL of the origin
+ * @param [xPath] {string} The XPath locator of the origin on the page referenced by URL.
+ * @param [location] {string} The x and y coordinate of its location on the Quote pane.
+ * @param [title] {string} The title of the quote.
+ * @constructor
+ */
+function QuoteRecord(id, text, htmlData, type, URL, xPath, location, title) {
     if (typeof id == 'object') { // If constructor object is passed.
         text = id.text;
-        html_data = id.html_data;
+        htmlData = id.html_data;
         type = id.type;
         URL = id.URL;
         xPath = id.xPath;
         location = id.location;
+        title = id.title;
 
         id = id.id;
     }
 
     this.id = id;
     this.text = text;
-    this.html_data = html_data;
+    this.html_data = htmlData;
     this.type = type;
     this.URL = URL;
     this.xPath = xPath;
     this.location = location;
+    this.title = title;
 }
 
 function QuoteConnection(obj) {
