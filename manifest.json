@@ -35,8 +35,7 @@
         "scripts/content/history_graph.js",
         "scripts/content/quote_graph.js",
         "scripts/content/content_script.js",
-        "lib/materialize.js",
-        "lib/jquery-editable-poshytip.js"
+        "lib/materialize.js"
       ],
       "run_at": "document_start"
     }

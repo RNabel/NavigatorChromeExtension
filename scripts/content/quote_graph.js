@@ -106,13 +106,6 @@ var QuoteGraph = {
             });
         });
         jsPlumb.fire("jsPlumbDemoLoaded", instance);
-
-        // Set in-place editing mode.
-        $.fn.editable.defaults.mode = 'inline';
-
-        $(document).ready(function () {
-            $('.' + QUOTE_NODE_CLASS).editable();
-        });
     },
 
     init: function () {
@@ -154,7 +147,7 @@ var QuoteGraph = {
         },
 
         /**
-         *
+         * Update all rendered quotes.
          * @param quoteStorage {QuoteStorage} updated quote storage object.
          */
         onQuoteUpdate: function (quoteStorage) {
@@ -170,8 +163,7 @@ var QuoteGraph = {
             var nodes = quoteStorage.getAllQuotes();
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
-                QuoteGraph.addNode(node.location.x, node.location.y,
-                    node.URL, node.text, node.html_data, node.xPath, node.type, node.id);
+                QuoteGraph.addNodeFromQuoteRecord(node);
             }
 
             // Create all connections.
@@ -217,19 +209,23 @@ var QuoteGraph = {
 
     },
 
-    addNode: function (x, y, url, text, html_data, source_selector, type, id) {
+    addNode: function (x, y, url, text, html_data, source_selector, type, id, title) {
         // Create div.
         if (id === undefined) {
             id = utils.guid(); // Create unique id.
         }
 
+        title = title || "&nbsp;";
+
         var $div = $(
-            '<div class="card tiny">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content">\n        <span class="card-title cyan-text ' + QUOTE_NODE_CLASS + '">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="'+ url + '" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
+            '<div class="card tiny">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content">\n        <span class="card-title cyan-text ' + QUOTE_NODE_CLASS + '">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="' + url + '" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
 
         var $closeX = $('.closing-x', $div)
             .on('click', QuoteGraph.deleteQuote);
 
-        var $title = QuoteGraph.addNodeHelpers.addHandlersToTitle($('.quote-title', $div).parent());
+        QuoteGraph.addNodeHelpers.addHandlersToTitle($('.quote-title', $div).parent());
+        var $title = $('.quote-title', $div);
+        $title.html(title);
 
         var $content = $('.x-content', $div);
         $content.text("Sample content");
@@ -281,6 +277,24 @@ var QuoteGraph = {
         return id;
     },
 
+    /**
+     * Wrapper to insert correct parameters to addNode.
+     * @param quoteRecord {QuoteRecord} Th record to use to insert a new node.
+     */
+    addNodeFromQuoteRecord: function (quoteRecord) {
+        QuoteGraph.addNode(
+            quoteRecord.location.x,
+            quoteRecord.location.y,
+            quoteRecord.URL,
+            quoteRecord.text,
+            quoteRecord.html_data,
+            quoteRecord.xPath,
+            quoteRecord.type,
+            quoteRecord.id,
+            quoteRecord.title
+        );
+    },
+
     addNodeHelpers: {
         handleTitleInlineEdit: function (ev) {
             ev.preventDefault();
@@ -290,25 +304,46 @@ var QuoteGraph = {
             var isInput = childInput.length ? childInput.prop('tagName').toLowerCase() == "input" : false;
 
             if (isClick && !isInput) {
+                var currentTitle = child.text();
+                currentTitle = (currentTitle == '\xa0') ? "" : currentTitle;
+
                 child.empty();
-                child.append($('<input placeholder="Sample Text" id="first_name" type="text" class="validate">'));
+                child.append($('<input placeholder="Enter Title" id="title_form" type="text" class="validate">\n'));
                 childInput = $(":first-child", child);
+                childInput.attr('value', currentTitle);
+
+
                 childInput.keypress(function (e) {
                     if (e.which == 13) {
                         $(this).blur();
                     }
                 });
+                // Focus and scroll to end of existing title.
                 childInput.focus();
+                var len = currentTitle.length;
+                childInput[0].setSelectionRange(len, len);
+
             } else if (!isClick) {
                 // Extract the text.
                 var newTitle = childInput.val();
-                child.text(newTitle);
+                var quoteID = childInput.parent().parent().parent().parent().attr('id');
 
-                // TODO save new title to backend.
+                // Ensure that the resulting title contains at least one character.
+                if (!$.trim(newTitle).length) {
+                    newTitle = "&nbsp;";
+                    child.html(newTitle);
+                } else {
+                    child.text(newTitle);
+                }
+
+                QuoteGraph.sendMessage({
+                    type: QUOTE_TITLE_CHANGED,
+                    data: {
+                        new_title: newTitle,
+                        quote_id: quoteID
+                    }
+                });
             }
-
-            // Refresh event listeners.
-            //QuoteGraph.addNodeHelpers.addHandlersToTitle($(this));
         },
 
         addHandlersToTitle: function ($element) {
