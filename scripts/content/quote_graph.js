@@ -114,7 +114,7 @@ var QuoteGraph = {
 
         $(LEFT_PANE_SELECTOR).on('drop', QuoteGraph.eventHandlers.drop);
         $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.eventHandlers.allowDrop);
-        $(LEFT_PANE_SELECTOR).dblclick(QuoteGraph.eventHandlers.onDblClick);
+        //$(LEFT_PANE_SELECTOR).dblclick(QuoteGraph.eventHandlers.onDblClick);
         $('#' + WEBSITE_CONTENT_WRAPPER_ID).on('dragstart', QuoteGraph.eventHandlers.startDrag);
         QuoteGraph.setup(); // Register setup method.
 
