@@ -114,6 +114,7 @@ var QuoteGraph = {
 
         $(LEFT_PANE_SELECTOR).on('drop', QuoteGraph.eventHandlers.drop);
         $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.eventHandlers.allowDrop);
+        $(LEFT_PANE_SELECTOR).dblclick(QuoteGraph.eventHandlers.onDblClick);
         $('#' + WEBSITE_CONTENT_WRAPPER_ID).on('dragstart', QuoteGraph.eventHandlers.startDrag);
         QuoteGraph.setup(); // Register setup method.
 
@@ -145,7 +146,6 @@ var QuoteGraph = {
                 })
             }
         },
-
         /**
          * Update all rendered quotes.
          * @param quoteStorage {QuoteStorage} updated quote storage object.
@@ -196,27 +196,39 @@ var QuoteGraph = {
                 htmlObj = $(html_data),
                 type = htmlObj.prop('tagName');
 
-            var id = QuoteGraph.addNode(x, y, url, text, html_data, source_selector, type);
-
             // Save the node to backend.
-            var newRecord = new QuoteRecord(id, text, html_data, type, url, source_selector, {x: x, y: y});
+            var newRecord = new QuoteRecord(undefined, text, html_data, type, url, source_selector, {x: x, y: y});
+
+            QuoteGraph.addNode(newRecord);
+
 
             QuoteGraph.sendMessage({
                 type: QUOTE_UPDATE,
                 data: newRecord
             });
+        },
+
+        onDblClick: function (ev) {
+            ev.preventDefault();
+
+            // Create new QuoteRecord to represent the node.
+            var quoteRecord = new QuoteRecord({
+                location: {
+                    x: ev.clientX,
+                    y: ev.clientY
+                }
+            });
+
+            QuoteGraph.addNodeFromQuoteRecord(quoteRecord);
         }
 
     },
 
     addNode: function (x, y, url, text, html_data, source_selector, type, id, title) {
-        // Create div.
-        if (id === undefined) {
-            id = utils.guid(); // Create unique id.
-        }
-
+        // Ensure title is not empty.
         title = title || "&nbsp;";
 
+        // Create div.
         var $div = $(
             '<div class="card tiny">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content">\n        <span class="card-title cyan-text ' + QUOTE_NODE_CLASS + '">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="' + url + '" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
 
@@ -271,10 +283,6 @@ var QuoteGraph = {
                     })
                 }
             });
-
-        //$('.' + QUOTE_NODE_CLASS).editable();
-
-        return id;
     },
 
     /**

@@ -27,7 +27,7 @@ function QuoteRecord(id, text, htmlData, type, URL, xPath, location, title) {
         id = id.id;
     }
 
-    this.id = id;
+    this.id = (id === undefined) ? utils.guid() : id; // Ensure id exists and create new one as required.
     this.text = text;
     this.html_data = htmlData;
     this.type = type;
