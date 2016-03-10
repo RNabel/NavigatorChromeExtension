@@ -29,7 +29,7 @@ var ContentScript = {
          */
         addSidePanes: function () {
             var right = $('<div class="container-container hist-container" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + HIST_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="left" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + HIST_COLLAPSE_CLASS + '">expand_more</i>\n    <div id="' + RIGHT_PANE_IDENTIFIER + '" class="container-1">\n    </div>\n</div>');
-            var left = $('<div class="quote-container container-container bigpicture-container" mag-thumb="drag" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="right" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + QUOTE_COLLAPSE_CLASS + '">chevron_left</i>\n    <div class="container drag-drop-demo bigpicture" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wi de drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
+            var left = $('<div class="quote-container container-container bigpicture-container" mag-thumb="drag" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="right" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + QUOTE_COLLAPSE_CLASS + '">chevron_left</i>\n    <div class="container drag-drop-demo bigpicture" data-x="721" data-y="480" data-zoom="1" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wi de drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
                 if (isLeft) {
@@ -71,7 +71,7 @@ var ContentScript = {
 
             ContentScript.quote_graph = QuoteGraph;
             (function () {
-                jsPlumb.ready(QuoteGraph.init);
+                //jsPlumb.ready(QuoteGraph.init);
             })();
 
             ContentScript.setup.addEventListenersToMaximizers();
@@ -255,8 +255,8 @@ var ContentScript = {
                 }
 
                 function newText(x, y, size, text) {
-                    var tb = $('<div class="card tiny text draggable" style="border: thin solid;">\n    <div class="card-content">\n    </div>\n</div>');
-                    var content = $('.card-content', tb);
+                    var tb = $('<div class="draggable text" style="border: thin solid; color: black">\n    <div class="cont">\n    </div>\n</div>');
+                    var content = $('.cont', tb);
                     //var tb = document.createElement('div');
                     content.attr('contenteditable', true);
                     content.text(text || "Hello");
@@ -345,14 +345,15 @@ var ContentScript = {
                     e.preventDefault();
                     // Insert new text.
                     //newText(current.x + (e.screenX) * current.zoom, current.y + (e.screenY) * current.zoom, 20 * current.zoom, '').focus();
-                    //newText(current.x + (e.clientX) * current.zoom, current.y + (e.clientY) * current.zoom, 20 * current.zoom, '').focus();
-                    var childPos = e.offset();
-                    var parentPos = e.parent().offset();
-                    var childOffset = {
-                        top: childPos.top - parentPos.top,
-                        left: childPos.left - parentPos.left
-                    };
-                    newText(current.x + (childOffset.left) * current.zoom, current.y + (childOffset.top) * current.zoom, 20 * current.zoom, '').focus();
+                    newText(current.x + (e.clientX) * current.zoom, current.y + (e.clientY) * current.zoom, 20 * current.zoom, '').focus();
+                    //var target = $(e.target);
+                    //var childPos = target.offset();
+                    //var parentPos = target.parent().offset();
+                    //var childOffset = {
+                    //    top: childPos.top - parentPos.top,
+                    //    left: childPos.left - parentPos.left
+                    //};
+                    //newText(current.x + (childOffset.left) * current.zoom, current.y + (childOffset.top) * current.zoom, 20 * current.zoom, '').focus();
                 });
 
                 var biggestPictureSeen = false,
