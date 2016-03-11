@@ -230,7 +230,7 @@ var HistoryGraph = {
                 for (var row = 0; row < HistoryGraph.columns[col].length; row++) {
                     var currentNode = HistoryGraph.columns[col][row];
 
-                    HistoryGraph.convertQuoteRecordToHTML(row, currentNode.getTitle(), currentNode.getFaviconURL(), col, currentNode.getID(), currentNode.getURL());
+                    HistoryGraph.addNode(row, currentNode.getTitle(), currentNode.getFaviconURL(), col, currentNode.getID(), currentNode.getURL());
                 }
             }
 

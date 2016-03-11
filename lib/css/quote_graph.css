@@ -207,3 +207,12 @@ x-favicon-wrapper {
 #bigpicture-container {
     z-index: 90;
 }
+
+.bigpicture {
+    position: relative;
+    transform-origin: 0 0;
+}
+
+.bigpictureNode {
+    transform-origin: 0 0;
+}

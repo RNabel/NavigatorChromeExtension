@@ -114,12 +114,23 @@ var QuoteGraph = {
 
         $(LEFT_PANE_SELECTOR).on('drop', QuoteGraph.eventHandlers.drop);
         $(LEFT_PANE_SELECTOR).on('dragover', QuoteGraph.eventHandlers.allowDrop);
-        //$(LEFT_PANE_SELECTOR).dblclick(QuoteGraph.eventHandlers.onDblClick);
         $('#' + WEBSITE_CONTENT_WRAPPER_ID).on('dragstart', QuoteGraph.eventHandlers.startDrag);
         QuoteGraph.setup(); // Register setup method.
         QuoteGraph.bigPictureAPI = QuoteGraph.instantiateBigPicture();
 
-        QuoteGraph.bigPictureAPI.setNewText(QuoteGraph.convertQuoteRecordToHTML);
+        QuoteGraph.bigPictureAPI.setNewText(function (quoteRecord) {
+            // Version 1:
+            //var tb = $('<div class="bigpictureNode text draggable" style="border: thin solid #000; color: #000; height: 100px; width: 100px">\n    <div class="cont">\n    </div>\n</div>');
+
+            // Version 2:
+            var tb = $('<div class="card tiny text draggable bigpictureNode">\n    <div class="card-content cont"></div>\n    <!--<i class="material-icons closing-x hoverable black-text right">close</i>-->\n    <!--<div class="card-content draggable">-->\n        <!--<span class="card-title cyan-text  QUOTE_TITLE_CLASS ">-->\n            <!--<div class="input-field quote-title">-->\n                <!--Plain title.-->\n            <!--</div>-->\n        <!--</span>-->\n        <!--<p class="x-content cyan-text text-darken-3  QUOTE_CONTENT_CLASS ">-->\n            <!--Sample content here.-->\n        <!--</p>-->\n    <!--</div>-->\n    <!--<div class="card-action">-->\n        <!--<a href=" url " class="cyan-text text-accent-4">Open origin</a>-->\n    <!--</div>-->\n</div>')
+
+            var content = $('.cont', tb);
+            content.attr('contenteditable', true);
+            content.text("Hello");
+
+            return tb;
+        });
 
         console.log("Quote graph initialized.");
 
@@ -188,18 +199,22 @@ var QuoteGraph = {
                 e = $(e);
             }
 
-            if (!e.hasClass('card')) {
-                e = e.closest('.card');
+            if (!e.hasClass('bigpictureNode')) {
+                e = e.closest('.bigpictureNode');
+                console.log('retrieved e:' + e.length);
             }
 
             e.css({
-                'font-size': e.data("size") / current.zoom + 'px',
-                'height': e.data("size") * 10/ current.zoom + 'px',
-                'width': e.data("size") * 10 / current.zoom + 'px',
+                //'font-size': e.data("size") / current.zoom + 'px',
+                //'height': e.data("size") * 10 / current.zoom + 'px',
+                //'width': e.data("size") * 10 / current.zoom + 'px',
                 'left': (e.data("x") - current.x) / current.zoom - bp.x + 'px',
                 'top': (e.data("y") - current.y) / current.zoom - bp.y + 'px'
             });
 
+            var newScale = e.data('original-zoom') / current.zoom;
+            e.css('transform-origin', '0 0');
+            e.css('transform', 'scale(' + newScale + ')');
         }
 
         /**
@@ -264,7 +279,7 @@ var QuoteGraph = {
                 tb = templateGenerator(quoteRecord);
 
             } else {
-                tb = $('<div class="draggable text" style="border: thin solid; color: black">\n    <div class="cont">\n    </div>\n</div>');
+                tb = $('<div class="draggable bigpictureNode" style="border: thin solid; color: black">\n    <div class="cont">\n    </div>\n</div>');
                 var content = $('.cont', tb);
 
                 content.attr('contenteditable', true);
@@ -272,8 +287,14 @@ var QuoteGraph = {
             }
 
             $(tb).data("x", x).data("y", y).data("size", size);
-            updateTextPosition(tb);
+
             bp.append(tb);
+
+            // Set the initial values for font-size.
+            // Scale font size on all children.
+
+            $(tb).data('original-zoom', current.zoom);
+            updateTextPosition(tb);
 
             // Make all nodes draggable, TODO should use specific id, rather than class.
             //QuoteGraph.instance.draggable(jsPlumb.getSelector(".card.tiny"),
@@ -304,14 +325,6 @@ var QuoteGraph = {
             return tb;
         }
 
-        bpContainer.click(function (e) {
-            e = e.originalEvent;
-            //if (isContainedByClass(e.target, 'text')) {
-            //    return;
-            //}
-            //newText(current.x + (e.clientX) * current.zoom, current.y + (e.clientY) * current.zoom, 20 * current.zoom, '').focus();
-        });
-
         /*
          * PAN AND MOVE
          */
@@ -327,7 +340,7 @@ var QuoteGraph = {
             if ((target.hasClass('text') && (e.ctrlKey || e.metaKey)) ||
                 target.hasClass('draggable')) {
 
-                movingText = $(e.target).closest('.card');;
+                movingText = target.closest('.bigpictureNode');
                 movingText.addClass("noselect notransition");
 
             } else {
@@ -402,7 +415,7 @@ var QuoteGraph = {
             current.y = wy - sy * zoom;
             current.zoom = zoom;
 
-            $("." + QUOTE_CARD_CLASS).each(function () {
+            $(".bigpictureNode").each(function () {
                 updateTextPosition(this);
             });
 
@@ -753,7 +766,7 @@ var QuoteGraph = {
 
         // Create div.
         var $div = $(
-            '<div class="card tiny">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content draggable '+ QUOTE_CARD_CLASS +'">\n        <span class="card-title cyan-text ' + QUOTE_TITLE_CLASS + '">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3 '+ QUOTE_CONTENT_CLASS + '">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="' + url + '" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
+            '<div class="card tiny bigpictureNode ' + QUOTE_CARD_CLASS + '">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content draggable">\n        <span class="card-title cyan-text ' + QUOTE_TITLE_CLASS + '">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3 ' + QUOTE_CONTENT_CLASS + '">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="' + url + '" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
 
         var $closeX = $('.closing-x', $div)
             .on('click', QuoteGraph.deleteQuote);
