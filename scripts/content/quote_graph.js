@@ -788,7 +788,7 @@ var QuoteGraph = {
             var isInput = childInput.length ? childInput.prop('tagName').toLowerCase() == "input" : false;
 
             if (isClick && !isInput) {
-                var currentTitle = child.text();
+                var currentTitle = child.text().trim();
                 currentTitle = (currentTitle == '\xa0') ? "" : currentTitle;
 
                 child.empty();
