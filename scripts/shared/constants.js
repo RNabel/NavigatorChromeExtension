@@ -39,10 +39,12 @@ var TOTAL_COLUMNS = 5,
 var QUOTE_GRAPH_MAX_SCALE = 1,
     QUOTE_GRAPH_MIN_SCALE = 0.1,
     QUOTE_MAXIMIZE_CLASS = "quote-maximize",
-    QUOTE_COLLAPSE_CLASS = "quote-collapse";
+    QUOTE_COLLAPSE_CLASS = "quote-collapse",
     QUOTE_MAXIMIZE_CLASS = "quote_maximize",
     QUOTE_COLLAPSE_CLASS = "quote-collapse",
-    QUOTE_NODE_CLASS = "quote_node",
+    QUOTE_TITLE_CLASS = "quote_title",
+    QUOTE_CONTENT_CLASS = "quote_content",
+    QUOTE_CARD_CLASS = "quote_card",
     QUOTE_TITLE_CHANGED = "quote_title_changed";
 
 // Messaging constants.

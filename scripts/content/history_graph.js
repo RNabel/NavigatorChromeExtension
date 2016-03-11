@@ -48,11 +48,11 @@ var HistoryGraph = {
         };
 
         // Add sample nodes.
-        //var id1 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 0);
-        //var id2 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 1);
-        //var id3 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 2);
-        //var id4 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 3);
-        //var id5 = this.addNode(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 4);
+        //var id1 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 0);
+        //var id2 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 1);
+        //var id3 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 2);
+        //var id4 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 3);
+        //var id5 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 4);
         //
         //// Add sample connections.
         //this.connections.connect(id1, id2);
@@ -230,7 +230,7 @@ var HistoryGraph = {
                 for (var row = 0; row < HistoryGraph.columns[col].length; row++) {
                     var currentNode = HistoryGraph.columns[col][row];
 
-                    HistoryGraph.addNode(row, currentNode.getTitle(), currentNode.getFaviconURL(), col, currentNode.getID(), currentNode.getURL());
+                    HistoryGraph.convertQuoteRecordToHTML(row, currentNode.getTitle(), currentNode.getFaviconURL(), col, currentNode.getID(), currentNode.getURL());
                 }
             }
 
