@@ -216,22 +216,22 @@ var QuoteGraph = {
          * Creates new text node.
          * @param x {int | QuoteRecord} The x coordinate or the QuoteRecord.
          * @param [y] {int} The y coordinate.
-         * @param [size] {int} The size of the box.
+         * @param [zoom] {int} The size of the box.
          * @param [text] {string} The content of the box.
          * @returns {string} The HTML object.
          */
-        function newText(x, y, size, text) {
+        function newText(x, y, zoom, text) {
             var tb = null;
             var quoteRecord = null;
             if (typeof x === 'object') {
                 quoteRecord = new QuoteRecord(x);
-                size = quoteRecord.size;
+                zoom = quoteRecord.zoom;
                 y = quoteRecord.location.y;
                 x = quoteRecord.location.x;
             }
 
-            if (size === undefined) {
-                size = 20;
+            if (zoom === undefined) {
+                zoom = current.zoom;
             }
             // templateGenerator is a function taking a quoteRecord as input,
             //      and returning the formatted quote HTML object, with required bindings.
@@ -243,7 +243,7 @@ var QuoteGraph = {
                             x: x,
                             y: y
                         },
-                        size: size
+                        zoom: zoom
                     };
                     quoteRecord = new QuoteRecord(quoteRecord)
                 }
@@ -257,14 +257,13 @@ var QuoteGraph = {
                 content.text(text || "Hello");
             }
 
-            $(tb).data("x", x).data("y", y).data("size", size);
+            $(tb).data("x", x).data("y", y).data("original-zoom", zoom);
 
             bp.append(tb);
 
             // Set the initial values for font-size.
             // Scale font size on all children.
 
-            $(tb).data('original-zoom', current.zoom);
             updateTextPosition(tb);
 
             // Make all nodes draggable, TODO should use specific id, rather than class.
@@ -388,7 +387,7 @@ var QuoteGraph = {
                     x: current.x + (e.clientX) * current.zoom,
                     y: current.y + (e.clientY) * current.zoom
                 },
-                size: 20 * current.zoom
+                zoom: current.zoom
             };
             quoteRecord = new QuoteRecord(quoteRecord);
 
