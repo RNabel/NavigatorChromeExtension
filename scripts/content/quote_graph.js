@@ -292,6 +292,7 @@ var QuoteGraph = {
             //            //}) TODO unquote.
             //        }
             //    });
+            QuoteGraph.instance.setId(tb, tb.id);
 
             return tb;
         }
@@ -761,8 +762,8 @@ var QuoteGraph = {
         endpointTemplate.uuid = id; // Temporarily add to jsPlumb template.
 
         // Create endpoint from modified template.
+        $($div).attr('id', id);
         var ret = QuoteGraph.instance.addEndpoint($div, endpointTemplate);
-        //this.instance.setId(ret.getElement(), id); TODO unquote and/or relocate.
 
         $($div).attr('id', id);
         return $div;
