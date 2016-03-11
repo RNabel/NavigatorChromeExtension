@@ -215,4 +215,14 @@ x-favicon-wrapper {
 
 .bigpictureNode {
     transform-origin: 0 0;
+    /* Copied text class. */
+    /*font-family: "Arial";*/
+    /*line-height: 1.1;*/
+    /*outline: 0;*/
+    position: absolute;
+    /*min-width: 2px;*/
+    /*cursor: text;*/
+    /*word-wrap: break-word;*/
+    /*white-space: pre;*/
+    transition-duration: inherit;
 }

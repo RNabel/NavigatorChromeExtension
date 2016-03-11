@@ -123,7 +123,7 @@ var QuoteGraph = {
             //var tb = $('<div class="bigpictureNode text draggable" style="border: thin solid #000; color: #000; height: 100px; width: 100px">\n    <div class="cont">\n    </div>\n</div>');
 
             // Version 2:
-            var tb = $('<div class="card tiny text draggable bigpictureNode">\n    <div class="card-content cont"></div>\n    <!--<i class="material-icons closing-x hoverable black-text right">close</i>-->\n    <!--<div class="card-content draggable">-->\n        <!--<span class="card-title cyan-text  QUOTE_TITLE_CLASS ">-->\n            <!--<div class="input-field quote-title">-->\n                <!--Plain title.-->\n            <!--</div>-->\n        <!--</span>-->\n        <!--<p class="x-content cyan-text text-darken-3  QUOTE_CONTENT_CLASS ">-->\n            <!--Sample content here.-->\n        <!--</p>-->\n    <!--</div>-->\n    <!--<div class="card-action">-->\n        <!--<a href=" url " class="cyan-text text-accent-4">Open origin</a>-->\n    <!--</div>-->\n</div>')
+            var tb = $('<div class="card tiny bigpictureNode draggable">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content draggable">\n        <span class="card-title cyan-text  QUOTE_TITLE_CLASS ">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3  QUOTE_CONTENT_CLASS ">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href=" url " class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>')
 
             var content = $('.cont', tb);
             content.attr('contenteditable', true);
@@ -131,6 +131,7 @@ var QuoteGraph = {
 
             return tb;
         });
+        //QuoteGraph.bigPictureAPI.setNewText(QuoteGraph.convertQuoteRecordToHTML);
 
         console.log("Quote graph initialized.");
 
@@ -176,17 +177,17 @@ var QuoteGraph = {
          * TEXT BOXES
          */
 
-        $(".text").each(function () {
+        $(".bigpictureNode").each(function () {
             updateTextPosition(this);
         });     // initialization
 
-        $(bp).on('blur', '.text', function () {
+        $(bp).on('blur', '.bigPictureNode', function () {
             if ($(this).text().replace(/^\s+|\s+$/g, '') === '') {
                 $(this).remove();
             }
         });
 
-        $(bp).on('input', '.text', function () {
+        $(bp).on('input', '.bigPictureNode', function () {
             redoSearch = true;
         });
 
@@ -337,7 +338,7 @@ var QuoteGraph = {
             var target = $(e.target);
 
             e = e.originalEvent;
-            if ((target.hasClass('text') && (e.ctrlKey || e.metaKey)) ||
+            if ((target.hasClass('bigPictureNode') && (e.ctrlKey || e.metaKey)) ||
                 target.hasClass('draggable')) {
 
                 movingText = target.closest('.bigpictureNode');
@@ -432,7 +433,7 @@ var QuoteGraph = {
             document.activeElement.blur();
             function universeboundingrect() {
                 var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-                var texteelements = document.getElementsByClassName('text');
+                var texteelements = document.getElementsByClassName('bigPictureNode');
                 [].forEach.call(texteelements, function (elt) {
                     var rect2 = elt.getBoundingClientRect();
                     var rect = {
@@ -457,7 +458,7 @@ var QuoteGraph = {
                 return {minX: minX, maxX: maxX, minY: minY, maxY: maxY};
             }
 
-            var texts = document.getElementsByClassName('text');
+            var texts = document.getElementsByClassName('bigPictureNode');
             if (texts.length === 0) {
                 return;
             }
@@ -489,7 +490,7 @@ var QuoteGraph = {
 
         function find(txt) {
             results = {index: -1, elements: [], text: txt};
-            $(".text").each(function () {
+            $(".bigPictureNode").each(function () {
                 if ($(this).text().toLowerCase().indexOf(txt.toLowerCase()) != -1) {
                     results.elements.push(this);
                 }

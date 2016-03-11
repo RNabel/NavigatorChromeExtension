@@ -7791,7 +7791,7 @@ small {
 }
 
 .card.tiny {
-  height: auto;
+  height: 200px;
   width:200px;
 }
 
