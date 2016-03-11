@@ -21,7 +21,7 @@ var BackgroundScript = {
             BackgroundScript.tools.sendMessage(message);
         },
 
-        onQuoteUpdate: function (update) {
+        onNewQuote: function (update) {
             var quote = new QuoteRecord(update);
             BackgroundScript.quote_graph.quoteStorage.addQuote(quote);
 
@@ -46,6 +46,8 @@ var BackgroundScript = {
                     x: update.x,
                     y: update.y
                 };
+
+                BackgroundScript.quote_graph.sendAllQuotes();
             }
         },
 
@@ -248,7 +250,7 @@ var BackgroundScript = {
     BackgroundScript.messageMap = {};
     BackgroundScript.messageMap[HISTORY_INIT_DATA] = BackgroundScript.history_graph.onInitHistory;
     BackgroundScript.messageMap[QUOTE_INIT_DATA] = BackgroundScript.quote_graph.sendAllQuotes;
-    BackgroundScript.messageMap[QUOTE_UPDATE] = BackgroundScript.quote_graph.onQuoteUpdate;
+    BackgroundScript.messageMap[QUOTE_UPDATE] = BackgroundScript.quote_graph.onNewQuote;
     BackgroundScript.messageMap[QUOTE_DELETED] = BackgroundScript.quote_graph.onQuoteDeleted;
     BackgroundScript.messageMap[QUOTE_LOCATION_UPDATE] = BackgroundScript.quote_graph.onQuoteLocationUpdate;
     BackgroundScript.messageMap[QUOTE_CONNECTION_UPDATE] = BackgroundScript.quote_graph.onQuoteConnectionUpdate;

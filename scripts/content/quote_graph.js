@@ -292,7 +292,7 @@ var QuoteGraph = {
             //            //}) TODO unquote.
             //        }
             //    });
-            QuoteGraph.instance.setId(tb, tb.id);
+            QuoteGraph.instance.setId(tb, tb[0].id);
 
             return tb;
         }
@@ -330,6 +330,17 @@ var QuoteGraph = {
             if (movingText) {
                 //$(movingText).addClass("text");
                 $(movingText).removeClass("noselect notransition");
+
+                var data = {
+                    uuid: $(movingText).attr('id'),
+                    x: $(movingText).data('x'),
+                    y: $(movingText).data('y')
+                };
+
+                QuoteGraph.sendMessage({
+                    type: QUOTE_LOCATION_UPDATE,
+                    data: data
+                })
             }
             movingText = null;
         };
