@@ -50,6 +50,10 @@ function QuoteConnection(obj) {
  * @constructor
  */
 function QuoteStorage(init_obj) {
+    /**
+     * Contains all QuoteRecord objects.
+     * @type {QuoteRecord[]}
+     */
     this.quotes = [];
     this.connections = [];
     if (init_obj !== undefined) {

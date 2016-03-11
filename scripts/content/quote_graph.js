@@ -1,20 +1,6 @@
 /**
  * Created by robin on 11/01/16.
  */
-function Quote(content, originUrl, location) {
-    this.content = content;
-    this.originURL = originUrl;
-    this.location = location;
-}
-
-Quote.prototype.getLocation = function () {
-    return this.location;
-};
-
-Quote.prototype.setLocation = function (location) {
-    this.location = location;
-};
-
 var QuoteGraph = {
 
     quotes: new QuoteStorage(), // List of all quotes in the graph.
@@ -123,9 +109,9 @@ var QuoteGraph = {
         console.log("Quote graph initialized.");
 
         // Request quote data update.
-        //QuoteGraph.sendMessage({
-        //    type: QUOTE_INIT_DATA
-        //}); TODO unquote!!
+        QuoteGraph.sendMessage({
+            type: QUOTE_INIT_DATA
+        });
     },
 
     instantiateBigPicture: function () {
@@ -193,9 +179,6 @@ var QuoteGraph = {
             }
 
             e.css({
-                //'font-size': e.data("size") / current.zoom + 'px',
-                //'height': e.data("size") * 10 / current.zoom + 'px',
-                //'width': e.data("size") * 10 / current.zoom + 'px',
                 'left': (e.data("x") - current.x) / current.zoom - bp.x + 'px',
                 'top': (e.data("y") - current.y) / current.zoom - bp.y + 'px'
             });
@@ -232,9 +215,9 @@ var QuoteGraph = {
         /**
          * Creates new text node.
          * @param x {int | QuoteRecord} The x coordinate or the QuoteRecord.
-         * @param y {int} The y coordinate.
-         * @param size {int} The size of the box.
-         * @param text {string} The content of the box.
+         * @param [y] {int} The y coordinate.
+         * @param [size] {int} The size of the box.
+         * @param [text] {string} The content of the box.
          * @returns {string} The HTML object.
          */
         function newText(x, y, size, text) {
@@ -381,8 +364,28 @@ var QuoteGraph = {
 
         bpContainer.dblclick(function (e) {
             e.preventDefault();
+
+            // Create new record.
+            /**
+             * The new quote record object, used to instatiate the object.
+             * @type {object | QuoteRecord}
+             */
+            var quoteRecord = {
+                text: '',
+                location: {
+                    x: current.x + (e.clientX) * current.zoom,
+                    y: current.y + (e.clientY) * current.zoom
+                },
+                size: 20 * current.zoom
+            };
+            quoteRecord = new QuoteRecord(quoteRecord);
+
+
             // Insert new node.
-            newText(current.x + (e.clientX) * current.zoom, current.y + (e.clientY) * current.zoom, 20 * current.zoom, '').focus();
+            newText(quoteRecord).focus();
+
+            // Notify background storage.
+            QuoteGraph.nodeAdded(quoteRecord);
         });
 
         var biggestPictureSeen = false,
@@ -640,7 +643,6 @@ var QuoteGraph = {
 
     },
 
-
     eventHandlers: {
         onNewConnection: function (info, ev) {
             console.log("---------------------");
@@ -678,7 +680,7 @@ var QuoteGraph = {
             var nodes = quoteStorage.getAllQuotes();
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
-                QuoteGraph.convertQuoteRecordToHTML(node);
+                QuoteGraph.bigPictureAPI.newText(node);
             }
 
             // Create all connections.
@@ -716,32 +718,13 @@ var QuoteGraph = {
 
             QuoteGraph.convertQuoteRecordToHTML(newRecord);
 
-
-            QuoteGraph.sendMessage({
-                type: QUOTE_UPDATE,
-                data: newRecord
-            });
-        },
-
-        onDblClick: function (ev) {
-            ev.preventDefault();
-
-            // Create new QuoteRecord to represent the node.
-            var quoteRecord = new QuoteRecord({
-                location: {
-                    x: ev.clientX,
-                    y: ev.clientY
-                }
-            });
-
-            QuoteGraph.convertQuoteRecordToHTML(quoteRecord);
+            QuoteGraph.nodeAdded(newRecord);
         }
-
     },
     /**
      * Convert passed in information into required HTML string.
      * @param quoteRecord {QuoteRecord}
-     * @returns {*|jQuery|HTMLElement}
+     * @returns {jQuery}
      */
     convertQuoteRecordToHTML: function (quoteRecord) {
         var url = quoteRecord.URL,
@@ -774,14 +757,14 @@ var QuoteGraph = {
             $($content).text(text);
         }
 
-        $($div).attr('id', QuoteGraph.i);
+        // Set ids.
+        endpointTemplate.uuid = id; // Temporarily add to jsPlumb template.
 
-
-        // Add the endpointTemplate to it.
-        endpointTemplate.uuid = id;
+        // Create endpoint from modified template.
         var ret = QuoteGraph.instance.addEndpoint($div, endpointTemplate);
         //this.instance.setId(ret.getElement(), id); TODO unquote and/or relocate.
 
+        $($div).attr('id', id);
         return $div;
     },
 
@@ -851,6 +834,17 @@ var QuoteGraph = {
             data: {
                 id: originID
             }
+        });
+    },
+
+    /**
+     * Syncs added nodes with background storage.
+     * @param newRecord {QuoteRecord} The record added to the graph.
+     */
+    nodeAdded: function (newRecord) {
+        QuoteGraph.sendMessage({
+            type: QUOTE_UPDATE,
+            data: newRecord
         });
     },
 
