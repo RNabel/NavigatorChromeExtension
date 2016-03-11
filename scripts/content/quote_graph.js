@@ -118,20 +118,7 @@ var QuoteGraph = {
         QuoteGraph.setup(); // Register setup method.
         QuoteGraph.bigPictureAPI = QuoteGraph.instantiateBigPicture();
 
-        QuoteGraph.bigPictureAPI.setNewText(function (quoteRecord) {
-            // Version 1:
-            //var tb = $('<div class="bigpictureNode text draggable" style="border: thin solid #000; color: #000; height: 100px; width: 100px">\n    <div class="cont">\n    </div>\n</div>');
-
-            // Version 2:
-            var tb = $('<div class="card tiny bigpictureNode draggable">\n    <i class="material-icons closing-x hoverable black-text right">close</i>\n    <div class="card-content draggable">\n        <span class="card-title cyan-text  QUOTE_TITLE_CLASS ">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3  QUOTE_CONTENT_CLASS ">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href=" url " class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>')
-
-            var content = $('.cont', tb);
-            content.attr('contenteditable', true);
-            content.text("Hello");
-
-            return tb;
-        });
-        //QuoteGraph.bigPictureAPI.setNewText(QuoteGraph.convertQuoteRecordToHTML);
+        QuoteGraph.bigPictureAPI.setNewText(QuoteGraph.convertQuoteRecordToHTML);
 
         console.log("Quote graph initialized.");
 
