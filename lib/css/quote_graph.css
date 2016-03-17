@@ -98,16 +98,16 @@ path, .jsplumb-endpoint {
 .history_entry {
     position: absolute;
     width: 16%;
-    display: flex;
+    /*display: flex;*/
     flex-flow: row nowrap;
-    overflow: hidden;
-    font-size: 16px;
-    font-size: 1vw;
+    /*overflow: hidden;*/
+    /*font-size: 16px;*/
+    /*font-size: 1vw;*/
 }
 
-x-favicon-wrapper {
-    width: 50%; /* This is relative to the tile's width. */
-    padding: 0px 5px 1px;
+.history_entry>img {
+    /*width: 50%; !* This is relative to the tile's width. *!*/
+    /*padding: 0px 5px 1px;*/
 }
 
 .favicon {

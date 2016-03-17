@@ -4,7 +4,6 @@
 
 /**
  *
- * @type {{history: HistoryStorage, columns: HistoryRecord[], connectors: HistoryRecord[], sendMessage: function}}
  */
 var HistoryGraph = {
     history: undefined,
@@ -95,8 +94,8 @@ var HistoryGraph = {
         }
 
         // Start recursive adding of parents and children.
-        HistoryGraph.recursiveAddNode(rootNode, 2, undefined, false);
-        HistoryGraph.recursiveAddNode(rootNode, 2, undefined, true);
+        HistoryGraph.recursiveAddNode(rootNode, 2, undefined, false, []);
+        HistoryGraph.recursiveAddNode(rootNode, 2, undefined, true, []);
 
         // Render all nodes.
         HistoryGraph.rendering.render();
@@ -116,6 +115,22 @@ var HistoryGraph = {
                 overlays: [["Arrow", {width: 12, length: 12, location: 1}]]
             });
             // Any event listeners like so: connection.bind("dblclick", QuoteGraph.deleteConnection);
+        },
+
+        /**
+         * Checks whether the passed history record already exists in the passed list of connections.
+         * @param connectionPair {HistoryRecord[]}
+         * @param connections {HistoryRecord[][]}
+         * @returns {boolean} Whether the connection already exists.
+         */
+        existsConnection: function (connectionPair, connections) {
+            for (var i = 0; i < connections.length; i++) {
+                var connection = connections[i];
+                if (connection[0] == connectionPair[0] && connection[1] == connectionPair[1]) {
+                    return true;
+                }
+            }
+            return false;
         }
     },
 
@@ -125,8 +140,9 @@ var HistoryGraph = {
      * @param currentColumnIndex {int} The index of the current column.
      * @param lastNode {HistoryRecord} The history record of the last node.
      * @param isChildDirection {boolean} Whether the direction of recursion is towards children or parents.
+     * @param connectionsMade {HistoryRecord[][]} all the connections already seen, used to prevent cycles.
      */
-    recursiveAddNode: function (currentNode, currentColumnIndex, lastNode, isChildDirection) {
+    recursiveAddNode: function (currentNode, currentColumnIndex, lastNode, isChildDirection, connectionsMade) {
         // Return if level too large.
         if (currentColumnIndex < 0 || currentColumnIndex >= TOTAL_COLUMNS) {
             return;
@@ -136,33 +152,38 @@ var HistoryGraph = {
         var nodes = (isChildDirection) ? currentNode.getChildren() : currentNode.getParents();
         var nextColumnIndex = (isChildDirection) ? currentColumnIndex + 1 : currentColumnIndex - 1;
 
-        // Add each node, and call self with respective node.
-        for (var i = 0; i < nodes.length; i++) {
-            var nextNodeID = nodes[i];
-            var nextNodeRecord = HistoryGraph.history.findRecord(nextNodeID);
-
-            HistoryGraph.recursiveAddNode(nextNodeRecord, nextColumnIndex, currentNode, isChildDirection)
-        }
-
         // Only add the currentNode, if it is not already added to the current column.
         var currentNodeID = currentNode.getID();
-        var alreadyExists = false;
+        var nodeAlreadyExists = false;
         for (i = 0; i < HistoryGraph.columns[currentColumnIndex].length; i++) {
             if (HistoryGraph.columns[currentColumnIndex][i].getID() == currentNodeID) {
-                alreadyExists = true;
+                nodeAlreadyExists = true;
                 break; // Could return here, but may make flow difficult to follow.
             }
         }
 
 
-        if (!alreadyExists) {
+        var connectorPair = isChildDirection ? [lastNode, currentNode] : [currentNode, lastNode];
+        var connectionAlreadyExists = HistoryGraph.connections.existsConnection(connectorPair, connectionsMade);
+
+        // Only add the node and connection if it has NOT already been made.
+        if (!nodeAlreadyExists && !connectionAlreadyExists) {
             HistoryGraph.columns[currentColumnIndex].push(currentNode);
+            connectionsMade.push(connectorPair);
 
             if (lastNode !== undefined) { // Only add connection if lastNode exists.
-                var connectorPair = isChildDirection ? [lastNode, currentNode] : [currentNode, lastNode];
                 HistoryGraph.connectors.push(connectorPair);
             }
+
+            // Add each child node, and call self with respective node.
+            for (var i = 0; i < nodes.length; i++) {
+                var nextNodeID = nodes[i];
+                var nextNodeRecord = HistoryGraph.history.findRecord(nextNodeID);
+
+                HistoryGraph.recursiveAddNode(nextNodeRecord, nextColumnIndex, currentNode, isChildDirection, connectionsMade)
+            }
         }
+
     },
 
     /**
@@ -178,7 +199,7 @@ var HistoryGraph = {
     addNode: function (y, title, faviconUrl, column, nodeID, websiteURL) {
         // Create div.
         var $div = $(
-            '<div class="history_entry chip truncate">\n    <x-favicon-wrapper>\n        <img class="favicon" align="middle">\n    </x-favicon-wrapper>\n    <x-title>Website title</x-title>\n</div>');
+            '<div class="history_entry chip truncate" title="'+ websiteURL + '">\n    <img class="favicon">\n    <x-title>Website title</x-title>\n</div>');
 
         var $favicon = $('.favicon', $div).attr({
             'src': faviconUrl
@@ -241,16 +262,33 @@ var HistoryGraph = {
                     target = currentPair[1].getID();
 
                 // For each column.
-                for (var columnIndex = 0; columnIndex < TOTAL_COLUMNS; columnIndex++) {
-                    var originElement = HistoryGraph.rendering.getElementByColumnAndURL(origin, columnIndex.toString());
+                //for (var columnIndex = 0; columnIndex < TOTAL_COLUMNS; columnIndex++) {
+                //    var originElement = HistoryGraph.rendering.getElementByColumnAndURL(origin, columnIndex);
+                //
+                //    if (originElement) {
+                //        var targetElement = HistoryGraph.rendering.getElementByColumnAndURL(target, (columnIndex + 1));
+                //
+                //        // If both origin and target exist in the correct columns, create connection.
+                //        if (targetElement) {
+                //            HistoryGraph.connections.connect($(originElement).attr('id'), $(targetElement).attr('id'));
+                //        }
+                //    }
+                //}
+                var centerColumnIndex = Math.ceil(TOTAL_COLUMNS / 2.0);
+                // MASSIVE FIXME not working. To be worked on as soon as correct bubbles spawned.
+                // --- FUTURE ---
+                for (var columnIndex = centerColumnIndex; columnIndex < TOTAL_COLUMNS; columnIndex++) {
+                    //  start from center index, and move outwards removing connectors as you move along
+                    if (HistoryGraph.rendering.addConnectorsIfOriginAndTargetMatch(origin, target, columnIndex)) {
+                        break;
+                    }
+                }
 
-                    if (originElement) {
-                        var targetElement = HistoryGraph.rendering.getElementByColumnAndURL(target, (columnIndex + 1).toString())
-
-                        // If both origin and target exist in the correct columns, create connection.
-                        if (targetElement) {
-                            HistoryGraph.connections.connect($(originElement).attr('id'), $(targetElement).attr('id'));
-                        }
+                // --- PAST ---
+                for (columnIndex = centerColumnIndex - 1; columnIndex >= 0; columnIndex--) {
+                    //  start from center index, and move outwards removing connectors as you move along
+                    if (HistoryGraph.rendering.addConnectorsIfOriginAndTargetMatch(origin, target, columnIndex)) {
+                        break;
                     }
                 }
             }
@@ -259,14 +297,39 @@ var HistoryGraph = {
         /**
          * Return the element with classes websiteURL and columnIndex.
          * @param websiteURL {string} The website's URL.
-         * @param columnIndex {string} The index of the column.
+         * @param columnIndex {int | string} The index of the column.
          * @returns {object | boolean} The element matching the criteria.
          */
         getElementByColumnAndURL: function (websiteURL, columnIndex) {
             // Get the column.
+            columnIndex = columnIndex.toString();
             var rows = $('.' + HIST_COLUMN_INDENTIFIER_PREFIX + columnIndex + '.' + websiteURL);
 
             return (rows.length) ? rows[0] : false;
+        },
+
+        /**
+         * Add a connection between the element with ID originID and the element with ID target ID, where the origin
+         *     element is in column with index columnIndex.
+         * @param originID {string}
+         * @param targetID {string}
+         * @param columnIndex {int}
+         * @returns {boolean} whether a connection was made.
+         */
+        addConnectorsIfOriginAndTargetMatch: function (originID, targetID, columnIndex) {
+            var originElement = HistoryGraph.rendering.getElementByColumnAndURL(originID, columnIndex);
+
+            if (originElement) {
+                var targetElement = HistoryGraph.rendering.getElementByColumnAndURL(targetID, (columnIndex + 1));
+
+                // If both origin and target exist in the correct columns, create connection.
+                if (targetElement) {
+                    HistoryGraph.connections.connect($(originElement).attr('id'), $(targetElement).attr('id'));
+                    return true; // Escape loop if connection used.
+                }
+            }
+
+            return false;
         }
     },
 

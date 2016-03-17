@@ -14,8 +14,8 @@
         "http://localhost/*"
       ],
       "css": [
-        "lib/css/materialize.css",
         "lib/css/bigpicture.css",
+        "lib/css/materialize.css",
         "lib/css/quote_graph.css"
       ],
       "js": [
