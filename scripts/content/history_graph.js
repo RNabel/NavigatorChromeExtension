@@ -2,9 +2,6 @@
  * Created by robin on 11/01/16.
  */
 
-/**
- *
- */
 var HistoryGraph = {
     history: undefined,
     columns: [], // All URLs drawn into each column.
@@ -46,19 +43,6 @@ var HistoryGraph = {
             maxConnections: 1000
         };
 
-        // Add sample nodes.
-        //var id1 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 0);
-        //var id2 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 1);
-        //var id3 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 2);
-        //var id4 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 3);
-        //var id5 = this.convertQuoteRecordToHTML(10, "bla", "https://www.wikipedia.org/static/favicon/wikipedia.ico", 4);
-        //
-        //// Add sample connections.
-        //this.connections.connect(id1, id2);
-        //this.connections.connect(id2, id3);
-        //this.connections.connect(id3, id4);
-        //this.connections.connect(id4, id5);
-
         // Request information from back-end, supplying current title.
         HistoryGraph.sendMessage({
             type: HISTORY_INIT_DATA,
@@ -85,17 +69,17 @@ var HistoryGraph = {
 
         // Find and create the root node.
         var currentURL = document.URL;
-        var rootNode = HistoryGraph.history.findRecord(currentURL);
+        var centerNode = HistoryGraph.history.findRecord(currentURL);
 
         // Escape if the current page does not exist in the history storage (yet). History will be updated and re-braodcast.
-        if (!rootNode) {
-            HistoryGraph.addNode(0, document.title, "", 2, "0", document.URL);
+        if (!centerNode) {
+            HistoryGraph.addNode(0, document.title, "", HIST_CENTER_COLUMN_INDEX, "0", document.URL);
             return;
         }
 
         // Start recursive adding of parents and children.
-        HistoryGraph.recursiveAddNode(rootNode, 2, undefined, false, []);
-        HistoryGraph.recursiveAddNode(rootNode, 2, undefined, true, []);
+        HistoryGraph.recursiveAddNode(centerNode, HIST_CENTER_COLUMN_INDEX, undefined, false, []);
+        HistoryGraph.recursiveAddNode(centerNode, HIST_CENTER_COLUMN_INDEX, undefined, true, []);
 
         // Render all nodes.
         HistoryGraph.rendering.render();
@@ -126,11 +110,29 @@ var HistoryGraph = {
         existsConnection: function (connectionPair, connections) {
             for (var i = 0; i < connections.length; i++) {
                 var connection = connections[i];
-                if (connection[0] == connectionPair[0] && connection[1] == connectionPair[1]) {
+                if (connection[0] == connectionPair[0] && connection[1] == connectionPair[1] ||
+                    connection[0] == connectionPair[1] && connection[1] == connectionPair[0]
+                ) {
                     return true;
                 }
             }
             return false;
+        },
+
+        /**
+         * Checks whether a node was already added to a column.
+         * @param id {string} The unique ID of the node.
+         * @param columnIndex {int} The index of the column.
+         * @returns {boolean} Whether the node already exists.
+         */
+        existsNodeInColumn: function (id, columnIndex) {
+            for (var i = 0; i < HistoryGraph.columns[columnIndex].length; i++) {
+                if (HistoryGraph.columns[columnIndex][i].getID() == id) {
+                    return true; // Node exists.
+                }
+            }
+
+            return false; // Node does not exist.
         }
     },
 
@@ -154,25 +156,25 @@ var HistoryGraph = {
 
         // Only add the currentNode, if it is not already added to the current column.
         var currentNodeID = currentNode.getID();
-        var nodeAlreadyExists = false;
-        for (i = 0; i < HistoryGraph.columns[currentColumnIndex].length; i++) {
-            if (HistoryGraph.columns[currentColumnIndex][i].getID() == currentNodeID) {
-                nodeAlreadyExists = true;
-                break; // Could return here, but may make flow difficult to follow.
-            }
-        }
+        var nodeAlreadyExists = HistoryGraph.connections.existsNodeInColumn(currentNodeID, currentColumnIndex);
 
+
+        // FIXME so far nodes only added as parents, check what's up with that!!
+        // UPDATE: Children not added as parent recursion adds root node, and thus the children code is not entered.
 
         var connectorPair = isChildDirection ? [lastNode, currentNode] : [currentNode, lastNode];
         var connectionAlreadyExists = HistoryGraph.connections.existsConnection(connectorPair, connectionsMade);
+        var isSecondRecursiveCallAtRoot = (currentColumnIndex == HIST_CENTER_COLUMN_INDEX && nodeAlreadyExists);
 
         // Only add the node and connection if it has NOT already been made.
-        if (!nodeAlreadyExists && !connectionAlreadyExists) {
-            HistoryGraph.columns[currentColumnIndex].push(currentNode);
-            connectionsMade.push(connectorPair);
+        if (!nodeAlreadyExists && !connectionAlreadyExists || isSecondRecursiveCallAtRoot) {
+            if (!isSecondRecursiveCallAtRoot) {
+                HistoryGraph.columns[currentColumnIndex].push(currentNode)
+            }
 
             if (lastNode !== undefined) { // Only add connection if lastNode exists.
                 HistoryGraph.connectors.push(connectorPair);
+                connectionsMade.push(connectorPair);
             }
 
             // Add each child node, and call self with respective node.
@@ -199,7 +201,7 @@ var HistoryGraph = {
     addNode: function (y, title, faviconUrl, column, nodeID, websiteURL) {
         // Create div.
         var $div = $(
-            '<div class="history_entry chip truncate" title="'+ websiteURL + '">\n    <img class="favicon">\n    <x-title>Website title</x-title>\n</div>');
+            '<div class="history_entry chip truncate" title="' + websiteURL + '">\n    <img class="favicon">\n    <x-title>Website title</x-title>\n</div>');
 
         var $favicon = $('.favicon', $div).attr({
             'src': faviconUrl

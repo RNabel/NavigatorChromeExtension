@@ -17,6 +17,7 @@ var WEBSITE_CONTENT_WRAPPER_ID = 'content',// Can change at runtime, if ID name-
 
 // History graph.
 var TOTAL_COLUMNS = 5,
+    HIST_CENTER_COLUMN_INDEX = Math.floor(TOTAL_COLUMNS / 2),
     MAX_X = 1.5,
     MIN_X = -1.5,
     MAX_Y = 3,
