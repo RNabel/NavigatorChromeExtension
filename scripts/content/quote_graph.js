@@ -177,14 +177,30 @@ var QuoteGraph = {
                 e = e.closest('.bigpictureNode');
             }
 
+            // Update the location of the nodes.
+            var currId = e.attr('id');
+
+            // Get all elements which have the data-id attribute which equals the current ID.
+            var relatedElements = $(LEFT_PANE_SELECTOR + '>.jsplumb-endpoint[data-id=' + currId + ']');
+
+
+            var newScale = e.data('original-zoom') / current.zoom;
             e.css({
                 'left': (e.data("x") - current.x) / current.zoom - bp.x + 'px',
                 'top': (e.data("y") - current.y) / current.zoom - bp.y + 'px'
             });
 
-            var newScale = e.data('original-zoom') / current.zoom;
-            e.css('transform-origin', '0 0');
-            e.css('transform', 'scale(' + newScale + ')');
+            e.css({
+                'transform-origin': '0 0',
+                'transform': 'scale(' + newScale + ')'
+            });
+
+            relatedElements.css({
+                'transform-origin': '50% 50% 0',
+                'transform': 'scale(' + newScale + ')'
+            });
+
+            // e.css('transform-origin', '0 0').css('transform', 'scale(' + newScale + ')');
         }
 
         /**
@@ -263,8 +279,6 @@ var QuoteGraph = {
             // Set the initial values for font-size.
             // Scale font size on all children.
 
-            updateTextPosition(tb);
-
             var uuid = tb[0].id;
             var endpointsWithoutAssociation = $(LEFT_PANE_SELECTOR + '>.jsplumb-endpoint:not([data-id])');
             if (endpointsWithoutAssociation.length === 1) {
@@ -276,6 +290,8 @@ var QuoteGraph = {
                 console.error("Multiple Endpoints are present and can not be uniquely associated with one node.");
 
             }
+            updateTextPosition(tb);
+
 
             return tb;
         }
@@ -402,14 +418,7 @@ var QuoteGraph = {
             current.zoom = zoom;
 
             $(".bigpictureNode").each(function () {
-                // Update the location of the nodes.
-                console.log($(this).attr('id'));
-                console.log("Hello");
-                var katavorioDrag = this._katavorioDrag;
-                console.log(katavorioDrag);
-
                 updateTextPosition(this);
-                katavorioDrag.mark();
             });
 
             biggestPictureSeen = false;
