@@ -225,4 +225,11 @@ path, .jsplumb-endpoint {
     /*word-wrap: break-word;*/
     /*white-space: pre;*/
     transition-duration: inherit;
+    z-index: 100;
 }
+
+.jsplumb-connector {
+    z-index: 90
+}
+
+.jsplumb-endpoint

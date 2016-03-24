@@ -37,7 +37,7 @@ var QuoteGraph = {
             var endpointColor = "rgba(229,219,61,0.5)";
             this.endpointTemplate = {
                 endpoint: ["Dot", {radius: 17}],
-                anchor: "BottomLeft",
+                anchor: "TopLeft",
                 paintStyle: {fillStyle: endpointColor, opacity: 0.5},
                 isSource: true,
                 scope: 'yellow',
@@ -175,7 +175,6 @@ var QuoteGraph = {
 
             if (!e.hasClass('bigpictureNode')) {
                 e = e.closest('.bigpictureNode');
-                console.log('retrieved e:' + e.length);
             }
 
             e.css({
@@ -266,32 +265,17 @@ var QuoteGraph = {
 
             updateTextPosition(tb);
 
-            // Make all nodes draggable, TODO should use specific id, rather than class.
-            //QuoteGraph.instance.draggable(jsPlumb.getSelector(".card.tiny"),
-            //    {
-            //        start: function (event, ui) {
-            //            mouseDownHandler(event);
-            //        },
-            //
-            //        drag: function (event) {
-            //            mouseMoveHandler(event);
-            //        },
-            //
-            //        stop: function (event, ui) {
-            //            mouseUpHandler(event);
-            //            var data = {
-            //                uuid: $element.attr('id'),
-            //                x: left,
-            //                y: top
-            //            };
-            //
-            //            //QuoteGraph.sendMessage({
-            //            //    type: QUOTE_LOCATION_UPDATE,
-            //            //    data: data
-            //            //}) TODO unquote.
-            //        }
-            //    });
-            QuoteGraph.instance.setId(tb, tb[0].id);
+            var uuid = tb[0].id;
+            var endpointsWithoutAssociation = $(LEFT_PANE_SELECTOR + '>.jsplumb-endpoint:not([data-id])');
+            if (endpointsWithoutAssociation.length === 1) {
+                endpointsWithoutAssociation.attr('data-id', uuid); // TODO use this information for selection, when updating location.
+                // endpointsWithoutAssociation.data("x", x).data("y", y).data("original-zoom", zoom);
+                // updateTextPosition(endpointsWithoutAssociation);
+                // endpointsWithoutAssociation.appendTo(tb);
+            } else {
+                console.error("Multiple Endpoints are present and can not be uniquely associated with one node.");
+
+            }
 
             return tb;
         }
@@ -418,7 +402,14 @@ var QuoteGraph = {
             current.zoom = zoom;
 
             $(".bigpictureNode").each(function () {
+                // Update the location of the nodes.
+                console.log($(this).attr('id'));
+                console.log("Hello");
+                var katavorioDrag = this._katavorioDrag;
+                console.log(katavorioDrag);
+
                 updateTextPosition(this);
+                katavorioDrag.mark();
             });
 
             biggestPictureSeen = false;
@@ -700,6 +691,18 @@ var QuoteGraph = {
                 var connection = connections[i];
                 QuoteGraph.addConnection(connection.source, connection.target);
             }
+
+            // var endpoints = $(LEFT_PANE_SELECTOR + ">.jsplumb-endpoint");
+            var endpoints = $(".bigpictureNode");
+            QuoteGraph.instance.draggable(endpoints, {
+                consumeStartEvent: false,
+                getSize: function (el) {
+                    var boundingBox = el.getBoundingClientRect();
+                    return [boundingBox.width, boundingBox.height]
+                }
+            });
+
+            QuoteGraph.instance.repaintEverything();
         },
 
         allowDrop: function (ev) {
