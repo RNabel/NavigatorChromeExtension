@@ -12,9 +12,10 @@
  * @param [xPath] {string} The XPath locator of the origin on the page referenced by URL.
  * @param [location] {string} The x and y coordinate of its location on the Quote pane.
  * @param [title] {string} The title of the quote.
+ * @param [zoom] {number} The size of the element.
  * @constructor
  */
-function QuoteRecord(id, text, htmlData, type, URL, xPath, location, title) {
+function QuoteRecord(id, text, htmlData, type, URL, xPath, location, title, zoom) {
     if (typeof id == 'object') { // If constructor object is passed.
         text = id.text;
         htmlData = id.html_data;
@@ -23,11 +24,11 @@ function QuoteRecord(id, text, htmlData, type, URL, xPath, location, title) {
         xPath = id.xPath;
         location = id.location;
         title = id.title;
-
+        zoom = id.zoom;
         id = id.id;
     }
 
-    this.id = id;
+    this.id = (id === undefined) ? utils.guid() : id; // Ensure id exists and create new one as required.
     this.text = text;
     this.html_data = htmlData;
     this.type = type;
@@ -35,6 +36,7 @@ function QuoteRecord(id, text, htmlData, type, URL, xPath, location, title) {
     this.xPath = xPath;
     this.location = location;
     this.title = title;
+    this.zoom = zoom;
 }
 
 function QuoteConnection(obj) {
@@ -48,6 +50,10 @@ function QuoteConnection(obj) {
  * @constructor
  */
 function QuoteStorage(init_obj) {
+    /**
+     * Contains all QuoteRecord objects.
+     * @type {QuoteRecord[]}
+     */
     this.quotes = [];
     this.connections = [];
     if (init_obj !== undefined) {

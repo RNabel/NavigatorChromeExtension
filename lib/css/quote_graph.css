@@ -92,21 +92,22 @@ path, .jsplumb-endpoint {
     margin-top: 2px;
     height: 10px;
     width: 10px;
+    font-size: medium;
 }
 
 .history_entry {
     position: absolute;
     width: 16%;
-    display: flex;
+    /*display: flex;*/
     flex-flow: row nowrap;
-    overflow: hidden;
-    font-size: 16px;
-    font-size: 1vw;
+    /*overflow: hidden;*/
+    /*font-size: 16px;*/
+    /*font-size: 1vw;*/
 }
 
-x-favicon-wrapper {
-    width: 50%; /* This is relative to the tile's width. */
-    padding: 0px 5px 1px;
+.history_entry>img {
+    /*width: 50%; !* This is relative to the tile's width. *!*/
+    /*padding: 0px 5px 1px;*/
 }
 
 .favicon {
@@ -198,6 +199,37 @@ x-favicon-wrapper {
 }
 
 .container-1 {
+    z-index:80;
     height: 100%;
     width: 100%;
 }
+
+#bigpicture-container {
+    z-index: 90;
+}
+
+.bigpicture {
+    position: relative;
+    transform-origin: 0 0;
+}
+
+.bigpictureNode {
+    transform-origin: 0 0;
+    /* Copied text class.
+    /*font-family: "Arial";*/
+    /*line-height: 1.1;*/
+    /*outline: 0;*/
+    position: absolute;
+    /*min-width: 2px;*/
+    /*cursor: text;*/
+    /*word-wrap: break-word;*/
+    /*white-space: pre;*/
+    transition-duration: inherit;
+    z-index: 100;
+}
+
+.jsplumb-connector {
+    z-index: 90
+}
+
+.jsplumb-endpoint

@@ -3,8 +3,8 @@
  */
 
 var ContentScript = {
-    history_graph: undefined,
-    quote_graph: undefined,
+    history_graph: {},
+    quote_graph: {},
 
     /**
      * Set up page.
@@ -29,7 +29,7 @@ var ContentScript = {
          */
         addSidePanes: function () {
             var right = $('<div class="container-container hist-container" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + HIST_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="left" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + HIST_COLLAPSE_CLASS + '">expand_more</i>\n    <div id="' + RIGHT_PANE_IDENTIFIER + '" class="container-1">\n    </div>\n</div>');
-            var left = $('<div class="quote-container container-container" mag-thumb="drag" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="right" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + QUOTE_COLLAPSE_CLASS + '">chevron_left</i>\n    <div class="container drag-drop-demo" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
+            var left = $('<div class="quote-container container-container bigpicture-container" mag-thumb="drag" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="right" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + QUOTE_COLLAPSE_CLASS + '">chevron_left</i>\n    <div class="drag-drop-demo bigpicture" data-x="721" data-y="480" data-zoom="1" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wi de drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
 
             function addStyle(el, isLeft) {
                 if (isLeft) {
@@ -57,26 +57,6 @@ var ContentScript = {
             // Add the panes to the document.
             $(document.documentElement).append(left);
             $(document.documentElement).append(right);
-
-            // Attach panzoom.
-            var $panzoom = $('.container').panzoom({
-                disablePan: false,
-                disableZoom: false,
-                minScale: QUOTE_GRAPH_MIN_SCALE,
-                maxScale: QUOTE_GRAPH_MAX_SCALE
-            });
-
-            // Make mousewheel zooming possible.
-            $panzoom.parent().on('mousewheel', function (e) {
-                e.preventDefault();
-                var delta = e.delta || e.originalEvent.wheelDelta;
-                var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
-                $panzoom.panzoom('zoom', zoomOut, {
-                    increment: 0.1,
-                    animate: false,
-                    focal: e
-                });
-            });
 
             // Initialize the history graph.
             ContentScript.history_graph = HistoryGraph;
@@ -141,7 +121,7 @@ var ContentScript = {
                 // Update maximizer icon.
                 var newIcon = isMaximized ? 'fullscreen' : 'fullscreen_exit';
                 $maximizer.text(newIcon);
-                $maximizer.attr('data-tooltip', isMaximized ? 'Fullscreen': 'End fullscreen')
+                $maximizer.attr('data-tooltip', isMaximized ? 'Fullscreen' : 'End fullscreen')
             });
             $('.' + HIST_MAXIMIZE_CLASS).bind('click', function () {
                 // Get current state.
@@ -173,9 +153,10 @@ var ContentScript = {
                 // Update maximizer icon.
                 var newIcon = isMaximized ? 'fullscreen' : 'fullscreen_exit';
                 $maximizer.text(newIcon);
-                $maximizer.attr('data-tooltip', isMaximized ? 'Fullscreen': 'End fullscreen')
+                $maximizer.attr('data-tooltip', isMaximized ? 'Fullscreen' : 'End fullscreen')
             });
         }
+
     },
 
     tools: {
