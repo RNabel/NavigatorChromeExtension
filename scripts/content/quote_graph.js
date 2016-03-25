@@ -577,7 +577,7 @@ var QuoteGraph = {
                 onZoom(current.zoom * 1.7);
                 return;
             }
-            if ((e.ctrlKey && !e.altKey || e.metaKey) && e.keyCode == 70) {         // CTRL+F
+            if (e.keyCode == 115) {         // F4
                 e.preventDefault();
                 setTimeout(function () {
                     query = window.prompt("What are you looking for?", "");
