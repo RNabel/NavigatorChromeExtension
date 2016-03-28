@@ -76,10 +76,6 @@ var HistoryGraph = {
             var histNode = new HistoryRecord(document.URL, 0, document.title);
             HistoryGraph.columns[HistoryGraph.currentNodeIndex].push(histNode);
             HistoryGraph.rendering.render();
-            // HistoryGraph.addNode(0, document.title,
-            //     utils.createFaviconURL(document.URL),
-            //     HIST_CENTER_COLUMN_INDEX,
-            //     "0", document.URL);
             return;
         }
 
@@ -163,10 +159,6 @@ var HistoryGraph = {
         // Only add the currentNode, if it is not already added to the current column.
         var currentNodeID = currentNode.getID();
         var nodeAlreadyExists = HistoryGraph.connections.existsNodeInColumn(currentNodeID, currentColumnIndex);
-
-
-        // FIXME so far nodes only added as parents, check what's up with that!!
-        // UPDATE: Children not added as parent recursion adds root node, and thus the children code is not entered.
 
         var connectorPair = isChildDirection ? [lastNode, currentNode] : [currentNode, lastNode];
         var connectionAlreadyExists = HistoryGraph.connections.existsConnection(connectorPair, connectionsMade);
