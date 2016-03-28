@@ -232,4 +232,6 @@ path, .jsplumb-endpoint {
     z-index: 90
 }
 
-.jsplumb-endpoint
+.jsplumb-endpoint {
+    z-index: 91
+}

@@ -34,15 +34,14 @@ var QuoteGraph = {
                 activeClass: "dragActive"
             };
 
-            var endpointColor = "rgba(229,219,61,0.5)";
             this.endpointTemplate = {
                 endpoint: ["Dot", {radius: 17}],
                 anchor: "TopLeft",
-                paintStyle: {fillStyle: endpointColor, opacity: 0.5},
+                paintStyle: {fillStyle: QUOTE_ENDPOINT_COLOR, opacity: 0.5},
                 isSource: true,
                 scope: 'yellow',
                 connectorStyle: {
-                    strokeStyle: endpointColor,
+                    strokeStyle: QUOTE_CONNECTOR_COLOR,
                     lineWidth: 4
                 },
                 connector: "Straight",
@@ -645,11 +644,24 @@ var QuoteGraph = {
             templateGenerator = newFunction;
         }
 
+        function getCurrent() {
+            return current;
+        }
+
+        function calculateQuotePosition(ev) {
+            return {
+                x: current.x + (ev.clientX) * current.zoom,
+                y: current.y + (ev.clientY) * current.zoom
+            }
+        }
+
         return {
             newText: newText,
             current: current,
             updateTextPosition: updateTextPosition,
-            setNewText: setNewNodeFunction
+            setNewText: setNewNodeFunction,
+            getCurrent: getCurrent,
+            calculateQuotePosition: calculateQuotePosition
         };
 
     },
@@ -729,15 +741,18 @@ var QuoteGraph = {
 
             var url = window.location.href,
                 text = ev.originalEvent.dataTransfer.getData('text/plain'),
-                html_data = ev.originalEvent.dataTransfer.getData('text/html'),
+                htmlData = ev.originalEvent.dataTransfer.getData('text/html'),
                 source_selector = ev.originalEvent.dataTransfer.getData('src'),
                 x = ev.offsetX,
                 y = ev.offsetY,
-                htmlObj = $(html_data),
+                htmlObj = $(htmlData),
                 type = htmlObj.prop('tagName');
 
+            var currentZoom = QuoteGraph.bigPictureAPI.getCurrent().zoom;
+            var quoteLocation = QuoteGraph.bigPictureAPI.calculateQuotePosition(ev);
+
             // Save the node to backend.
-            var newRecord = new QuoteRecord(undefined, text, html_data, type, url, source_selector, {x: x, y: y});
+            var newRecord = new QuoteRecord(undefined, text, htmlData, type, url, source_selector, quoteLocation, "", currentZoom);
 
             QuoteGraph.convertQuoteRecordToHTML(newRecord);
 
@@ -760,24 +775,24 @@ var QuoteGraph = {
 
         // Create div.
         var $div = $(
-            '<div class="card tiny bigpictureNode ' + QUOTE_CARD_CLASS + '">\n    <i class="material-icons closing-x black-text right " style="cursor: pointer;">close</i>\n    <div class="card-content draggable">\n        <span class="card-title cyan-text ' + QUOTE_TITLE_CLASS + '">\n            <div class="input-field quote-title">\n                Plain title.\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3 ' + QUOTE_CONTENT_CLASS + '">\n            Sample content here.\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="' + url + '" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
+            '<div class="card tiny bigpictureNode ' + QUOTE_CARD_CLASS + '">\n    <i class="material-icons closing-x black-text right " style="cursor: pointer;">close</i>\n    <div class="card-content draggable">\n        <span class="card-title cyan-text ' + QUOTE_TITLE_CLASS + '">\n            <div class="input-field quote-title">\n                &nbsp;\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3 ' + QUOTE_CONTENT_CLASS + '">\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="' + url + '" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
 
         var $closeX = $('.closing-x', $div)
             .on('click', QuoteGraph.deleteQuote);
 
         QuoteGraph.addNodeHelpers.addHandlersToTitle($('.quote-title', $div).parent());
         var $title = $('.quote-title', $div);
+        title = (title == "") ? "&nbsp;" : title;
         $title.html(title);
 
         var $content = $('.x-content', $div);
-        $content.text("Sample content");
 
         // Check if image.
         if (type == 'IMG') {
             var source = $(html_data).attr('src'); // Extract the source of the image.
-            $($content).append($('<img>').attr('src', source));
+            $content.append($('<img>').attr('src', source));
         } else {
-            $($content).text(text);
+            $content.text(text);
         }
 
         // Set ids.
@@ -788,11 +803,14 @@ var QuoteGraph = {
         var ret = QuoteGraph.instance.addEndpoint($div, endpointTemplate);
 
         $($div).attr('id', id);
+        $div.dblclick(function (ev) {ev.stopPropagation()});
+
         return $div;
     },
 
     addNodeHelpers: {
         handleTitleInlineEdit: function (ev) {
+            ev.stopPropagation();
             ev.preventDefault();
             var isClick = ev.originalEvent.type == "click";
             var child = $(":first-child", this);
@@ -844,8 +862,11 @@ var QuoteGraph = {
 
         addHandlersToTitle: function ($element) {
             $element
-                .on("click", QuoteGraph.addNodeHelpers.handleTitleInlineEdit)
-                .on("focusout", QuoteGraph.addNodeHelpers.handleTitleInlineEdit);
+                .click(QuoteGraph.addNodeHelpers.handleTitleInlineEdit)
+                .on("focusout", QuoteGraph.addNodeHelpers.handleTitleInlineEdit)
+                .dblclick(function (ev) {
+                    ev.stopPropagation()
+                });
         }
     },
 
@@ -884,6 +905,7 @@ var QuoteGraph = {
     },
 
     deleteConnection: function (conn, ev) {
+        ev.stopPropagation();
         var uuids = this.getUuids();
 
         QuoteGraph.sendMessage({

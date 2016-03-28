@@ -35,7 +35,7 @@ function HistoryRecord(URL, access_time, title, parent, faviconURL) {
     // Fall back to generic favicon if faviconURL not specified. Using answer from Stackoverflow question:
     //      http://stackoverflow.com/a/15750809/3918512 and http://stackoverflow.com/a/23945027/3918512
     // If particular site not working, it is because it does not store its favicon in the expected location: domain.com/favicon.ico
-    this.faviconURL = this.faviconURL || "http://" + utils.extractDomain(URL) + "/favicon.ico";
+    this.faviconURL = utils.createFaviconURL(this.URL);
 }
 
 /**
@@ -43,14 +43,14 @@ function HistoryRecord(URL, access_time, title, parent, faviconURL) {
  * @returns {string} The b64 encoded URL.
  */
 HistoryRecord.prototype.getID = function () {
-    return btoa(this.URL).replace(/([ #;&,.+*~\':"!^$[\]()=>|\/@])/g,'');
+    return btoa(this.URL).replace(/([ #;&,.+*~\':"!^$[\]()=>|\/@])/g, '');
 };
 
 /**
  * Return the URL of this history record.
  * @returns {string} The URL.
  */
-HistoryRecord.prototype.getURL = function() {
+HistoryRecord.prototype.getURL = function () {
     return this.URL;
 };
 
@@ -58,7 +58,7 @@ HistoryRecord.prototype.getURL = function() {
  * Return the entry's favicon URL.
  * @returns {string} The url to the element's favicon.
  */
-HistoryRecord.prototype.getFaviconURL = function() {
+HistoryRecord.prototype.getFaviconURL = function () {
     return this.faviconURL;
 };
 

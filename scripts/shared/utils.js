@@ -55,5 +55,17 @@ utils = {
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+    },
+    
+    createFaviconURL: function (url) {
+        // Fall back to generic favicon if faviconURL not specified. Using answer from Stackoverflow question:
+        //      http://stackoverflow.com/a/15750809/3918512 and http://stackoverflow.com/a/23945027/3918512
+        // If particular site not working, it is because it does not store its favicon in the expected location: domain.com/favicon.ico
+        if (typeof url == "string" && url.includes("chrome://newtab/")) {
+            url = "http://www.favicon.cc/favicon/327/29/favicon.png";
+        } else {
+            url = "http://" + utils.extractDomain(url) + "/favicon.ico";
+        }
+        return url;
     }
 };

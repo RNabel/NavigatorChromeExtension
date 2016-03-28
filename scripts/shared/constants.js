@@ -25,7 +25,8 @@ var TOTAL_COLUMNS = 5,
 
     HIST_CONNECTOR_WIDTH = 2,
     HIST_CONNECTOR_OPACITY = 1,
-    HIST_CONNECTOR_COLOR = "rgba(229,219,61,0.5)",
+    HIST_CONNECTOR_COLOR = "#b2dfdb",
+    HIST_ENDPOINT_COLOR = "#b2dfdb",
     HIST_ENDPOINT_RADIUS = 1,
 
     HIST_BOX_HEIGHT_DISTANCE = "35",
@@ -34,7 +35,8 @@ var TOTAL_COLUMNS = 5,
     HIST_MAXIMIZE_CLASS = "hist_maximize",
     HIST_COLLAPSE_CLASS = "hist-collapse",
     HIST_HEIGHT_SMALL = "30%",
-    HIST_HEIGHT_FULLSCREEN = "auto";
+    HIST_HEIGHT_FULLSCREEN = "auto",
+    HIST_CENTRAL_NODE_STYLE_CLASSES = 'teal lighten-3';
 
 // Quote graph constants.
 var QUOTE_GRAPH_MAX_SCALE = 1,
@@ -46,7 +48,9 @@ var QUOTE_GRAPH_MAX_SCALE = 1,
     QUOTE_TITLE_CLASS = "quote_title",
     QUOTE_CONTENT_CLASS = "quote_content",
     QUOTE_CARD_CLASS = "quote_card",
-    QUOTE_TITLE_CHANGED = "quote_title_changed";
+    QUOTE_TITLE_CHANGED = "quote_title_changed",
+    QUOTE_CONNECTOR_COLOR = "#80cbc4",
+    QUOTE_ENDPOINT_COLOR = "#26a69a";
 
 // Messaging constants.
 var HISTORY_ID = "history",

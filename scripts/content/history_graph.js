@@ -28,7 +28,7 @@ var HistoryGraph = {
         this.endpointTemplate = {
             endpoint: ["Dot", {radius: HIST_ENDPOINT_RADIUS}],
             anchor: ["Left", "Right"],
-            paintStyle: {fillStyle: HIST_CONNECTOR_COLOR, opacity: HIST_CONNECTOR_OPACITY},
+            paintStyle: {fillStyle: HIST_ENDPOINT_COLOR, opacity: HIST_CONNECTOR_OPACITY},
             isSource: true,
             scope: 'yellow',
             connectorStyle: {
@@ -73,7 +73,13 @@ var HistoryGraph = {
 
         // Escape if the current page does not exist in the history storage (yet). History will be updated and re-braodcast.
         if (!centerNode) {
-            HistoryGraph.addNode(0, document.title, "", HIST_CENTER_COLUMN_INDEX, "0", document.URL);
+            var histNode = new HistoryRecord(document.URL, 0, document.title);
+            HistoryGraph.columns[HistoryGraph.currentNodeIndex].push(histNode);
+            HistoryGraph.rendering.render();
+            // HistoryGraph.addNode(0, document.title,
+            //     utils.createFaviconURL(document.URL),
+            //     HIST_CENTER_COLUMN_INDEX,
+            //     "0", document.URL);
             return;
         }
 
@@ -264,36 +270,21 @@ var HistoryGraph = {
                     target = currentPair[1].getID();
 
                 // For each column.
-                //for (var columnIndex = 0; columnIndex < TOTAL_COLUMNS; columnIndex++) {
-                //    var originElement = HistoryGraph.rendering.getElementByColumnAndURL(origin, columnIndex);
-                //
-                //    if (originElement) {
-                //        var targetElement = HistoryGraph.rendering.getElementByColumnAndURL(target, (columnIndex + 1));
-                //
-                //        // If both origin and target exist in the correct columns, create connection.
-                //        if (targetElement) {
-                //            HistoryGraph.connections.connect($(originElement).attr('id'), $(targetElement).attr('id'));
-                //        }
-                //    }
-                //}
-                var centerColumnIndex = Math.ceil(TOTAL_COLUMNS / 2.0);
-                // MASSIVE FIXME not working. To be worked on as soon as correct bubbles spawned.
-                // --- FUTURE ---
-                for (var columnIndex = centerColumnIndex; columnIndex < TOTAL_COLUMNS; columnIndex++) {
-                    //  start from center index, and move outwards removing connectors as you move along
-                    if (HistoryGraph.rendering.addConnectorsIfOriginAndTargetMatch(origin, target, columnIndex)) {
-                        break;
-                    }
-                }
+                for (var columnIndex = 0; columnIndex < TOTAL_COLUMNS; columnIndex++) {
+                   var originElement = HistoryGraph.rendering.getElementByColumnAndURL(origin, columnIndex);
 
-                // --- PAST ---
-                for (columnIndex = centerColumnIndex - 1; columnIndex >= 0; columnIndex--) {
-                    //  start from center index, and move outwards removing connectors as you move along
-                    if (HistoryGraph.rendering.addConnectorsIfOriginAndTargetMatch(origin, target, columnIndex)) {
-                        break;
-                    }
+                   if (originElement) {
+                       var targetElement = HistoryGraph.rendering.getElementByColumnAndURL(target, (columnIndex + 1));
+
+                       // If both origin and target exist in the correct columns, create connection.
+                       if (targetElement) {
+                           HistoryGraph.connections.connect($(originElement).attr('id'), $(targetElement).attr('id'));
+                       }
+                   }
                 }
             }
+
+            $('.column-' + HIST_CENTER_COLUMN_INDEX).addClass(HIST_CENTRAL_NODE_STYLE_CLASSES)
         },
 
         /**
