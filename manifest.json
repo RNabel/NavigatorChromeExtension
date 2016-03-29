@@ -1,7 +1,7 @@
 {
-  "name": "Navigator Prototype",
-  "description": "Gives you the best idea about your current browsing location you could possibly want.",
-  "version": "1.0",
+  "name": "ChromeNavigator",
+  "description": "Speed up research, and navigation.",
+  "version": "0.1",
   "permissions": [
     "contextMenus",
     "tabs",
