@@ -11,9 +11,9 @@
   "templates": {
     "cleverLinks": false,
     "monospaceLinks": true,
-    "systemName": "remoteFileExplorer",
-    "footer": "Created by Simon Speich",
-    "copyright": "2013",
+    "systemName": "ChromeNavigator",
+    "footer": "Created by Robin Nabel",
+    "copyright": "2016",
     "navType": "vertical",
     "theme": "spacelab",
     "linenums": true,
