@@ -1,6 +1,6 @@
 {
   "name": "ChromeNavigator",
-  "description": "Speed up research, and navigation.",
+  "description": "Speed up research and navigation.",
   "version": "0.1",
   "permissions": [
     "contextMenus",
@@ -19,7 +19,6 @@
         "lib/css/quote_graph.css"
       ],
       "js": [
-        "lib/d3.js",
         "lib/jquery-2.2.0.js",
         "lib/jChangeType.js",
         "lib/jsPlumb-2.0.5.js",

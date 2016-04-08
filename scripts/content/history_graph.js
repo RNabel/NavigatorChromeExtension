@@ -2,6 +2,10 @@
  * Created by robin on 11/01/16.
  */
 
+/**
+ * @exports HistoryGraph
+ * @namespace HistoryGraph
+ */
 var HistoryGraph = {
     history: undefined,
     columns: [], // All URLs drawn into each column.
@@ -55,6 +59,7 @@ var HistoryGraph = {
 
     /**
      * Create the initial graph based on recorded history.
+     * @memberOf HistoryGraph
      * @param historyStorage {HistoryStorage} The entire session's history used initialise the tree.
      */
     drawGraphFromStorage: function (historyStorage) {
@@ -87,6 +92,10 @@ var HistoryGraph = {
         HistoryGraph.rendering.render();
     },
 
+    /**
+     * @memberOf HistoryGraph
+     * @namespace HistoryGraph.connections
+     */
     connections: {
         connect: function (source, target) {
             // Create the relevant endpoints.
@@ -239,6 +248,10 @@ var HistoryGraph = {
         return id;
     },
 
+    /**
+     * @memberOf HistoryGraph
+     * @namespace HistoryGraph.rendering
+     */
     rendering: {
         render: function () {
             // Clear current canvas.
@@ -318,7 +331,10 @@ var HistoryGraph = {
         }
     },
 
-
+    /**
+     * @memberOf HistoryGraph
+     * @namespace HistoryGraph.tools
+     */
     tools: {
         messageHandler: function (request, sender, sendResponse, sentFromExt) {
             switch (request.type) {
