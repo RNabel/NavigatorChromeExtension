@@ -1,7 +1,17 @@
 /**
  * Created by Robin Nabel on 03/11/15.
  */
+
+/**
+ * @exports BackgroundScript
+ * @namespace BackgroundScript
+ */
 var BackgroundScript = {
+
+    /**
+     * @memberOf BackgroundScript
+     * @namespace BackgroundScript.quote_graph
+     */
     quote_graph: {
         // The variable which holds content for the left pane to display
         uuidToUrlMap: {},
@@ -81,6 +91,10 @@ var BackgroundScript = {
         }
     },
 
+    /**
+     * @memberOf BackgroundScript
+     * @namespace BackgroundScript.history_graph
+     */
     history_graph: {
         history: new HistoryStorage(),
         title_cache: {},
@@ -204,6 +218,10 @@ var BackgroundScript = {
         }
     },
 
+    /**
+     * @memberOf BackgroundScript
+     * @namespace BackgroundScript.tools
+     */
     tools: {
         /**
          * Sends object to all content scripts, and allows setting a callback function.

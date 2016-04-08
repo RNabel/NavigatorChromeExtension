@@ -1,6 +1,11 @@
 /**
  * Created by robin on 11/01/16.
  */
+
+/**
+ * @exports QuoteGraph
+ * @namespace QuoteGraph
+ */
 var QuoteGraph = {
 
     quotes: new QuoteStorage(), // List of all quotes in the graph.
@@ -666,6 +671,10 @@ var QuoteGraph = {
 
     },
 
+    /**
+     * @memberOf QuoteGraph
+     * @namespace QuoteGraph.eventHandlers
+     */
     eventHandlers: {
         onNewConnection: function (info, ev) {
             console.log("---------------------");
@@ -808,6 +817,10 @@ var QuoteGraph = {
         return $div;
     },
 
+    /**
+     * @memberOf QuoteGraph
+     * @namespace QuoteGraph.addNodeHelpers
+     */
     addNodeHelpers: {
         handleTitleInlineEdit: function (ev) {
             ev.stopPropagation();
@@ -914,6 +927,10 @@ var QuoteGraph = {
         });
     },
 
+    /**
+     * @memberOf QuoteGraph
+     * @namespace QuoteGraph.tools
+     */
     tools: {
         messageHandler: function (request, sender, sendResponse, sentFromExt) {
             switch (request.type) {

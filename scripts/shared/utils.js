@@ -2,6 +2,10 @@
  * Created by robin on 03/02/16.
  */
 
+/**
+ * @exports utils
+ * @namespace utils
+ */
 utils = {
     /**
      * UUID generator, used to create indices for the text nodes.

@@ -2,6 +2,10 @@
  * Created by Robin Nabel on 30/10/2015.
  */
 
+/**
+ * @exports ContentScript
+ * @namespace ContentScript
+ */
 var ContentScript = {
     history_graph: {},
     quote_graph: {},
@@ -22,6 +26,10 @@ var ContentScript = {
             .append('<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">');
     },
 
+    /**
+     * @memberOf ContentScript
+     * @namespace ContentScript.setup
+     */
     setup: {
         /**
          * Set up the panes displaying the history and quote graph.
@@ -159,6 +167,10 @@ var ContentScript = {
 
     },
 
+    /**
+     * @memberOf ContentScript
+     * @namespace ContentScript.tools
+     */
     tools: {
         receiveMessages: function (request, sender, sendResponse) {
             var sentFromExt = !(sender.tab == undefined);
