@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>ChromeNavigator Class: The object's constructor.</title>
+	<title>ChromeNavigator Namespace: utils</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -77,13 +77,13 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: The object's constructor.</h1>
+	<h1 class="page-title">Namespace: utils</h1>
 <section>
 
 <header>
     
         <h2>
-        The object's constructor.
+        utils
         </h2>
         
     
@@ -94,9 +94,71 @@
     <div class="container-overview">
     
         
+
+        
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
 <hr>
 <dt>
-    <h4 class="name" id="The object's constructor."><span class="type-signature"></span>new The object's constructor.(<span class="optional">init_list</span>)</h4>
+    <h4 class="name" id=".escapeHtml"><span class="type-signature">&lt;static> </span>escapeHtml(unsafe)</h4>
     
     
 </dt>
@@ -104,7 +166,8 @@
 
     
     <div class="description">
-        Object which contains all HistoryRecords and makes accessor methods available.
+        HTML-Escape an input string to make it safe to be inserted by .innerHTML .
+Taken from <a href="http://stackoverflow.com/a/6234804/3918512">StackOverflow Answer</a>.
     </div>
     
 
@@ -127,8 +190,6 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
         
 
@@ -141,16 +202,13 @@
 
         <tr>
             
-                <td class="name"><code>init_list</code></td>
+                <td class="name"><code>unsafe</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;object></span>
-|
-
-<span class="param-type"><a href="HistoryStorage.html">HistoryStorage</a></span>
+<span class="param-type">string</span>
 
 
 
@@ -158,20 +216,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last">History storage / list of <a href="global.html#HistoryRecord"><code>History records</code></a> to be copied.</td>
+            <td class="description last">The unsafe string to be escaped.</td>
         </tr>
 
     
@@ -231,12 +279,99 @@
     
 
     
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    The escaped string.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">XML</span>
+|
+
+<span class="param-type">string</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
 
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".guid"><span class="type-signature">&lt;static> </span>guid()</h4>
     
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        UUID generator, used to create indices for the text nodes.
     </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
 
     
 
@@ -249,7 +384,137 @@
     
 
     
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    The unique identifier.
+</div>
 
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".timestamp"><span class="type-signature">&lt;static> </span>timestamp()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Creates UNIX-style timestamp.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    The current timestamp.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        </dl>
     
 
     

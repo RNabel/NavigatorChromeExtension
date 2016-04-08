@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>ChromeNavigator Class: QuoteStorage</title>
+	<title>ChromeNavigator Namespace: history_graph</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -77,13 +77,15 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: QuoteStorage</h1>
+	<h1 class="page-title">Namespace: history_graph</h1>
 <section>
 
 <header>
     
         <h2>
-        QuoteStorage
+            <span class="ancestors"><a href="BackgroundScript.html">BackgroundScript</a>.</span>
+        
+        history_graph
         </h2>
         
     
@@ -94,9 +96,71 @@
     <div class="container-overview">
     
         
+
+        
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
 <hr>
 <dt>
-    <h4 class="name" id="QuoteStorage"><span class="type-signature"></span>new QuoteStorage(<span class="optional">init_obj</span>)</h4>
+    <h4 class="name" id=".createNewConnection"><span class="type-signature">&lt;static> </span>createNewConnection(source, target)</h4>
     
     
 </dt>
@@ -104,7 +168,7 @@
 
     
     <div class="description">
-        Initialise quote storage.
+        Creates new connection.
     </div>
     
 
@@ -127,8 +191,6 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
         
 
@@ -141,7 +203,7 @@
 
         <tr>
             
-                <td class="name"><code>init_obj</code></td>
+                <td class="name"><code>source</code></td>
             
 
             <td class="type">
@@ -155,497 +217,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last">The QuoteStorage object to use as base.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        <dl>
-            
-<hr>
-<dt class="name" id="quotes">
-    <h4><span class="type-signature"></span>quotes<span class="type-signature"> :Array.&lt;<a href="QuoteRecord.html">QuoteRecord</a>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Contains all QuoteRecord objects.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Array.&lt;<a href="QuoteRecord.html">QuoteRecord</a>></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-            
-<hr>
-<dt>
-    <h4 class="name" id="addConnection"><span class="type-signature"></span>addConnection(connection)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Add connection to storage object.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>connection</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">QuoteConnection</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The connection to add.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="addQuote"><span class="type-signature"></span>addQuote(quote)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Add Quote to storage object.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>quote</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="QuoteRecord.html">QuoteRecord</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The quote to add.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="deleteConnection"><span class="type-signature"></span>deleteConnection(source, target)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Delete a connection between given target and source.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>source</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The id of the source.</td>
+            <td class="description last">The URL (or id) of the source page.</td>
         </tr>
 
     
@@ -658,7 +233,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">object</span>
 
 
 
@@ -669,159 +244,7 @@
 
             
 
-            <td class="description last">The id of the target.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    Whether the function executed correctly.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="deleteQuote"><span class="type-signature"></span>deleteQuote(nodeID)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Delete quote.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>nodeID</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The id of the node.</td>
+            <td class="description last">The URL (or id) of the target page.</td>
         </tr>
 
     
@@ -889,7 +312,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="existsConnection"><span class="type-signature"></span>existsConnection(source, target)</h4>
+    <h4 class="name" id=".notifyHistoryUpdate"><span class="type-signature">&lt;static> </span>notifyHistoryUpdate(source, target)</h4>
     
     
 </dt>
@@ -897,7 +320,7 @@
 
     
     <div class="description">
-        Check whether connection between source and target exists.
+        Creates the object to be sent to all content scripts.
     </div>
     
 
@@ -937,19 +360,13 @@
 
             <td class="type">
             
-                
-<span class="param-type">string</span>
-
-
-
-            
             </td>
 
             
 
             
 
-            <td class="description last">The id of the source.</td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -961,19 +378,13 @@
 
             <td class="type">
             
-                
-<span class="param-type">string</span>
-
-
-
-            
             </td>
 
             
 
             
 
-            <td class="description last">The id of the target.</td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -1033,30 +444,6 @@
     
 
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    Whether the a connection exists.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>
@@ -1065,7 +452,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="getAllConnections"><span class="type-signature"></span>getAllConnections()</h4>
+    <h4 class="name" id=".onTabChange"><span class="type-signature">&lt;static> </span>onTabChange(tabId, changeInfo, tab)</h4>
     
     
 </dt>
@@ -1073,203 +460,8 @@
 
     
     <div class="description">
-        Return array of all connections.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;QuoteConnection></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="getAllQuotes"><span class="type-signature"></span>getAllQuotes()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Return array of all quotes.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;<a href="QuoteRecord.html">QuoteRecord</a>></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="getQuote"><span class="type-signature"></span>getQuote(uuid)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Return QuoteRecord object if Uuid exists in record store or False
+        Function handling tab URL changes. Called from event listener.
+<a href="https://developer.chrome.com/extensions/tabs#event-onUpdated">Official Google documentation</a>
     </div>
     
 
@@ -1304,13 +496,13 @@
 
         <tr>
             
-                <td class="name"><code>uuid</code></td>
+                <td class="name"><code>tabId</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">int</span>
 
 
 
@@ -1321,7 +513,55 @@
 
             
 
-            <td class="description last">The UUID of the QuoteRecord.</td>
+            <td class="description last">The id of the tab.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>changeInfo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Further information on occurred changes.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tab</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Tab</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The state of the updated tab.</td>
         </tr>
 
     
@@ -1381,33 +621,6 @@
     
 
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    The QuoteRecord instance if found, false otherwise.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="QuoteRecord.html">QuoteRecord</a></span>
-|
-
-<span class="param-type">boolean</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>
@@ -1416,7 +629,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="removeAttachedConnections"><span class="type-signature"></span>removeAttachedConnections(source)</h4>
+    <h4 class="name" id=".onTabClosed"><span class="type-signature">&lt;static> </span>onTabClosed(tabId, removeInfo)</h4>
     
     
 </dt>
@@ -1424,7 +637,8 @@
 
     
     <div class="description">
-        Remove all connections attached to the specified node.
+        Function handling tab closing. Called from event handler.
+<a href="https://developer.chrome.com/extensions/tabs#event-onRemoved">Official Google documentation</a>
     </div>
     
 
@@ -1459,13 +673,13 @@
 
         <tr>
             
-                <td class="name"><code>source</code></td>
+                <td class="name"><code>tabId</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">int</span>
 
 
 
@@ -1476,7 +690,31 @@
 
             
 
-            <td class="description last">The id of the node.</td>
+            <td class="description last">The id of the closed tab.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>removeInfo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The information about the closed tab.</td>
         </tr>
 
     
@@ -1536,30 +774,128 @@
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    Whether function executed correctly.
-</div>
+</dd>
 
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
         
-<span class="param-type">boolean</span>
+            
+<hr>
+<dt>
+    <h4 class="name" id=".sendEntireHistory"><span class="type-signature">&lt;static> </span>sendEntireHistory(tabId)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Sends entire history to the specified tab.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tabId</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
 
 
 
-    </dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-        
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -1618,7 +954,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 	
-		on 2016-04-08T21:31:50+01:00
+		on 2016-04-08T21:31:49+01:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>ChromeNavigator Class: The object's constructor.</title>
+	<title>ChromeNavigator Namespace: QuoteGraph</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -77,13 +77,13 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: The object's constructor.</h1>
+	<h1 class="page-title">Namespace: QuoteGraph</h1>
 <section>
 
 <header>
     
         <h2>
-        The object's constructor.
+        QuoteGraph
         </h2>
         
     
@@ -94,9 +94,84 @@
     <div class="container-overview">
     
         
+
+        
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Namespaces</h3>
+
+        <dl>
+            <dt><a href="namespaces.html#QuoteGraph.addNodeHelpers"><a href="QuoteGraph.addNodeHelpers.html">addNodeHelpers</a></a></dt>
+            <dd></dd>
+        
+            <dt><a href="namespaces.html#QuoteGraph.eventHandlers"><a href="QuoteGraph.eventHandlers.html">eventHandlers</a></a></dt>
+            <dd></dd>
+        
+            <dt><a href="namespaces.html#QuoteGraph.tools"><a href="QuoteGraph.tools.html">tools</a></a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
 <hr>
 <dt>
-    <h4 class="name" id="The object's constructor."><span class="type-signature"></span>new The object's constructor.(<span class="optional">init_list</span>)</h4>
+    <h4 class="name" id=".addConnection"><span class="type-signature">&lt;static> </span>addConnection(source, target)</h4>
     
     
 </dt>
@@ -104,7 +179,7 @@
 
     
     <div class="description">
-        Object which contains all HistoryRecords and makes accessor methods available.
+        Connect two graphs in the jsPlumb graph.
     </div>
     
 
@@ -127,8 +202,6 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
         
 
@@ -141,16 +214,16 @@
 
         <tr>
             
-                <td class="name"><code>init_list</code></td>
+                <td class="name"><code>source</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;object></span>
+<span class="param-type">string</span>
 |
 
-<span class="param-type"><a href="HistoryStorage.html">HistoryStorage</a></span>
+<span class="param-type">int</span>
 
 
 
@@ -158,20 +231,37 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
 
-                
+            
 
+            <td class="description last">The source id.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
                 
-                </td>
+<span class="param-type">string</span>
+|
+
+<span class="param-type">int</span>
+
+
+
+            
+            </td>
+
             
 
             
 
-            <td class="description last">History storage / list of <a href="global.html#HistoryRecord"><code>History records</code></a> to be copied.</td>
+            <td class="description last">The target id.</td>
         </tr>
 
     
@@ -235,8 +325,266 @@
     
 </dd>
 
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".convertQuoteRecordToHTML"><span class="type-signature">&lt;static> </span>convertQuoteRecordToHTML(quoteRecord)</h4>
     
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Convert passed in information into required HTML string.
     </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>quoteRecord</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="QuoteRecord.html">QuoteRecord</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">jQuery</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".nodeAdded"><span class="type-signature">&lt;static> </span>nodeAdded(newRecord)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Syncs added nodes with background storage.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>newRecord</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="QuoteRecord.html">QuoteRecord</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The record added to the graph.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
 
     
 
@@ -250,6 +598,10 @@
 
     
 
+    
+</dd>
+
+        </dl>
     
 
     
@@ -303,7 +655,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 	
-		on 2016-04-08T21:31:50+01:00
+		on 2016-04-08T21:31:49+01:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
