@@ -34,7 +34,7 @@ var TOTAL_COLUMNS = 5,
     HIST_TOP_OFFSET = 5,
     HIST_MAXIMIZE_CLASS = "hist_maximize",
     HIST_COLLAPSE_CLASS = "hist-collapse",
-    HIST_HEIGHT_SMALL = "30%",
+    HIST_HEIGHT_SMALL = "auto",
     HIST_HEIGHT_FULLSCREEN = "auto",
     HIST_CENTRAL_NODE_STYLE_CLASSES = 'teal lighten-3';
 
