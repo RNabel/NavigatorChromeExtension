@@ -803,7 +803,7 @@ var QuoteGraph = {
         // Check if image.
         if (type == 'IMG') {
             var source = $(html_data).attr('src'); // Extract the source of the image.
-            $content.append($('<img>').attr('src', source));
+            $content.append($('<img>').attr('src', source).css('width', '100%'));
         } else {
             $content.text(text);
         }
