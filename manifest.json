@@ -1,24 +1,53 @@
 {
-  "name": "Navigator Prototype",
-  "description": "Gives you the best idea about your current browsing location you could possibly want.",
-  "version": "1.0",
+  "name": "ChromeNavigator",
+  "description": "Speed up research and navigation.",
+  "version": "0.1",
   "permissions": [
     "contextMenus",
     "tabs",
     "*://*/*"
   ],
-  "content_scripts": [{
-    "matches": ["*://*/*"],
-    "js":      ["lib/d3.js", "lib/jquery-2.1.4.min.js", "scripts/content_script.js"],
-    "run_at": "document_end"
-  }],
-
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.wikipedia.org/*",
+        "http://localhost/*"
+      ],
+      "css": [
+        "lib/css/bigpicture.css",
+        "lib/css/materialize.css",
+        "lib/css/quote_graph.css"
+      ],
+      "js": [
+        "lib/jquery-2.2.0.js",
+        "lib/jChangeType.js",
+        "lib/jsPlumb-2.0.5.js",
+        "lib/jquery.panzoom.js",
+        "scripts/shared/constants.js",
+        "scripts/shared/utils.js",
+        "scripts/shared/quote_storage.js",
+        "scripts/shared/history_storage.js",
+        "scripts/content/history_graph.js",
+        "scripts/content/quote_graph.js",
+        "scripts/content/content_script.js",
+        "lib/materialize.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
   "background": {
-    "scripts": ["lib/jquery-2.1.4.min.js", "scripts/background.js"]
+    "scripts": [
+      "lib/jquery-2.2.0.js",
+      "scripts/shared/constants.js",
+      "scripts/shared/utils.js",
+      "scripts/shared/quote_storage.js",
+      "scripts/shared/history_storage.js",
+      "scripts/background/background.js"
+    ]
   },
-
   "web_accessible_resources": [
-    "assets/*"
+    "assets/*",
+    "lib/*"
   ],
   "manifest_version": 2
 }
