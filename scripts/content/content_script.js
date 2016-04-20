@@ -42,7 +42,7 @@ var ContentScript = {
         addSidePanes: function () {
             var right = $('<div class="container-container hist-container" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + HIST_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="left" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + HIST_COLLAPSE_CLASS + '">expand_more</i>\n    <div id="' + RIGHT_PANE_IDENTIFIER + '" class="container-1">\n    </div>\n</div>');
             var left = $('<div class="quote-container container-container bigpicture-container" mag-thumb="drag" style="z-index: ' + Z_INDEX_BACKGROUND + '">\n    <i data-position="left" data-delay="50" data-tooltip="Fullscreen" class="material-icons no-select fullscreen tooltipped ' + QUOTE_MAXIMIZE_CLASS + '">fullscreen</i>\n    <i data-position="right" data-delay="50" data-tooltip="Collapse" class="material-icons no-select tooltipped ' + QUOTE_COLLAPSE_CLASS + '">chevron_left</i>\n    <div class="drag-drop-demo bigpicture" data-x="721" data-y="480" data-zoom="1" id="' + LEFT_PANE_IDENTIFIER + '" style="color:transparent">\n        <div class="jtk-demo-canvas canvas-wi de drag-drop-demo jtk-surface"></div>\n    </div>\n</div>');
-
+            
             function addStyle(el, isLeft) {
                 if (isLeft) {
                     // Wrapping element.
@@ -74,7 +74,9 @@ var ContentScript = {
             $(document.documentElement).append(bottomRightExpander);
             $(document.documentElement).append(topLeftExpander);
 
-
+            // Add unique class to the body tag.
+            $('body').addClass('content_container');
+            
             // Initialize the history graph.
             ContentScript.history_graph = HistoryGraph;
             ContentScript.history_graph.sendMessage = ContentScript.tools.sendMessage;
