@@ -426,6 +426,9 @@ var QuoteGraph = {
             });
 
             biggestPictureSeen = false;
+
+            // Redraw all nodes.
+            QuoteGraph.eventHandlers.onQuoteUpdate(QuoteGraph.quotes);
         }
 
         function zoomOnText(res) {
