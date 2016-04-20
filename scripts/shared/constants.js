@@ -43,8 +43,6 @@ var QUOTE_GRAPH_MAX_SCALE = 1,
     QUOTE_GRAPH_MIN_SCALE = 0.1,
     QUOTE_MAXIMIZE_CLASS = "quote-maximize",
     QUOTE_COLLAPSE_CLASS = "quote-collapse",
-    QUOTE_MAXIMIZE_CLASS = "quote_maximize",
-    QUOTE_COLLAPSE_CLASS = "quote-collapse",
     QUOTE_TITLE_CLASS = "quote_title",
     QUOTE_CONTENT_CLASS = "quote_content",
     QUOTE_CARD_CLASS = "quote_card",
@@ -64,3 +62,8 @@ var QUOTE_ID = "quote_graph",
     QUOTE_CONNECTION_UPDATE = "quote_connection_update",
     QUOTE_CONNECTION_DELETED = "quote_connection_deleted",
     QUOTE_INIT_DATA = "quote_init_data";
+
+
+// Elements inserted in page.
+var bottomRightExpander = '<a class="btn-floating btn '+ HIST_COLLAPSE_CLASS +'" style="bottom: 10px; right: 10px">\n    <i data-position="left"\n       data-delay="50"\n       data-tooltip="Expand"\n       class="material-icons no-select fullscreen tooltipped">\n        expand_less\n    </i>\n</a>';
+var topLeftExpander = '<a class="btn-floating btn ' + QUOTE_COLLAPSE_CLASS + '" style="top: 10px; left: 10px">\n    <i data-position="right" \n       data-delay="50" \n       data-tooltip="Expand"\n       class="material-icons no-select fullscreen tooltipped">\n        chevron_right\n    </i>\n</a>';

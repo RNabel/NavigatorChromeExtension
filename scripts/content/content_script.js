@@ -7,8 +7,12 @@
  * @namespace ContentScript
  */
 var ContentScript = {
-    history_graph: {},
-    quote_graph: {},
+    history_graph: {
+        isMinimized: false
+    },
+    quote_graph: {
+        isMinimized: false
+    },
 
     /**
      * Set up page.
@@ -66,6 +70,11 @@ var ContentScript = {
             $(document.documentElement).append(left);
             $(document.documentElement).append(right);
 
+            // Add expanders for both panes.
+            $(document.documentElement).append(bottomRightExpander);
+            $(document.documentElement).append(topLeftExpander);
+
+
             // Initialize the history graph.
             ContentScript.history_graph = HistoryGraph;
             ContentScript.history_graph.sendMessage = ContentScript.tools.sendMessage;
@@ -79,7 +88,7 @@ var ContentScript = {
                 jsPlumb.ready(QuoteGraph.init);
             })();
 
-            ContentScript.setup.addEventListenersToMaximizers();
+            ContentScript.setup.addEventListenersToPaneControls();
         },
 
         /**
@@ -100,7 +109,8 @@ var ContentScript = {
         /**
          * Add the requires event listeners to the fullscreen and minimize images.
          */
-        addEventListenersToMaximizers: function () {
+        addEventListenersToPaneControls: function () {
+            // Maximizers.
             $('.' + QUOTE_MAXIMIZE_CLASS).bind('click', function () {
                 // Get current state.
                 var $maximizer = $('.' + QUOTE_MAXIMIZE_CLASS);
@@ -162,6 +172,67 @@ var ContentScript = {
                 var newIcon = isMaximized ? 'fullscreen' : 'fullscreen_exit';
                 $maximizer.text(newIcon);
                 $maximizer.attr('data-tooltip', isMaximized ? 'Fullscreen' : 'End fullscreen')
+            });
+
+            // Minimizers.
+            $('.' + QUOTE_COLLAPSE_CLASS).bind('click', function () {
+                // Get current state.
+                var isMinimized = ContentScript.quote_graph.isMinimized;
+
+                var $quotePane = $('.quote-container'),
+                    $body = $('body');
+                if (isMinimized) {
+                    // Move quotePane back to original position.
+                    $quotePane.animate({'left': '0px'});
+
+                    // Move body content to the right.
+                    $body.animate({
+                        'margin-left': '20%',
+                        'width': '80%'
+                    });
+                } else {
+                    // Move pane to the left.
+                    $quotePane.animate({'left': '-20%'});
+
+                    // Change left property of the HTML content.
+                    $body.animate({
+                        'margin-left': '0px',
+                        'width': '100%'
+                    });
+                }
+                ContentScript.quote_graph.isMinimized = !isMinimized;
+            });
+            $('.' + HIST_COLLAPSE_CLASS).bind('click', function () {
+                // Get current state.
+                var isMinimized = ContentScript.history_graph.isMinimized;
+
+                var $historyPane = $('.hist-container'),
+                    $body = $('body'),
+                    $quotePane = $('.quote-container');
+
+                if (isMinimized) {
+                    // Move history pane back to original position.
+                    $historyPane.animate({'bottom': '0px'});
+
+                    // Move body content up.
+                    $body.animate({'margin-bottom': '20%'});
+
+                    // Resize the quote pane.
+                    $quotePane.animate({'height': '80%'});
+                } else {
+                    // Move pane downwards/.
+                    $historyPane.animate({'bottom': '-20%'});
+
+                    // Change bottom property of the HTML content.
+                    $body.animate({
+                        'margin-bottom': '0px'
+                    });
+
+                    // Resize the quote pane.
+                    $quotePane.animate({'height': '100%'});
+                }
+
+                ContentScript.history_graph.isMinimized = !isMinimized;
             });
         }
 
