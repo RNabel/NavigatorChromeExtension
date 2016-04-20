@@ -18,6 +18,26 @@ var BackgroundScript = {
         quoteStorage: new QuoteStorage(),
 
         /**
+         * Saves the current state of the Quote Graph.
+         */
+        saveQuoteGraph: function() {
+            chrome.storage.local.set({'quoteGraph': BackgroundScript.quote_graph.quoteStorage}, function() {
+                // Notify that we saved.
+                console.log('QuoteStorage backed up.');
+            });
+        },
+
+        /**
+         * Load the state of the QuoteGraph from localStorage.
+         */
+        loadQuoteGraph: function() {
+            chrome.storage.local.get('quoteGraph', function (data) {
+                BackgroundScript.quote_graph.quoteStorage = new QuoteStorage(data);
+                BackgroundScript.quote_graph.sendAllQuotes();
+            })
+        },
+
+        /**
          * Sends entire history to all tabs.
          */
         sendAllQuotes: function () {
@@ -34,16 +54,14 @@ var BackgroundScript = {
         onNewQuote: function (update) {
             var quote = new QuoteRecord(update);
             BackgroundScript.quote_graph.quoteStorage.addQuote(quote);
-
-            BackgroundScript.quote_graph.sendAllQuotes();
+            BackgroundScript.quote_graph.saveQuoteGraph();
         },
 
         onQuoteDeleted: function (data) {
             var nodeID = data.id;
 
             BackgroundScript.quote_graph.quoteStorage.deleteQuote(nodeID);
-
-            BackgroundScript.quote_graph.sendAllQuotes();
+            BackgroundScript.quote_graph.saveQuoteGraph();
         },
 
         onQuoteLocationUpdate: function (update) {
@@ -57,7 +75,7 @@ var BackgroundScript = {
                     y: update.y
                 };
 
-                BackgroundScript.quote_graph.sendAllQuotes();
+                BackgroundScript.quote_graph.saveQuoteGraph();
             }
         },
 
@@ -68,7 +86,7 @@ var BackgroundScript = {
             var connection = new QuoteConnection({source: source, target: target});
             BackgroundScript.quote_graph.quoteStorage.addConnection(connection);
 
-            BackgroundScript.quote_graph.sendAllQuotes();
+            BackgroundScript.quote_graph.saveQuoteGraph();
         },
 
         onQuoteConnectionDeleted: function (data) {
@@ -77,7 +95,7 @@ var BackgroundScript = {
 
             BackgroundScript.quote_graph.quoteStorage.deleteConnection(source, target);
 
-            BackgroundScript.quote_graph.sendAllQuotes();
+            BackgroundScript.quote_graph.saveQuoteGraph();
         },
 
         onQuoteTitleChanged: function (data) {
@@ -87,7 +105,7 @@ var BackgroundScript = {
             var quoteRecord = BackgroundScript.quote_graph.quoteStorage.getQuote(quoteID);
             quoteRecord.title = newTitle;
 
-            BackgroundScript.quote_graph.sendAllQuotes();
+            BackgroundScript.quote_graph.saveQuoteGraph();
         }
     },
 
@@ -100,24 +118,42 @@ var BackgroundScript = {
         title_cache: {},
         currentTabUrls: {},
 
+        /**
+         * Saves the current state of the Quote Graph.
+         */
+        saveHistoryGraph: function() {
+            chrome.storage.local.set({'historyGraph': BackgroundScript.history_graph.history}, function() {
+                // Notify that we saved.
+                console.log('HistoryGraph backed up.');
+            });
+        },
+
+        /**
+         * Load the state of the QuoteGraph from localStorage.
+         */
+        loadHistoryGraph: function() {
+            chrome.storage.local.get('historyGraph', function (data) {
+                BackgroundScript.history_graph.history = new HistoryStorage(data);
+                BackgroundScript.history_graph.sendEntireHistory();
+            })
+        },
+
         onInitHistory: function (data) {
             console.log("Sending INIT history.");
             BackgroundScript.history_graph.title_cache[data.url] = data.title;
-            BackgroundScript.history_graph.sendEntireHistory();
+            BackgroundScript.history_graph.loadHistoryGraph();
         },
 
         /**
          * Sends entire history to the specified tab.
-         * @param tabId
          */
-        sendEntireHistory: function (tabId) {
+        sendEntireHistory: function () {
             console.log("Send entire history - initial.");
             var message = {
                 deliver_to: HISTORY_ID,
                 type: HISTORY_INIT_DATA,
                 data: BackgroundScript.history_graph.history
             };
-            //BackgroundScript.tools.sendMessage(message, tabId); FIXME not sending to correct tab when tab id is specified.
             BackgroundScript.tools.sendMessage(message);
         },
 
@@ -145,7 +181,7 @@ var BackgroundScript = {
             tar.addParent(source.url);
 
             // Notify all content scripts to update graph as necessary.
-            BackgroundScript.history_graph.notifyHistoryUpdate(source, target);
+            BackgroundScript.history_graph.saveHistoryGraph(source, target);
         },
 
         /**
@@ -274,6 +310,10 @@ var BackgroundScript = {
     BackgroundScript.messageMap[QUOTE_CONNECTION_UPDATE] = BackgroundScript.quote_graph.onQuoteConnectionUpdate;
     BackgroundScript.messageMap[QUOTE_CONNECTION_DELETED] = BackgroundScript.quote_graph.onQuoteConnectionDeleted;
     BackgroundScript.messageMap[QUOTE_TITLE_CHANGED] = BackgroundScript.quote_graph.onQuoteTitleChanged;
+
+    // Load history and quote graph.
+    BackgroundScript.quote_graph.loadQuoteGraph();
+    // BackgroundScript.; TODO
 })
 ();
 
@@ -288,3 +328,26 @@ chrome.tabs.onUpdated.addListener(
 chrome.tabs.onRemoved.addListener(
     BackgroundScript.history_graph.onTabClosed
 );
+
+// Storage update listener.
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+    for (key in changes) {
+        var storageChange = changes[key];
+        if (key === 'quoteGraph') {
+            // Send out update.
+            BackgroundScript.quote_graph.sendAllQuotes();
+        } else if (key === 'historyGraph') {
+            BackgroundScript.history_graph.sendEntireHistory();
+        } else {
+            console.log("Unexpected key submitted. %s", key);
+        }
+
+        // TODO remove.
+        console.log('Storage key "%s" in namespace "%s" changed. ' +
+            'Old value was "%s", new value is "%s".',
+            key,
+            namespace,
+            storageChange.oldValue,
+            storageChange.newValue);
+    }
+});

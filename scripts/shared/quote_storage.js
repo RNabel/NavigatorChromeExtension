@@ -46,7 +46,7 @@ function QuoteConnection(obj) {
 
 /**
  * Initialise quote storage.
- * @param [init_obj] {object} The QuoteStorage object to use as base.
+ * @param [init_obj] {QuoteStorage} The QuoteStorage object to use as base.
  * @constructor
  */
 function QuoteStorage(init_obj) {

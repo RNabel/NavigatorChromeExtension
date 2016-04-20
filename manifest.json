@@ -5,7 +5,9 @@
   "permissions": [
     "contextMenus",
     "tabs",
-    "*://*/*"
+    "*://*/*",
+    "storage",
+    "unlimitedStorage"
   ],
   "content_scripts": [
     {
