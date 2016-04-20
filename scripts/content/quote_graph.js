@@ -786,6 +786,10 @@ var QuoteGraph = {
         var $div = $(
             '<div class="card tiny bigpictureNode ' + QUOTE_CARD_CLASS + '">\n    <i class="material-icons closing-x black-text right " style="cursor: pointer;">close</i>\n    <div class="card-content draggable">\n        <span class="card-title cyan-text ' + QUOTE_TITLE_CLASS + '">\n            <div class="input-field quote-title">\n                &nbsp;\n            </div>\n        </span>\n        <p class="x-content cyan-text text-darken-3 ' + QUOTE_CONTENT_CLASS + '">\n        </p>\n    </div>\n    <div class="card-action">\n        <a href="' + url + '" class="cyan-text text-accent-4">Open origin</a>\n    </div>\n</div>');
 
+        if (url === undefined) {
+            $('.card-action', $div).remove()
+        }
+
         var $closeX = $('.closing-x', $div)
             .on('click', QuoteGraph.deleteQuote);
 
